@@ -1,2 +1,0 @@
-hola rudek
-Hola iortega-
