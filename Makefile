@@ -6,14 +6,14 @@
 #    By: orudek <orudek@student.42madrid.com>       +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/09/03 15:02:39 by iortega-          #+#    #+#              #
-#    Updated: 2023/09/03 19:26:12 by orudek           ###   ########.fr        #
+#    Updated: 2023/09/03 19:30:06 by orudek           ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
 NAME := minishell
 
 CC := gcc
-STANDARD_FLAGS := -Wall -Wextra -Werror#-fsanitize=leak
+STANDARD_FLAGS := #-Wall -Wextra -Werror#-fsanitize=leak
 RM := rm -f
 
 SRC_DIR := src
