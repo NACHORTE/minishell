@@ -6,7 +6,7 @@
 #    By: orudek <orudek@student.42madrid.com>       +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/09/03 15:02:39 by iortega-          #+#    #+#              #
-#    Updated: 2023/09/03 18:32:36 by orudek           ###   ########.fr        #
+#    Updated: 2023/09/03 19:16:50 by orudek           ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -52,6 +52,7 @@ clean:
 
 fclean: clean
 	@$(RM) $(NAME)
+	@echo "Deleted $(NAME) executable"
 	
 re: fclean all
 
