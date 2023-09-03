@@ -1,25 +1,43 @@
-#include <stdio.h>
-#include <stdlib.h>
-#include "libft.h"
-#include <readline/readline.h>
-#include <readline/history.h>
+#include "minishell.h"
 
-int main()
+void	free_double(char **arr)
 {
-      char *inpt;
+	int	i;
 
-        int i = 0;
+	i = 0;
+	while (arr[i])
+	{
+		free(arr[i]);
+		i++;
+	}
+	free(arr);
+}
 
-        while ( i < 10 )
-        {
-                inpt = readline("Enter text: ");
-                add_history(inpt);
-                printf("%s", inpt);
-				free(inpt);
-                printf("\n");
-                ++i;
-        }
+int	main()
+{
+	char	*input;
+	char	**parsed;
+	int		i;
+	int		exit;
 
-        return 0;
-
+	exit = 1;
+	while (exit)
+	{
+		input = readline("\033[36mminishell >> \033[0m");
+		printf("%s\n", input);
+		parsed = ft_split(input, ' ');
+		i = 0;
+		while (parsed[i])
+		{
+			if (!ft_strcmp(parsed[i], "exit"))
+				exit = 0;
+			printf("%s\n", parsed[i]);
+			i++;
+		}
+		free_double(parsed);
+		free(input);
+	}
+	/*free_double(parsed);
+	free(input);*/
+	return (0);
 }
