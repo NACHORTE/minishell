@@ -6,7 +6,7 @@
 #    By: iortega- <iortega-@student.42madrid.com    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/09/03 15:02:39 by iortega-          #+#    #+#              #
-#    Updated: 2023/09/03 15:51:39 by iortega-         ###   ########.fr        #
+#    Updated: 2023/09/03 16:42:10 by iortega-         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -20,7 +20,7 @@ LIBFT	:= libft.a
 
 INCLUDE_DIR := $(LIB_DIR)/include
 
-STANDARD_FLAGS	:= -Wall -Wextra -Werror -lreadline
+STANDARD_FLAGS	:= -Wall -Wextra -Werror -lreadline #-fsanitize=leak
 
 SRCS			:= main.c \
 

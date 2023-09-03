@@ -24,13 +24,15 @@ int	main()
 	while (exit)
 	{
 		input = readline("\033[36mminishell >> \033[0m");
-		printf("%s\n", input);
 		parsed = ft_split(input, ' ');
 		i = 0;
 		while (parsed[i])
 		{
-			if (!ft_strcmp(parsed[i], "exit"))
+			if (!ft_strcmp(parsed[i], "exit") && i == 0)
+			{
 				exit = 0;
+				break;
+			}
 			printf("%s\n", parsed[i]);
 			i++;
 		}
