@@ -3,48 +3,56 @@
 #                                                         :::      ::::::::    #
 #    Makefile                                           :+:      :+:    :+:    #
 #                                                     +:+ +:+         +:+      #
-#    By: iortega- <iortega-@student.42madrid.com    +#+  +:+       +#+         #
+#    By: orudek <orudek@student.42madrid.com>       +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/09/03 15:02:39 by iortega-          #+#    #+#              #
-#    Updated: 2023/09/03 16:42:10 by iortega-         ###   ########.fr        #
+#    Updated: 2023/09/03 18:32:36 by orudek           ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
-NAME	:= minishell
+NAME := minishell
 
-CC		:= gcc
+CC := gcc
+STANDARD_FLAGS := -Wall -Wextra -Werror#-fsanitize=leak
+RM := rm -f
 
-LIB_DIR := libft
+SRC_DIR := src
+INCLUDE_DIR := include
+OBJ_DIR := obj
 
-LIBFT	:= libft.a
+LIBFT_DIR := libft
+LIBFT_NAME := libft.a
 
-INCLUDE_DIR := $(LIB_DIR)/include
+LIB := readline
 
-STANDARD_FLAGS	:= -Wall -Wextra -Werror -lreadline #-fsanitize=leak
+SRC_FILES := main.c
 
-SRCS			:= main.c \
+SRC := $(addprefix $(SRC_DIR)/,$(SRC_FILES))
+LIB_FLAG := $(addprefix -l,$(LIB))
+INCLUDE_PATH := -I$(INCLUDE_DIR) -I$(LIBFT_DIR)/include
+OBJ := $(SRC:$(SRC_DIR)/%.c=$(OBJ_DIR)/%.o)
 
-OBJS			:= $(SRCS:.c=.o)
+all: $(NAME)
 
-INCLUDE_PATH := $(addprefix -I, $(INCLUDE_DIR))
+$(NAME): $(OBJ) $(LIBFT_DIR)/$(LIBFT_NAME)
+	$(CC) $(STANDARD_FLAGS)  $(INCLUDE_PATH) $(OBJ) $(LIBFT_DIR)/$(LIBFT_NAME) -lreadline -o $@
 
-all:			$(NAME)
+$(OBJ_DIR)/%.o: $(SRC_DIR)/%.c
+	@mkdir -p $(OBJ_DIR)
+	$(CC) $(STANDARD_FLAGS) $(INCLUDE_PATH) -c -o $@ $<
 
-$(NAME): $(OBJS) $(LIB_DIR)/$(LIBFT)
-				$(CC) $(OBJS) $(LIB_DIR)/$(LIBFT) $(STANDARD_FLAGS) -o $(NAME)
-
-$(OBJS): $(SRCS)
-				$(CC) $(STANDARD_FLAGS) $(INCLUDE_PATH) -c $(SRCS)
-
-$(LIB_DIR)/$(LIBFT):
-	@make -C $(LIB_DIR) all
+$(LIBFT_DIR)/$(LIBFT_NAME):
+	@make -C $(LIBFT_DIR) all
 
 clean:
-				rm -rf $(OBJS)
+	@$(RM) -r $(OBJ_DIR)
+	@make -C $(LIBFT_DIR) fclean
+	@echo "Deleted obj files:\n\t$(OBJ)"
+	@echo "Deleted $(LIBFT_NAME)"
 
-fclean:
-				make clean
-				rm -rf $(NAME)
-re:
-				make fclean
-				make
+fclean: clean
+	@$(RM) $(NAME)
+	
+re: fclean all
+
+.PHONY: clean fclean all re
