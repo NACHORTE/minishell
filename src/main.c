@@ -99,6 +99,7 @@ int	main(int argc, char **argv, char **envp)
 		parse.cmd = ft_split(input, ' ');
 		if (parse.cmd[0])
 		{
+			add_history(input);
 			parse.cmd_path = get_cmd_path(parse.path, parse.cmd[0]);
 			parse.child = fork();
 			if (parse.child == 0)
