@@ -3,10 +3,10 @@
 #                                                         :::      ::::::::    #
 #    Makefile                                           :+:      :+:    :+:    #
 #                                                     +:+ +:+         +:+      #
-#    By: orudek <orudek@student.42madrid.com>       +#+  +:+       +#+         #
+#    By: iortega- <iortega-@student.42madrid.com    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/09/03 15:02:39 by iortega-          #+#    #+#              #
-#    Updated: 2023/09/03 19:30:06 by orudek           ###   ########.fr        #
+#    Updated: 2023/09/05 22:44:50 by iortega-         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -25,7 +25,8 @@ LIBFT_NAME := libft.a
 
 LIB := readline
 
-SRC_FILES := main.c
+SRC_FILES := main.c\
+	ft_split_args.c
 
 SRC := $(addprefix $(SRC_DIR)/,$(SRC_FILES))
 LIB_FLAG := $(addprefix -l,$(LIB))

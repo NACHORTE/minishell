@@ -6,7 +6,7 @@
 /*   By: iortega- <iortega-@student.42madrid.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/03 15:58:32 by iortega-          #+#    #+#             */
-/*   Updated: 2023/09/03 18:59:15 by iortega-         ###   ########.fr       */
+/*   Updated: 2023/09/05 22:46:30 by iortega-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,5 +33,7 @@ typedef struct s_command
 	char	*cmd_path;
 	pid_t	child;
 }t_command;
+
+char	**ft_split_args(char const *str, char c);
 
 #endif

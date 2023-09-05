@@ -96,7 +96,7 @@ int	main(int argc, char **argv, char **envp)
 	while (1)
 	{
 		input = readline("\033[36mminishell >> \033[0m");
-		parse.cmd = ft_split(input, ' ');
+		parse.cmd = ft_split_args(input, ' ');
 		if (parse.cmd[0])
 		{
 			add_history(input);
