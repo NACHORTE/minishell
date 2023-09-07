@@ -96,10 +96,26 @@ int	main(int argc, char **argv, char **envp)
 	while (1)
 	{
 		input = readline("\033[36mminishell >> \033[0m");
+		add_history(input);
 		parse.cmd = ft_split_args(input, ' ');
-		if (parse.cmd[0])
+		if (!ft_strncmp(parse.cmd[0], "exit", 4))
 		{
-			add_history(input);
+			free_double(parse.cmd);
+			free(input);
+			break;
+		}
+		else if (!ft_strncmp(parse.cmd[0], "cd", 2))
+		{
+			if (!parse.cmd[1] || !ft_strncmp(parse.cmd[1], "~", 1))
+				chdir(getenv("HOME"));
+			else
+			{
+				if (chdir(parse.cmd[1]) != 0)
+					perror(parse.cmd[1]);
+			}
+		}
+		else if (parse.cmd[0])
+		{
 			parse.cmd_path = get_cmd_path(parse.path, parse.cmd[0]);
 			parse.child = fork();
 			if (parse.child == 0)
