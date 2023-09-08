@@ -87,51 +87,94 @@ void	execute(t_command parse, char **envp)
 	exit(1);
 }
 
+void	new_line(int sig)
+{
+	printf("\n\033[36mminishell >> \033[0m");
+}
+
+int check_closed_quotes(char *input)
+{
+	int	i;
+	int	quotes;
+
+	i = 0;
+	quotes = 0;
+	while (input[i])
+	{
+		if (input[i] == '"')
+			quotes++;
+		if (input[i] == '\\' || input[i] == ';')
+		{
+			printf("Invalid character: \"%c\"\n", input[i]);
+			return (0);
+		}
+		i++;
+	}
+	if (quotes % 2 == 0)
+		return (1);
+	else
+	{
+		printf("Please close quotes.\n");
+		return (0);
+	}
+}
+
 int	main(int argc, char **argv, char **envp)
 {
 	char	*input;
 	t_command	parse;
 
+	signal(SIGINT, &new_line);
+	signal(SIGQUIT, SIG_IGN);
 	parse.path = get_path(envp);
 	while (1)
 	{
 		input = readline("\033[36mminishell >> \033[0m");
-		add_history(input);
-		parse.cmd = ft_split_args(input, ' ');
-		if (!ft_strncmp(parse.cmd[0], "exit", 4))
+		if (input)
 		{
-			free_double(parse.cmd);
-			free(input);
-			break;
-		}
-		else if (!ft_strncmp(parse.cmd[0], "cd", 2))
-		{
-			if (!parse.cmd[1] || !ft_strncmp(parse.cmd[1], "~", 1))
-				chdir(getenv("HOME"));
-			else
+			add_history(input);
+			if (check_closed_quotes(input))
 			{
-				if (chdir(parse.cmd[1]) != 0)
-					perror(parse.cmd[1]);
+				parse.cmd = ft_split_args(input, ' ');
+				if (!parse.cmd[0])
+					{}
+				else if (!ft_strncmp(parse.cmd[0], "exit", 4))
+				{
+					free_double(parse.cmd);
+					free(input);
+					break;
+				}
+				else if (!ft_strncmp(parse.cmd[0], "cd", 2))
+				{
+					if (!parse.cmd[1] || !ft_strncmp(parse.cmd[1], "~", 1))
+						chdir(getenv("HOME"));
+					else
+					{
+						if (chdir(parse.cmd[1]) != 0)
+							perror(parse.cmd[1]);
+					}
+				}
+				else if (parse.cmd[0])
+				{
+					parse.cmd_path = get_cmd_path(parse.path, parse.cmd[0]);
+					parse.child = fork();
+					if (parse.child == 0)
+						execute(parse, envp);
+					waitpid(parse.child, NULL, 0);
+					if (parse.cmd_path)
+						free(parse.cmd_path);
+					free_double(parse.cmd);
+					free(input);
+				}
+				else
+				{
+					free_double(parse.cmd);
+					free(input);
+				}
 			}
 		}
-		else if (parse.cmd[0])
-		{
-			parse.cmd_path = get_cmd_path(parse.path, parse.cmd[0]);
-			parse.child = fork();
-			if (parse.child == 0)
-				execute(parse, envp);
-			waitpid(parse.child, NULL, 0);
-			if (parse.cmd_path)
-				free(parse.cmd_path);
-			free_double(parse.cmd);
-			free(input);
-		}
-		else
-		{
-			free_double(parse.cmd);
-			free(input);
-		}
 	}
+	rl_clear_history();
 	free_double(parse.path);
 	/*free_double(parsed);
 	free(input);*/
