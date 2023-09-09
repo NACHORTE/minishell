@@ -6,7 +6,7 @@
 /*   By: orudek <orudek@student.42madrid.com>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/13 14:28:51 by orudek            #+#    #+#             */
-/*   Updated: 2023/09/09 23:12:44 by orudek           ###   ########.fr       */
+/*   Updated: 2023/09/09 23:22:17 by orudek           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -54,35 +54,6 @@ static char *dup_redirection(char *out, const char *s, int len, char c)
 		return (out);
 	(void)dup_str(&out[i], s, len - i, c);
 	return (out);
-}
-
-/*	dup_word:
-		Auxiliary function used in "get_word"
-		Creates a new string of size "len", and stores the next word found in
-		the passed string "s".
-	Parameters:
-		s: String where to search the word.
-		len: length of the word that will be created
-		c: delimiter character used to separate words
-	Return:
-		Returns the a new string containing the next word found in "s".
-		The word is formatted ignoring certain characters depending on the 
-		type of word (string or redirection)
-	Code:
-		First allocates the memory of the word
-*/
-static char	*dup_word(const char *s, int len, char c)
-{
-	char	*out;
-	int		i;
-
-	out = malloc(len + 1);
-	if (out == NULL)
-		return (NULL);
-	if (*s == '<' || *s == '>')
-		return (dup_redirection(out, s, len, c));
-	else
-		return (dup_str(out, s, len, c));
 }
 
 /*	get_str_len:
@@ -211,8 +182,8 @@ static void	get_redirection_len(const char *s, char c, int *len, int *i)
 		First it skips all the delimiter characters.
 		Then it calls to different functions of calculating the length of the
 		word depending of whether the first character found is <,> or not.
-		Then calls the function "dup_word" that creates the string and stores
-		the word inside.
+		Then allocates the needed memory for the word and checks again the
+		first character to decide which copying function to call.
 		Finally it advances the pointer of "s" to the byte after the end of the
 		string and returns the word.
 */
@@ -228,9 +199,13 @@ static char	*get_word(const char **s, char c)
 		get_redirection_len(*s, c, &len, &i);
 	else
 		get_str_len(*s, c, &len, &i);
-	word = dup_word(*s, len, c);
-	if (!word)
+	word = malloc(len + 1);
+	if (word == NULL)
 		return (NULL);
+	if (**s == '<' || **s == '>')
+		dup_redirection(word, *s, len, c);
+	else
+		dup_str(word, *s, len, c);
 	*s += i;
 	return (word);
 }
@@ -336,11 +311,11 @@ char	**split_args(char const *s, char c)
 	return (words);
 }
 
-/*
+
 int main(int c, char **v)
 {
 	char **s = split_args(v[1], ' ');
 	for (int i = 0; s[i]; i++)
 		printf("str[%d]=\'%s\'\n",i,s[i]);
 	return (1);
-}*/
+}
