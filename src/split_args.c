@@ -6,7 +6,7 @@
 /*   By: orudek <orudek@student.42madrid.com>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/13 14:28:51 by orudek            #+#    #+#             */
-/*   Updated: 2023/09/09 18:43:12 by orudek           ###   ########.fr       */
+/*   Updated: 2023/09/09 18:47:20 by orudek           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -97,11 +97,9 @@ static char	*dup_word(const char *s, int len, char c)
 	if (out == NULL)
 		return (NULL);
 	if (*s == '<' || *s == '>')
-	{
 		//printf("DUP_WORD: calling DUP_REDIRECTION\n");
 		return (dup_redirection(out, s, len, c));
 	else
-	{
 		//printf("DUP_WORD: calling DUP_STR\n");
 		return (dup_str(out, s, len, c));
 }
@@ -167,11 +165,9 @@ static char	*get_word(const char **s, char c)
 	if (**s == '>' || **s == '<')
 		get_redirection_len(*s, c, &len, &i);
 		//printf("GETWORD: string len from GET_REDIRECTION_LEN: len:%d, i:%d\n", len, i);
-	}
 	else
 		get_str_len(*s, c, &len, &i);
 		//printf("GETWORD: string len from GET_STR_LEN: len:%d, i:%d\n", len, i);
-	}
 	//get a new string with the word saved
 	word = dup_word(*s, len, c);
 	//printf("GETWORD: word saved as: ||%s||\n",word);
