@@ -263,7 +263,7 @@ int	main(int argc, char **argv, char **envp)
 			add_history(input);
 			if (check_closed_quotes(input))
 			{
-				parse.cmd = ft_split_args(input, ' ');
+				parse.cmd = split_args(input, ' ');
 				if (!parse.cmd[0])
 					{
 						free(parse.cmd);
