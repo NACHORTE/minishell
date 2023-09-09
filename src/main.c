@@ -71,8 +71,8 @@ void	no_command(t_command parse)
 {
 	int	len;
 	write(2, &"Command not found: ", 19);
-	len = ft_strlen(parse.cmd[0]);
-	write(2, parse.cmd[0], len);
+	len = ft_strlen(parse.cmd_parsed[0]);
+	write(2, parse.cmd_parsed[0], len);
 	write(2, &"\n", 1);
 }
 
@@ -83,7 +83,7 @@ void	execute(t_command parse, char **envp)
 		no_command(parse);
 		exit(127);
 	}
-	execve(parse.cmd_path, parse.cmd, envp);
+	execve(parse.cmd_path, parse.cmd_parsed, envp);
 	exit(1);
 }
 
@@ -119,10 +119,138 @@ int check_closed_quotes(char *input)
 	}
 }
 
+void	check_restdin(char **input)
+{
+	int	i;
+	int	j;
+	int	flag;
+	int	fd;
+
+	i = 0;
+	flag = 0;
+	/*while (input[i])
+	{
+		printf("%s\n", input[i]);
+		i++;
+	}
+	i = 0;*/
+	while (input[i])   //if we have < " " file we get flag 1 and check file, else if we have <file we check file without "<"
+	{
+		j = 0;
+		if (ft_strlen(input[i]) == 1 && input[i][j] == '<')
+		{
+			i++;
+			flag = 1;
+			break;
+		}
+		else if (input[i][j] == '<')
+		{
+			j++;
+			flag = 1;
+			break;
+		}
+		i++;
+	}
+	if (flag)
+	{
+		fd = open(&input[i][j], O_RDONLY);
+		if (fd < 0)
+		{
+			perror(&input[i][j]);
+			exit(1);
+		}
+		dup2(fd, 0);
+		close(fd);
+	}
+}
+
+void	check_restdout(char **input)
+{
+	int	i;
+	int	j;
+	int	flag;
+	int	fd;
+
+	i = 0;
+	flag = 0;
+	/*while (input[i])
+	{
+		printf("%s\n", input[i]);
+		i++;
+	}
+	i=0;*/
+	while (input[i])   //if we have > " " file we get flag 1 and check file, else if we have >file we check file without ">"
+	{
+		j = 0;
+		if (ft_strlen(input[i]) == 1 && input[i][j] == '>')
+		{
+			i++;
+			flag = 1;
+			break;
+		}
+		else if (input[i][j] == '>')
+		{
+			j++;
+			flag = 1;
+			break;
+		}
+		i++;
+	}
+	if (flag)
+	{
+		fd = open(&input[i][j], O_WRONLY | O_TRUNC | O_CREAT, 0666);
+		if (fd < 0)
+		{
+			perror(&input[i][j]);
+			exit(1);
+		}
+		dup2(fd, 1);
+		close(fd);
+	}
+}
+
+char	**parse_cmd(char **input)
+{
+	int	i;
+	char	**parsed;
+	int	args;
+
+	i = 0;
+	args = 0;
+	while(input[i])
+	{
+		if (input[i][0] != '<' && input[i][0] != '>')
+			args++;
+		else
+			i++;
+		if (!input[i])
+			break;
+		i++;
+	}
+	parsed = malloc(sizeof(char *) * (args + 1));
+	i = 0;
+	args = 0;
+	while (input[i])
+	{
+		if (input[i][0] != '<' && input[i][0] != '>')
+		{
+			parsed[args] = ft_strdup(input[i]);
+			args++;
+		}
+		else if (ft_strlen(input[i]) == 1)
+			i++;
+		i++;
+	}
+	parsed[args] = 0;
+	return (parsed);
+}
+
 int	main(int argc, char **argv, char **envp)
 {
 	char	*input;
 	t_command	parse;
+	int i;
+	int	j;
 
 	signal(SIGINT, &new_line);
 	signal(SIGQUIT, SIG_IGN);
@@ -130,14 +258,17 @@ int	main(int argc, char **argv, char **envp)
 	while (1)
 	{
 		input = readline("\033[36mminishell >> \033[0m");
-		if (input)
+		if (ft_strlen(input) > 0)
 		{
 			add_history(input);
 			if (check_closed_quotes(input))
 			{
 				parse.cmd = ft_split_args(input, ' ');
 				if (!parse.cmd[0])
-					{}
+					{
+						free(parse.cmd);
+						free(input);
+					}
 				else if (!ft_strncmp(parse.cmd[0], "exit", 4))
 				{
 					free_double(parse.cmd);
@@ -153,17 +284,45 @@ int	main(int argc, char **argv, char **envp)
 						if (chdir(parse.cmd[1]) != 0)
 							perror(parse.cmd[1]);
 					}
+					free_double(parse.cmd);
+					free(input);
 				}
 				else if (parse.cmd[0])
 				{
-					parse.cmd_path = get_cmd_path(parse.path, parse.cmd[0]);
+					i = 0;
+					j = 0;
+					/*while(parse.cmd[i])   //while redirections are found, keep searching for command
+					{
+						if (!parse.cmd[i + 1])
+							break;
+						if (parse.cmd[i][0] == '<' || parse.cmd[i][0] == '>')
+						{
+							if (ft_strlen(parse.cmd[i]) == 1)
+								j++;
+							j++;
+							i++;
+							break;
+						}
+						else
+							break;
+						i++;
+					}*/
+					parse.cmd_parsed = parse_cmd(parse.cmd);
+					//parse.cmd_path = get_cmd_path(parse.path, parse.cmd[j]); //once we hace the command check access
+					parse.cmd_path = get_cmd_path(parse.path, parse.cmd_parsed[0]); //once we hace the command check access
 					parse.child = fork();
 					if (parse.child == 0)
+					{
+						check_restdin(parse.cmd);  //check if redirections are made (stdin)
+						check_restdout(parse.cmd); //check if redirections are made (stdout)
+						//parse.cmd_parsed = parse_cmd(parse.cmd); //delete redirections from command array
 						execute(parse, envp);
+					}
 					waitpid(parse.child, NULL, 0);
 					if (parse.cmd_path)
 						free(parse.cmd_path);
 					free_double(parse.cmd);
+					free_double(parse.cmd_parsed);
 					free(input);
 				}
 				else
@@ -173,6 +332,8 @@ int	main(int argc, char **argv, char **envp)
 				}
 			}
 		}
+		else
+			free(input);
 	}
 	rl_clear_history();
 	free_double(parse.path);
