@@ -6,7 +6,7 @@
 /*   By: orudek <orudek@student.42madrid.com>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/13 14:28:51 by orudek            #+#    #+#             */
-/*   Updated: 2023/09/10 15:06:58 by orudek           ###   ########.fr       */
+/*   Updated: 2023/09/10 15:12:36 by orudek           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -159,11 +159,11 @@ char	**split_args(char const *s, char c)
 	return (words);
 }
 
-
+/*
 int main(int c, char **v)
 {
 	char **s = split_args(v[1], ' ');
 	for (int i = 0; s[i]; i++)
 		printf("str[%d]=[%s]\n",i,s[i]);
 	return (1);
-}
+}*/
