@@ -6,7 +6,7 @@
 #    By: orudek <orudek@student.42madrid.com>       +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/09/03 15:02:39 by iortega-          #+#    #+#              #
-#    Updated: 2023/09/09 17:51:32 by orudek           ###   ########.fr        #
+#    Updated: 2023/09/10 14:37:27 by orudek           ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -26,7 +26,8 @@ LIBFT_NAME := libft.a
 LIB := readline
 
 SRC_FILES := main.c\
-	split_args.c
+	split_args.c\
+	split_args2.c
 
 SRC := $(addprefix $(SRC_DIR)/,$(SRC_FILES))
 LIB_FLAG := $(addprefix -l,$(LIB))
