@@ -216,6 +216,12 @@ char	**parse_cmd(char **input)
 	int	args;
 
 	i = 0;
+	while(input[i])
+	{
+		printf("%s\n", input[i]);
+		i++;
+	}
+	i = 0;
 	args = 0;
 	while(input[i])
 	{
@@ -228,13 +234,21 @@ char	**parse_cmd(char **input)
 		i++;
 	}
 	parsed = malloc(sizeof(char *) * (args + 1));
+	if (!parsed)
+		return (NULL);
 	i = 0;
 	args = 0;
 	while (input[i])
 	{
 		if (input[i][0] != '<' && input[i][0] != '>')
 		{
-			parsed[args] = ft_strdup(input[i]);
+			parsed[args] = ft_strdup(input[i]);   //parchear malloc dup
+			if (!parsed[args])
+			{
+				printf("problema dup\n");
+				free_double(parsed);
+				return (NULL);
+			}
 			args++;
 		}
 		else if (ft_strlen(input[i]) == 1)
@@ -242,6 +256,12 @@ char	**parse_cmd(char **input)
 		i++;
 	}
 	parsed[args] = 0;
+	i = 0;
+	while(parsed[i])
+	{
+		printf("%s\n", parsed[i]);
+		i++;
+	}
 	return (parsed);
 }
 

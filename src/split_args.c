@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   split_args.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: orudek <orudek@student.42madrid.com>       +#+  +:+       +#+        */
+/*   By: iortega- <iortega-@student.42madrid.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/13 14:28:51 by orudek            #+#    #+#             */
-/*   Updated: 2023/09/11 13:18:26 by orudek           ###   ########.fr       */
+/*   Updated: 2023/09/11 13:43:39 by iortega-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -160,7 +160,7 @@ char	**split_args(char const *s, char c)
 	return (words);
 }
 
-
+/*
 int main(int c, char **v)
 {
 	if(c == 3)
@@ -169,4 +169,4 @@ int main(int c, char **v)
 	for (int i = 0; s[i]; i++)
 		printf("str[%d]=\'%s\'\n",i,s[i]);
 	return (1);
-}
+}*/
