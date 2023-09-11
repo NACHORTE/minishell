@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   split_args.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: iortega- <iortega-@student.42madrid.com    +#+  +:+       +#+        */
+/*   By: orudek <orudek@student.42madrid.com>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/13 14:28:51 by orudek            #+#    #+#             */
-/*   Updated: 2023/09/11 13:43:39 by iortega-         ###   ########.fr       */
+/*   Updated: 2023/09/11 16:51:55 by orudek           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -167,6 +167,10 @@ int main(int c, char **v)
 		c = 4;
 	char **s = split_args(v[1], ' ');
 	for (int i = 0; s[i]; i++)
-		printf("str[%d]=\'%s\'\n",i,s[i]);
+	{
+		printf("str[%d]=\n", i);
+		for (int j = 0; s[i][j] || s[i][j - 1]; j++)
+			printf("\tchar:[%c] int:%d\n",s[i][j],s[i][j]);
+	}
 	return (1);
 }*/

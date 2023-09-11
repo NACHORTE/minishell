@@ -6,7 +6,7 @@
 /*   By: orudek <orudek@student.42madrid.com>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/09 23:37:26 by orudek            #+#    #+#             */
-/*   Updated: 2023/09/11 13:17:13 by orudek           ###   ########.fr       */
+/*   Updated: 2023/09/11 16:50:28 by orudek           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -61,6 +61,7 @@ void	dup_str(char *out, const char *s, int len)
 		}
 		out[i++] = *s;
 	}
+	out[i] = 0;
 }
 
 /*	dup_redirection:
