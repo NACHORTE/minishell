@@ -6,7 +6,7 @@
 /*   By: orudek <orudek@student.42madrid.com>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/10 15:29:51 by orudek            #+#    #+#             */
-/*   Updated: 2023/09/11 16:43:03 by orudek           ###   ########.fr       */
+/*   Updated: 2023/09/11 17:18:33 by orudek           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -95,13 +95,13 @@ int main()
 	vars[4] = malloc (sizeof(t_var));
 	vars[0]->name = ft_strdup("name0");
 	vars[0]->content = ft_strdup("content0");
-	vars[1]->name = ft_strdup("name0");
+	vars[1]->name = ft_strdup("name1");
 	vars[1]->content = ft_strdup("content1");
 	vars[2]->name = ft_strdup("name2");
 	vars[2]->content = ft_strdup("content2");
 	vars[3]->name = ft_strdup("name3");
 	vars[3]->content = ft_strdup("content3");
-	vars[4]->name = ft_strdup("name2");
+	vars[4]->name = ft_strdup("name4");
 	vars[4]->content = ft_strdup("content4");
 	
 	set_variable(&list, vars[0]);
@@ -110,7 +110,11 @@ int main()
 	set_variable(&list, vars[3]);
 	set_variable(&list, vars[4]);
 	print_list(list);
+	unset_variable(&list, "name2");
+	unset_variable(&list, "name0");
+	unset_variable(&list, "name4");
+	print_list(list);
 	ft_lstfree(&list, free_var);
 	free(vars);
-	return (0);
+	return (1);
 }*/
