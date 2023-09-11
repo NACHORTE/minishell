@@ -6,11 +6,63 @@
 /*   By: orudek <orudek@student.42madrid.com>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/09 23:37:26 by orudek            #+#    #+#             */
-/*   Updated: 2023/09/10 15:05:13 by orudek           ###   ########.fr       */
+/*   Updated: 2023/09/11 22:35:46 by orudek           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "libft.h"
+/*	dup_str:
+		Auxiliary function used in "get_word"
+		Copies the word found in string "s" into string "out" ignoring
+		quotations that surround a string and ending when finding the delimiter
+		character or '<' '>'.
+	Parameters:
+		out: string where the word will be copied
+		s: string where the word will be searched
+		len: length of the word that will be copied
+	Return:
+		The returned result is the "out" variable
+	Code:
+		Iterates until the string is over or the required characters have been
+		written in "out".
+		The loop works with states:
+			-state 0: Means the read characters are outside quotes
+			-state 1: Means the read characters are inside "" quotes
+			-state 2: Means the read characters are inside '' quotes
+		(state 1 and 2 are different because there can be opposite quotes
+		inside)
+		When in state 0, if any quote is found the state will change. The
+		assignation is done like that to shorten the code. if s[i]=' the result
+		is 2 and if s[i]=" the result is 1
+		When in either state 1 or 2, if the same quotation type is found, state
+		goes back to 0.
+		In both state transitions, the iteration is skipped so the surrounding
+		quotation characters don't get counted in the length.
+		With every successful iteration the character is written in "out".
+*/
+void	dup_str(char *out, const char *s, int len)
+{
+	int	i;
+	int	state;
+
+	state = 0;
+	i = 0;
+	s--;
+	while (i < len && *++s)
+	{
+		if ((state == 0 && *s == '\'') || (state == 0 && *s == '"'))
+		{
+			state = (*s == '\'') * 2 + (*s == '"');
+			continue ;
+		}
+		if ((state == 1 && *s == '"') || (state == 2 && *s == '\''))
+		{
+			state = 0;
+			continue ;
+		}
+		out[i++] = *s;
+	}
+	out[i] = 0;
+}
 
 /*	dup_redirection:
 		Auxiliary function used in "get_word"

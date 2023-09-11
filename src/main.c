@@ -216,12 +216,12 @@ char	**parse_cmd(char **input)
 	int	args;
 
 	i = 0;
-	while(input[i])
+	/*while(input[i])
 	{
 		printf("%s\n", input[i]);
 		i++;
 	}
-	i = 0;
+	i = 0;*/
 	args = 0;
 	while(input[i])
 	{
@@ -256,12 +256,12 @@ char	**parse_cmd(char **input)
 		i++;
 	}
 	parsed[args] = 0;
-	i = 0;
+	/*i = 0;
 	while(parsed[i])
 	{
 		printf("%s\n", parsed[i]);
 		i++;
-	}
+	}*/
 	return (parsed);
 }
 
@@ -284,6 +284,19 @@ int	main(int argc, char **argv, char **envp)
 			if (check_closed_quotes(input))
 			{
 				parse.cmd = split_args(input, ' ');
+				i = 0;
+				while (parse.cmd[i] && parse.cmd[i][0] != 0)
+					i++;
+				printf("%d\n", i);
+				if (parse.cmd[i] && parse.cmd[i][0] == 0)
+					free(parse.cmd[i]);
+				parse.cmd[i] = 0;
+				i = 0;
+	while(parse.cmd[i])
+	{
+		printf("%s\n", parse.cmd[i]);
+		i++;
+	}
 				if (!parse.cmd[0])
 					{
 						free(parse.cmd);
@@ -339,6 +352,20 @@ int	main(int argc, char **argv, char **envp)
 						execute(parse, envp);
 					}
 					waitpid(parse.child, NULL, 0);
+					i = 0;
+	while(parse.cmd[i])
+	{
+		printf("%s\n", parse.cmd[i]);
+		i++;
+	}
+	printf("%d\n", i);
+					/*i = 0;
+	while(parse.cmd_parsed[i])
+	{
+		printf("%s\n", parse.cmd_parsed[i]);
+		i++;
+	}
+	printf("%d\n", i);*/
 					if (parse.cmd_path)
 						free(parse.cmd_path);
 					free_double(parse.cmd);
