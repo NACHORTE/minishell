@@ -6,7 +6,7 @@
 /*   By: orudek <orudek@student.42madrid.com>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/09 23:37:26 by orudek            #+#    #+#             */
-/*   Updated: 2023/09/09 23:39:07 by orudek           ###   ########.fr       */
+/*   Updated: 2023/09/11 13:17:13 by orudek           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,7 +19,6 @@
 		out: string where the word will be copied
 		s: string where the word will be searched
 		len: length of the word that will be copied
-		c: delimiter character between words
 	Return:
 		The returned result is the "out" variable
 	Code:
@@ -40,7 +39,7 @@
 		quotation characters don't get counted in the length.
 		With every successful iteration the character is written in "out".
 */
-char	*dup_str(char *out, const char *s, int len, char c)
+void	dup_str(char *out, const char *s, int len)
 {
 	int	i;
 	int	state;
@@ -50,12 +49,12 @@ char	*dup_str(char *out, const char *s, int len, char c)
 	s--;
 	while (i < len && *++s)
 	{
-		if (state == 0 && *s == '\'' || state == 0 && *s == '"')
+		if ((state == 0 && *s == '\'') || (state == 0 && *s == '"'))
 		{
 			state = (*s == '\'') * 2 + (*s == '"');
 			continue ;
 		}
-		if (state == 1 && *s == '"' || state == 2 && *s == '\'')
+		if ((state == 1 && *s == '"') || (state == 2 && *s == '\''))
 		{
 			state = 0;
 			continue ;
@@ -98,17 +97,16 @@ char	*dup_str(char *out, const char *s, int len, char c)
 void	dup_redirection(char *out, const char *s, int len, char c)
 {
 	int	i;
-	int	j;
 
 	out[0] = *s++;
 	i = 1;
 	if (*s == out[0])
 		out[i++] = *s++;
 	else if (*s == '<' || *s == '>')
-		*s++;
+		s++;
 	while (*s == c)
 		s++;
-	(void)dup_str(&out[i], s, len - i, c);
+	(void)dup_str(&out[i], s, len - i);
 }
 
 /*	get_str_len:
@@ -160,7 +158,7 @@ void	get_str_len(const char *s, char c, int *len, int *i)
 			state = (s[*i] == '\'') * 2 + (s[*i] == '"');
 			continue ;
 		}
-		if (state == 1 && s[*i] == '"' || state == 2 && s[*i] == '\'')
+		if ((state == 1 && s[*i] == '"') || (state == 2 && s[*i] == '\''))
 		{
 			state = 0;
 			continue ;
