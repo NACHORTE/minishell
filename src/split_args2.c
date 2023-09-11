@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   split_args2.c                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: orudek <orudek@student.42madrid.com>       +#+  +:+       +#+        */
+/*   By: iortega- <iortega-@student.42madrid.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/09 23:37:26 by orudek            #+#    #+#             */
-/*   Updated: 2023/09/11 13:17:13 by orudek           ###   ########.fr       */
+/*   Updated: 2023/09/11 16:29:25 by iortega-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -59,7 +59,7 @@ void	dup_str(char *out, const char *s, int len)
 			state = 0;
 			continue ;
 		}
-		out[i++] = *s;
+		out[i++] = *s; //investigar final array
 	}
 }
 
