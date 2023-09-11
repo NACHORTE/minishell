@@ -6,22 +6,16 @@
 /*   By: orudek <orudek@student.42madrid.com>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/10 15:29:51 by orudek            #+#    #+#             */
-/*   Updated: 2023/09/10 17:14:37 by orudek           ###   ########.fr       */
+/*   Updated: 2023/09/11 16:41:53 by orudek           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "libft.h"
-
-typedef struct s_variable
-{
-	char	*name;
-	char	*content;
-}	t_var;
+#include "t_var.h"
 
 static int	is_in_list(t_list *lst, char *name)
 {
-	t_var var;
-	int	index;
+	t_var	var;
+	int		index;
 
 	index = 0;
 	while (lst)
@@ -35,83 +29,61 @@ static int	is_in_list(t_list *lst, char *name)
 	return (-1);
 }
 
-static t_list	*ft_lstget_index(t_list *lst, int index)
+static char	replace_variable(t_list **lst, t_var *var, int index)
 {
-	while (lst && index-- > 0)
-		lst = lst->next;
-	return (lst);
-}
-
-char	set_variable(t_list **lst, t_var *var)
-{
-	int	index;
-	t_list	*new_lst;
 	t_list	*aux;
+	t_list	*aux2;
+	t_list	*new_lst;
 
-	if (!var)
+	new_lst = ft_lstnew(var);
+	if (!new_lst)
 		return (0);
-	index = is_in_list(*lst, var->name); 
-	if (index == -1)
-		ft_lstadd_back_content(lst, var);
+	if (index == 0)
+	{
+		ft_lstpop(lst, 0, free_var);
+		ft_lstadd_front(lst, new_lst);
+	}
 	else
 	{
-		new_lst = ft_lstnew(var);
-		if (!new_lst)
-			return (0);
-		if (index == 0)
-		{
-			new_lst->next = (*lst)->next;
-			free ((*lst)->content);
-			free (*lst);
-			*lst = new_lst;
-		}
-		else
-		{
-			aux = ft_lstget_index(*lst, index - 1);
-			new_lst->next = aux->next->next;
-			free (aux->next->content);
-			free (aux->next);
-			aux->next = new_lst;
-		}
+		aux = ft_lstget_index(*lst, index - 1);
+		aux2 = aux->next;
+		aux->next = new_lst;
+		new_lst->next = aux2->next;
+		ft_lstdelone(aux2, free_var);
 	}
 	return (1);
 }
 
-void print_list(t_list *list)
+char	set_variable(t_list **lst, t_var *var)
 {
-	int i = 0;
+	int		index;
+	t_list	*new_lst;
+
+	if (!var)
+		return (0);
+	index = is_in_list(*lst, var->name);
+	if (index == -1)
+		return (ft_lstadd_back_content(lst, var));
+	return (replace_variable(lst, var, index));
+}
+
+/*COMENTAR A PARTIR DE AQUI*/
+/*void print_list(t_list *list)
+{
+	int i = 0;//COMENTAR ESTA FUNCION SI NO SE USA MAIN
 
 	if (!list)
 		printf("list[0]: NULL\n");
 	while(list)
 	{
-		printf("list[%d]: (%p)\n",i,list);
-		printf("\tvars.name:\t[%s]\n\tvars.content:\t[%s]\n",((t_var *)list->content)->name, ((t_var *)list->content)->content);	
+		printf("list[%d]: (%p) (%p)\n",i,list, list->next);
+		printf("\tvars.name:\t[%s]\n\tvars.content:\t[%s]\n",
+		((t_var *)list->content)->name, ((t_var *)list->content)->content);
 		list = list->next;
 		i++;
 	}
+	printf("______\n");
 }
-
-void	ft_free_var(t_var *var)
-{
-	free(var->content);
-	free(var->name);
-	free(var);
-}
-
-void	ft_free_list(t_list *list)
-{
-	t_list aux;
-
-	while (list)
-	{
-		aux.next = list->next;
-		ft_free_var(list->content);
-		free(list);
-		list = aux.next;
-	}
-}
-/*
 int main()
 {
 	t_var **vars = malloc(sizeof(t_var *) * 5);
@@ -122,16 +94,16 @@ int main()
 	vars[2] = malloc (sizeof(t_var));
 	vars[3] = malloc (sizeof(t_var));
 	vars[4] = malloc (sizeof(t_var));
-	vars[0]->name = "name0";
-	vars[0]->content = "content0";
-	vars[1]->name = "name0";
-	vars[1]->content = "content1";
-	vars[2]->name = "name2";
-	vars[2]->content = "content2";
-	vars[3]->name = "name3";
-	vars[3]->content = "content3";
-	vars[4]->name = "name2";
-	vars[4]->content = "content4";
+	vars[0]->name = ft_strdup("name0");
+	vars[0]->content = ft_strdup("content0");
+	vars[1]->name = ft_strdup("name0");
+	vars[1]->content = ft_strdup("content1");
+	vars[2]->name = ft_strdup("name2");
+	vars[2]->content = ft_strdup("content2");
+	vars[3]->name = ft_strdup("name3");
+	vars[3]->content = ft_strdup("content3");
+	vars[4]->name = ft_strdup("name2");
+	vars[4]->content = ft_strdup("content4");
 	
 	set_variable(&list, vars[0]);
 	set_variable(&list, vars[1]);
@@ -139,7 +111,7 @@ int main()
 	set_variable(&list, vars[3]);
 	set_variable(&list, vars[4]);
 	print_list(list);
-	ft_free_list(list);
+	ft_lstfree(&list, free_var);
 	free(vars);
 	return (1);
 }*/
