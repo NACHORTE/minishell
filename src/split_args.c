@@ -6,12 +6,13 @@
 /*   By: orudek <orudek@student.42madrid.com>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/13 14:28:51 by orudek            #+#    #+#             */
-/*   Updated: 2023/09/10 15:12:36 by orudek           ###   ########.fr       */
+/*   Updated: 2023/09/09 23:39:47 by orudek           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "libft.h"
 
+char	*dup_str(char *out, const char *s, int len, char c);
 void	dup_redirection(char *out, const char *s, int len, char c);
 void	get_str_len(const char *s, char c, int *len, int *i);
 void	get_redirection_len(const char *s, char c, int *len, int *i);
@@ -53,7 +54,7 @@ static char	*get_word(const char **s, char c)
 	if (**s == '<' || **s == '>')
 		dup_redirection(word, *s, len, c);
 	else
-		ft_memcpy(word, *s, len);
+		dup_str(word, *s, len, c);
 	*s += i;
 	return (word);
 }
@@ -164,6 +165,6 @@ int main(int c, char **v)
 {
 	char **s = split_args(v[1], ' ');
 	for (int i = 0; s[i]; i++)
-		printf("str[%d]=[%s]\n",i,s[i]);
+		printf("str[%d]=\'%s\'\n",i,s[i]);
 	return (1);
 }*/
