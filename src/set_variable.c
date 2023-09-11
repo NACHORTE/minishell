@@ -6,7 +6,7 @@
 /*   By: orudek <orudek@student.42madrid.com>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/10 15:29:51 by orudek            #+#    #+#             */
-/*   Updated: 2023/09/11 16:41:53 by orudek           ###   ########.fr       */
+/*   Updated: 2023/09/11 16:43:03 by orudek           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -57,7 +57,6 @@ static char	replace_variable(t_list **lst, t_var *var, int index)
 char	set_variable(t_list **lst, t_var *var)
 {
 	int		index;
-	t_list	*new_lst;
 
 	if (!var)
 		return (0);
@@ -67,8 +66,8 @@ char	set_variable(t_list **lst, t_var *var)
 	return (replace_variable(lst, var, index));
 }
 
-/*COMENTAR A PARTIR DE AQUI*/
-/*void print_list(t_list *list)
+/*COMENTAR A PARTIR DE AQUI*//*
+void print_list(t_list *list)
 {
 	int i = 0;//COMENTAR ESTA FUNCION SI NO SE USA MAIN
 
@@ -113,5 +112,5 @@ int main()
 	print_list(list);
 	ft_lstfree(&list, free_var);
 	free(vars);
-	return (1);
+	return (0);
 }*/
