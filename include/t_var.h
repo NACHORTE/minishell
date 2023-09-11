@@ -1,19 +1,30 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ft_lstdelone.c                                     :+:      :+:    :+:   */
+/*   t_var.h                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: orudek <orudek@student.42madrid.com>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2023/03/13 14:27:41 by orudek            #+#    #+#             */
-/*   Updated: 2023/09/11 16:00:07 by orudek           ###   ########.fr       */
+/*   Created: 2023/09/11 13:20:58 by orudek            #+#    #+#             */
+/*   Updated: 2023/09/11 13:48:19 by orudek           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "libft.h"
+#ifndef T_VAR_H
+# define T_VAR_H
 
-void	ft_lstdelone(t_list *lst, void (*del)(void *))
+# include "libft.h"
+
+typedef struct s_variable
 {
-	del(lst->content);
-	free(lst);
-}
+	char	*name;
+	char	*content;
+}	t_var;
+
+//t_var *new_var(char *name, char *content);
+char	set_variable(t_list **lst, t_var *var);
+char	*get_variable(t_list *lst, char *name);
+void	unset_variable(t_list **lst, char *name);
+void	free_var(void *var);
+
+#endif

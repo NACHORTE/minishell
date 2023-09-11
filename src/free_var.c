@@ -1,19 +1,20 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ft_lstdelone.c                                     :+:      :+:    :+:   */
+/*   free_var.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: orudek <orudek@student.42madrid.com>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2023/03/13 14:27:41 by orudek            #+#    #+#             */
-/*   Updated: 2023/09/11 16:00:07 by orudek           ###   ########.fr       */
+/*   Created: 2023/09/11 13:44:41 by orudek            #+#    #+#             */
+/*   Updated: 2023/09/11 16:02:07 by orudek           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "libft.h"
+#include "t_var.h"
 
-void	ft_lstdelone(t_list *lst, void (*del)(void *))
+void	free_var(void *var)
 {
-	del(lst->content);
-	free(lst);
+	free(((t_var *)var)->content);
+	free(((t_var *)var)->name);
+	free(((t_var *)var));
 }

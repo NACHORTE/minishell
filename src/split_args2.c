@@ -6,7 +6,7 @@
 /*   By: iortega- <iortega-@student.42madrid.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/09 23:37:26 by orudek            #+#    #+#             */
-/*   Updated: 2023/09/11 16:29:25 by iortega-         ###   ########.fr       */
+/*   Updated: 2023/09/11 17:32:39 by iortega-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -61,6 +61,7 @@ void	dup_str(char *out, const char *s, int len)
 		}
 		out[i++] = *s; //investigar final array
 	}
+	out[i] = 0;
 }
 
 /*	dup_redirection:
