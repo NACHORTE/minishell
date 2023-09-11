@@ -1,19 +1,22 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ft_lstdelone.c                                     :+:      :+:    :+:   */
+/*   ft_lstget_index.c                                  :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: orudek <orudek@student.42madrid.com>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2023/03/13 14:27:41 by orudek            #+#    #+#             */
-/*   Updated: 2023/09/11 16:00:07 by orudek           ###   ########.fr       */
+/*   Created: 2023/09/11 14:44:43 by orudek            #+#    #+#             */
+/*   Updated: 2023/09/11 15:03:21 by orudek           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "libft.h"
 
-void	ft_lstdelone(t_list *lst, void (*del)(void *))
+t_list	*ft_lstget_index(t_list *list, int index)
 {
-	del(lst->content);
-	free(lst);
+	if (index >= ft_lstsize(list) || index < 0)
+		return (NULL);
+	while (index-- > 0)
+		list = list->next;
+	return (list);
 }
