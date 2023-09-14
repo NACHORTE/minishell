@@ -6,7 +6,7 @@
 /*   By: orudek <orudek@student.42madrid.com>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/11 22:37:17 by orudek            #+#    #+#             */
-/*   Updated: 2023/09/14 19:44:00 by orudek           ###   ########.fr       */
+/*   Updated: 2023/09/14 20:36:37 by orudek           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,12 +23,20 @@ static void	update_state(int *state, char c)
 
 static char *find_var(char *str, int len, t_list *list)
 {
+	int	i;
+
 	if (*str == '$')
 		str++;
 	while (list)
 	{
-		if (!ft_strncmp(str,((t_var *)list->content)->name, len))
-			return (((t_var *)list->content)->content);
+		i = -1;
+		while (++i < len)
+		{
+			if (str[i] != ((t_var *)list->content)->name[i])
+				break ;
+			if (i == len - 1 && ((t_var *)list->content)->name[i + 1] == '\0')
+				return (((t_var *)list->content)->content);
+		}
 		list = list->next;
 	}
 	return (NULL);
@@ -112,6 +120,7 @@ char	*expand_variables(char *str, t_list *local, t_list *env)
 	int		state;
 
 	len = expanded_len(str ,local, env);
+	printf("mallocing: %d\n",len);
 	out = malloc(len + 1);
 	if (!out)
 		return (NULL);
@@ -182,7 +191,7 @@ int main(int c, char **v)
 	print_list(local);
 	print_list(env);
 	char *expanded = expand_variables(v[1], local, env);
-	printf("expanded: %s\n",expanded);
+	printf("expanded: %s$\n",expanded);
 	ft_lstfree(&local, free_var);
 	ft_lstfree(&env, free_var);
 	free(vars);
