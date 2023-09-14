@@ -87,7 +87,7 @@ void	execute(t_command parse, char **envp)
 	exit(1);
 }
 
-void	new_line(int sig)
+void	new_line_father(int sig)
 {
 	printf("\n\033[36mminishell >> \033[0m");
 }
@@ -265,75 +265,25 @@ char	**parse_cmd(char **input)
 	return (parsed);
 }
 
-int	count_words(char *string)
-{
-	int	i;
-	int	new;
-	int	count;
-	int quotes;
-
-	i = 0;
-	new = 1;
-	count = 0;
-	quotes = 0;
-	while (string[i])
-	{
-		if (string[i] == '"')
-		{
-			quotes = !quotes;
-		}
-		if (string[i] != ' ' && new == 1)
-		{
-			count++;
-			new = 0;
-		}
-		else if (string[i] == ' ' && new == 0 && quotes == 0)
-		{
-			new = 1;
-		}
-		i++;
-	}
-	printf("%d chars\n", i);
-	return (count);
-}
-
 int	main(int argc, char **argv, char **envp)
 {
 	char	*input;
 	t_command	parse;
 	int i;
 	int	j;
-	int	num_args;
 
-	signal(SIGINT, &new_line);
 	signal(SIGQUIT, SIG_IGN);
 	parse.path = get_path(envp);
 	while (1)
 	{
+		signal(SIGINT, &new_line_father);
 		input = readline("\033[36mminishell >> \033[0m");
-		num_args = count_words(input);
-		printf("%d\n", num_args);
-		//printf("%s\n", input);
 		if (ft_strlen(input) > 0)
 		{
 			add_history(input);
 			if (check_closed_quotes(input))
 			{
 				parse.cmd = split_args(input, ' ');
-				parse.cmd[num_args] = 0;
-				/*i = 0;
-				while (parse.cmd[i] && parse.cmd[i][0] != 0)
-					i++;
-				printf("%d\n", i);
-				if (parse.cmd[i] && parse.cmd[i][0] == 0)
-					free(parse.cmd[i]);
-				parse.cmd[i] = 0;*/
-				i = 0;
-	while(i < 10 && parse.cmd[i])
-	{
-		printf("numero %d: %d %c\n",i, parse.cmd[i][0], parse.cmd[i][0]);
-		i++;
-	}
 				if (!parse.cmd[0])
 					{
 						free(parse.cmd);
@@ -361,49 +311,19 @@ int	main(int argc, char **argv, char **envp)
 				{
 					i = 0;
 					j = 0;
-					/*while(parse.cmd[i])   //while redirections are found, keep searching for command
-					{
-						if (!parse.cmd[i + 1])
-							break;
-						if (parse.cmd[i][0] == '<' || parse.cmd[i][0] == '>')
-						{
-							if (ft_strlen(parse.cmd[i]) == 1)
-								j++;
-							j++;
-							i++;
-							break;
-						}
-						else
-							break;
-						i++;
-					}*/
 					parse.cmd_parsed = parse_cmd(parse.cmd);
-					//parse.cmd_path = get_cmd_path(parse.path, parse.cmd[j]); //once we hace the command check access
 					parse.cmd_path = get_cmd_path(parse.path, parse.cmd_parsed[0]); //once we hace the command check access
 					parse.child = fork();
 					if (parse.child == 0)
 					{
 						check_restdin(parse.cmd);  //check if redirections are made (stdin)
 						check_restdout(parse.cmd); //check if redirections are made (stdout)
-						//parse.cmd_parsed = parse_cmd(parse.cmd); //delete redirections from command array
-						//execute(parse, envp);
+						execute(parse, envp);
 						exit(0);
 					}
+					else
+						signal(SIGINT, SIG_IGN);
 					waitpid(parse.child, NULL, 0);
-					/*i = 0;
-	while(parse.cmd[i])
-	{
-		printf("%s\n", parse.cmd[i]);
-		i++;
-	}
-	printf("%d\n", i);*/
-					/*i = 0;
-	while(parse.cmd_parsed[i])
-	{
-		printf("%s\n", parse.cmd_parsed[i]);
-		i++;
-	}
-	printf("%d\n", i);*/
 					if (parse.cmd_path)
 						free(parse.cmd_path);
 					free_double(parse.cmd);

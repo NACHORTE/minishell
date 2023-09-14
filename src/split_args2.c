@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   split_args2.c                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: orudek <orudek@student.42madrid.com>       +#+  +:+       +#+        */
+/*   By: iortega- <iortega-@student.42madrid.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/09 23:37:26 by orudek            #+#    #+#             */
-/*   Updated: 2023/09/11 22:35:46 by orudek           ###   ########.fr       */
+/*   Updated: 2023/09/14 13:51:38 by iortega-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,6 +39,9 @@
 		quotation characters don't get counted in the length.
 		With every successful iteration the character is written in "out".
 */
+
+#include "libft.h"
+
 void	dup_str(char *out, const char *s, int len)
 {
 	int	i;
