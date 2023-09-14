@@ -6,7 +6,7 @@
 /*   By: orudek <orudek@student.42madrid.com>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/11 22:37:17 by orudek            #+#    #+#             */
-/*   Updated: 2023/09/14 20:36:37 by orudek           ###   ########.fr       */
+/*   Updated: 2023/09/14 20:39:09 by orudek           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -120,7 +120,6 @@ char	*expand_variables(char *str, t_list *local, t_list *env)
 	int		state;
 
 	len = expanded_len(str ,local, env);
-	printf("mallocing: %d\n",len);
 	out = malloc(len + 1);
 	if (!out)
 		return (NULL);
