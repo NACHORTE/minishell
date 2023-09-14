@@ -265,12 +265,45 @@ char	**parse_cmd(char **input)
 	return (parsed);
 }
 
+int	count_words(char *string)
+{
+	int	i;
+	int	new;
+	int	count;
+	int quotes;
+
+	i = 0;
+	new = 1;
+	count = 0;
+	quotes = 0;
+	while (string[i])
+	{
+		if (string[i] == '"')
+		{
+			quotes = !quotes;
+		}
+		if (string[i] != ' ' && new == 1)
+		{
+			count++;
+			new = 0;
+		}
+		else if (string[i] == ' ' && new == 0 && quotes == 0)
+		{
+			new = 1;
+		}
+		i++;
+	}
+	printf("%d chars\n", i);
+	return (count);
+}
+
 int	main(int argc, char **argv, char **envp)
 {
 	char	*input;
 	t_command	parse;
 	int i;
 	int	j;
+	int	num_args;
 
 	signal(SIGINT, &new_line);
 	signal(SIGQUIT, SIG_IGN);
@@ -278,23 +311,27 @@ int	main(int argc, char **argv, char **envp)
 	while (1)
 	{
 		input = readline("\033[36mminishell >> \033[0m");
+		num_args = count_words(input);
+		printf("%d\n", num_args);
+		//printf("%s\n", input);
 		if (ft_strlen(input) > 0)
 		{
 			add_history(input);
 			if (check_closed_quotes(input))
 			{
 				parse.cmd = split_args(input, ' ');
-				i = 0;
+				parse.cmd[num_args] = 0;
+				/*i = 0;
 				while (parse.cmd[i] && parse.cmd[i][0] != 0)
 					i++;
 				printf("%d\n", i);
 				if (parse.cmd[i] && parse.cmd[i][0] == 0)
 					free(parse.cmd[i]);
-				parse.cmd[i] = 0;
+				parse.cmd[i] = 0;*/
 				i = 0;
-	while(parse.cmd[i])
+	while(i < 10 && parse.cmd[i])
 	{
-		printf("%s\n", parse.cmd[i]);
+		printf("numero %d: %d %c\n",i, parse.cmd[i][0], parse.cmd[i][0]);
 		i++;
 	}
 				if (!parse.cmd[0])
@@ -349,16 +386,17 @@ int	main(int argc, char **argv, char **envp)
 						check_restdin(parse.cmd);  //check if redirections are made (stdin)
 						check_restdout(parse.cmd); //check if redirections are made (stdout)
 						//parse.cmd_parsed = parse_cmd(parse.cmd); //delete redirections from command array
-						execute(parse, envp);
+						//execute(parse, envp);
+						exit(0);
 					}
 					waitpid(parse.child, NULL, 0);
-					i = 0;
+					/*i = 0;
 	while(parse.cmd[i])
 	{
 		printf("%s\n", parse.cmd[i]);
 		i++;
 	}
-	printf("%d\n", i);
+	printf("%d\n", i);*/
 					/*i = 0;
 	while(parse.cmd_parsed[i])
 	{
