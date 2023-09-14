@@ -54,7 +54,6 @@ SRC_FILES := ft_atoi.c\
 	ft_lstget_val.c\
 	ft_lstget_index.c\
 	ft_lstadd_front.c\
-	ft_lstclear.c\
 	ft_lstdelone.c\
 	ft_lstfree.c\
 	ft_lstdelone.c\
