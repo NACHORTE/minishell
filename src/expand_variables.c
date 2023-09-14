@@ -6,7 +6,7 @@
 /*   By: orudek <orudek@student.42madrid.com>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/11 22:37:17 by orudek            #+#    #+#             */
-/*   Updated: 2023/09/14 17:30:04 by orudek           ###   ########.fr       */
+/*   Updated: 2023/09/14 19:44:00 by orudek           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,11 +46,11 @@ static int	arg_len(char *str, int *len, t_list *local, t_list *env)
 			break ;
 		i++; // can be optimized initializing i to 0, and doiing ++i on the loop condition
 	}
-	if (len == 0)
+	if (i == 1)
 		return (i);
-	var = find_var(str, *len, local);
+	var = find_var(str, i - 1, local);
 	if (!var)
-		var = find_var(str,*len,env);
+		var = find_var(str, i - 1, env);
 	if (!var)
 		return (i);
 	*len += ft_strlen(var);
@@ -78,9 +78,30 @@ static int	expanded_len(char *str, t_list *local, t_list *env)
 	return (len);
 }
 
-static int	dup_arg(char *str, int *i, t_list *local, t_list *env)
+static int	dup_arg(char *out, char **str, t_list *local, t_list *env)
 {
-	
+	int	len;
+	int j;
+	int	i;
+	char *var;
+
+	len = 0;
+	i = arg_len(*str, &len, local, env);
+	if (len == 0)
+	{
+		(*str) += i;
+		return (0);
+	}
+	var = find_var(*str, i - 1, local);
+	if (!var)
+		var = find_var(*str, i - 1, env);
+	if (!var)
+		return (i);
+	j = -1;
+	while (++j < len)
+		*out++ = *var++;
+	(*str) += i;
+	return (len);
 }
 
 char	*expand_variables(char *str, t_list *local, t_list *env)
@@ -91,8 +112,7 @@ char	*expand_variables(char *str, t_list *local, t_list *env)
 	int		state;
 
 	len = expanded_len(str ,local, env);
-	printf("len %d\n",len);
-	/*out = malloc(len + 1);
+	out = malloc(len + 1);
 	if (!out)
 		return (NULL);
 	i = 0;
@@ -101,16 +121,16 @@ char	*expand_variables(char *str, t_list *local, t_list *env)
 	{
 		update_state(&state, *str);
 		if (state != 2 && *str == '$')
-			str += dup_arg(str, &i, local, env);
+			i += dup_arg(&out[i], &str, local, env);
 		else
 			out[i++] = *str++;
 	}
-	out[i] = 0;*/
-	return 0;
+	out[i] = 0;
+	return out;
 }
 
 
-/*COMENTAR A PARTIR DE AQUI*/
+/*COMENTAR A PARTIR DE AQUI*//*
 #include "t_var.h"
 
 void print_list(t_list *list)
@@ -167,4 +187,4 @@ int main(int c, char **v)
 	ft_lstfree(&env, free_var);
 	free(vars);
 	return (1);
-}
+}*/
