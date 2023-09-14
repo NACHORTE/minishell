@@ -87,9 +87,14 @@ void	execute(t_command parse, char **envp)
 	exit(1);
 }
 
-void	new_line_father(int sig)
+void	new_line(int sig)
 {
-	printf("\n\033[36mminishell >> \033[0m");
+	//printf("\n\033[36mminishell >> \033[0m");
+	write(1, "\n", 1);
+    rl_on_new_line();
+    rl_replace_line("", 0);
+   // rl_redisplay();
+	exit(1);
 }
 
 int check_closed_quotes(char *input)
@@ -272,73 +277,83 @@ int	main(int argc, char **argv, char **envp)
 	int i;
 	int	j;
 
-	signal(SIGQUIT, SIG_IGN);
+	signal(SIGINT, SIG_IGN);
+	//signal(SIGQUIT, SIG_IGN);
 	parse.path = get_path(envp);
 	while (1)
 	{
-		signal(SIGINT, &new_line_father);
-		input = readline("\033[36mminishell >> \033[0m");
-		if (ft_strlen(input) > 0)
+		parse.terminal = fork();
+		if (parse.terminal == 0)
 		{
-			add_history(input);
-			if (check_closed_quotes(input))
+			//signal(SIGINT, SIG_DFL);
+			signal(SIGINT, &new_line);
+			input = readline("\033[36mminishell >> \033[0m");
+			//signal(SIGINT, &new_line_father);
+			//input = readline("\033[36mminishell >> \033[0m");
+			if (ft_strlen(input) > 0)
 			{
-				parse.cmd = split_args(input, ' ');
-				if (!parse.cmd[0])
+				add_history(input);
+				if (check_closed_quotes(input))
+				{
+					parse.cmd = split_args(input, ' ');
+					if (!parse.cmd[0])
+						{
+							free(parse.cmd);
+							free(input);
+						}
+					else if (!ft_strncmp(parse.cmd[0], "exit", 4))
 					{
-						free(parse.cmd);
+						free_double(parse.cmd);
+						free(input);
+						exit(1);
+					}
+					else if (!ft_strncmp(parse.cmd[0], "cd", 2))
+					{
+						if (!parse.cmd[1] || !ft_strncmp(parse.cmd[1], "~", 1))
+							chdir(getenv("HOME"));
+						else
+						{
+							if (chdir(parse.cmd[1]) != 0)
+								perror(parse.cmd[1]);
+						}
+						free_double(parse.cmd);
 						free(input);
 					}
-				else if (!ft_strncmp(parse.cmd[0], "exit", 4))
-				{
-					free_double(parse.cmd);
-					free(input);
-					break;
-				}
-				else if (!ft_strncmp(parse.cmd[0], "cd", 2))
-				{
-					if (!parse.cmd[1] || !ft_strncmp(parse.cmd[1], "~", 1))
-						chdir(getenv("HOME"));
-					else
+					else if (parse.cmd[0])
 					{
-						if (chdir(parse.cmd[1]) != 0)
-							perror(parse.cmd[1]);
-					}
-					free_double(parse.cmd);
-					free(input);
-				}
-				else if (parse.cmd[0])
-				{
-					i = 0;
-					j = 0;
-					parse.cmd_parsed = parse_cmd(parse.cmd);
-					parse.cmd_path = get_cmd_path(parse.path, parse.cmd_parsed[0]); //once we hace the command check access
-					parse.child = fork();
-					if (parse.child == 0)
-					{
-						check_restdin(parse.cmd);  //check if redirections are made (stdin)
-						check_restdout(parse.cmd); //check if redirections are made (stdout)
-						execute(parse, envp);
-						exit(0);
+						i = 0;
+						j = 0;
+						parse.cmd_parsed = parse_cmd(parse.cmd);
+						parse.cmd_path = get_cmd_path(parse.path, parse.cmd_parsed[0]); //once we hace the command check access
+						parse.child = fork();
+						if (parse.child == 0)
+						{
+							check_restdin(parse.cmd);  //check if redirections are made (stdin)
+							check_restdout(parse.cmd); //check if redirections are made (stdout)
+							execute(parse, envp);
+							exit(0);
+						}
+						/*else
+							signal(SIGINT, SIG_IGN);*/
+						waitpid(parse.child, NULL, 0);
+						if (parse.cmd_path)
+							free(parse.cmd_path);
+						free_double(parse.cmd);
+						free_double(parse.cmd_parsed);
+						free(input);
 					}
 					else
-						signal(SIGINT, SIG_IGN);
-					waitpid(parse.child, NULL, 0);
-					if (parse.cmd_path)
-						free(parse.cmd_path);
-					free_double(parse.cmd);
-					free_double(parse.cmd_parsed);
-					free(input);
-				}
-				else
-				{
-					free_double(parse.cmd);
-					free(input);
+					{
+						free_double(parse.cmd);
+						free(input);
+					}
 				}
 			}
+			else
+				free(input);
+			exit (1);
 		}
-		else
-			free(input);
+		waitpid(parse.terminal, NULL, 0);
 	}
 	rl_clear_history();
 	free_double(parse.path);
