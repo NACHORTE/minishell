@@ -6,7 +6,7 @@
 /*   By: iortega- <iortega-@student.42madrid.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/09 23:37:26 by orudek            #+#    #+#             */
-/*   Updated: 2023/09/14 13:51:38 by iortega-         ###   ########.fr       */
+/*   Updated: 2023/09/15 11:23:34 by iortega-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -101,14 +101,13 @@ void	dup_str(char *out, const char *s, int len)
 void	dup_redirection(char *out, const char *s, int len, char c)
 {
 	int	i;
-	int	j;
 
 	out[0] = *s++;
 	i = 1;
 	if (*s == out[0])
 		out[i++] = *s++;
 	else if (*s == '<' || *s == '>')
-		*s++;
+		s++;
 	while (*s == c)
 		s++;
 	ft_memcpy(&out[i], s, len - i);
@@ -160,7 +159,7 @@ void	get_str_len(const char *s, char c, int *len, int *i)
 	{
 		if (state == 0 && (s[*i] == '\'' || s[*i] == '"'))
 			state = (s[*i] == '\'') * 2 + (s[*i] == '"');
-		else if (state == 1 && s[*i] == '"' || state == 2 && s[*i] == '\'')
+		else if ((state == 1 && s[*i] == '"') || (state == 2 && s[*i] == '\''))
 			state = 0;
 		(*len)++;
 	}

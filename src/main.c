@@ -92,7 +92,7 @@ void	new_line(int sig)
 	//printf("\n\033[36mminishell >> \033[0m");
 	write(1, "\n", 1);
     rl_on_new_line();
-    rl_replace_line("", 0);
+   // rl_replace_line("", 0);
    // rl_redisplay();
 	exit(1);
 }
@@ -175,9 +175,11 @@ void	check_restdout(char **input)
 	int	j;
 	int	flag;
 	int	fd;
+	char	*redi;
 
 	i = 0;
 	flag = 0;
+	fd = 0;
 	/*while (input[i])
 	{
 		printf("%s\n", input[i]);
@@ -189,26 +191,44 @@ void	check_restdout(char **input)
 		j = 0;
 		if (ft_strlen(input[i]) == 1 && input[i][j] == '>')
 		{
+			if (fd != 0)
+				close (fd);
 			i++;
 			flag = 1;
-			break;
-		}
-		else if (input[i][j] == '>')
-		{
-			j++;
-			flag = 1;
-			break;
-		}
-		i++;
-	}
-	if (flag)
-	{
-		fd = open(&input[i][j], O_WRONLY | O_TRUNC | O_CREAT, 0666);
+			redi = &input[i][j];
+			fd = open(&input[i][j], O_WRONLY | O_TRUNC | O_CREAT, 0666);
 		if (fd < 0)
 		{
 			perror(&input[i][j]);
 			exit(1);
 		}
+			//break;
+		}
+		else if (input[i][j] == '>')
+		{
+			if (fd != 0)
+				close (fd);
+			j++;
+			flag = 1;
+			redi = &input[i][j];
+			fd = open(&input[i][j], O_WRONLY | O_TRUNC | O_CREAT, 0666);
+		if (fd < 0)
+		{
+			perror(&input[i][j]);
+			exit(1);
+		}
+			//break;
+		}
+		i++;
+	}
+	if (flag)
+	{
+		/*fd = open(&input[i][j], O_WRONLY | O_TRUNC | O_CREAT, 0666);
+		if (fd < 0)
+		{
+			perror(&input[i][j]);
+			exit(1);
+		}*/
 		dup2(fd, 1);
 		close(fd);
 	}

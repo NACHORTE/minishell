@@ -3,17 +3,17 @@
 #                                                         :::      ::::::::    #
 #    Makefile                                           :+:      :+:    :+:    #
 #                                                     +:+ +:+         +:+      #
-#    By: orudek <orudek@student.42madrid.com>       +#+  +:+       +#+         #
+#    By: iortega- <iortega-@student.42madrid.com    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/09/03 15:02:39 by iortega-          #+#    #+#              #
-#    Updated: 2023/09/10 14:37:27 by orudek           ###   ########.fr        #
+#    Updated: 2023/09/15 11:30:28 by iortega-         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
 NAME := minishell
 
 CC := gcc
-STANDARD_FLAGS := -fsanitize=leak #-Wall -Wextra -Werror
+STANDARD_FLAGS := -I/Users/$(USER)/.brew/opt/readline/include #-fsanitize=leak #-Wall -Wextra -Werror
 RM := rm -f
 
 SRC_DIR := src
