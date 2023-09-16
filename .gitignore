@@ -1,6 +1,11 @@
-obj/
+/*
+!.gitignore
+!include/
+!libft/
+!src/
+!Makefile
+!subject.pdf
 **/obj
-*.o
 **/*.o
-minishell
-libft/libft.a
+**/*.a
+**/a.out
