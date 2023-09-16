@@ -6,7 +6,7 @@
 /*   By: iortega- <iortega-@student.42madrid.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/03 15:58:32 by iortega-          #+#    #+#             */
-/*   Updated: 2023/09/16 18:08:22 by iortega-         ###   ########.fr       */
+/*   Updated: 2023/09/16 21:35:53 by iortega-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,6 +37,7 @@ typedef struct s_command
 	pid_t	child;
 	pid_t	terminal;
 	t_list	*env;
+	int		sout;
 }t_command;
 
 char	**split_args(char const *str, char c);

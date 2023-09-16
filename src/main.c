@@ -252,10 +252,10 @@ char	**parse_cmd(char **input)
 	{
 		if (input[i][0] != '<' && input[i][0] != '>')
 			args++;
-		else
+		/*else
 			i++;
 		if (!input[i])
-			break;
+			break;*/
 		i++;
 	}
 	parsed = malloc(sizeof(char *) * (args + 1));
@@ -400,7 +400,6 @@ int	main(int argc, char **argv, char **envp)
 	t_command	parse;
 	int i;
 	int	j;
-	t_list *aux;
 
 	//signal(SIGINT, &new_line);
 	//signal(SIGINT, SIG_IGN);
@@ -408,13 +407,7 @@ int	main(int argc, char **argv, char **envp)
 	parse.env = NULL;
 	parse.path = get_path(envp);
 	save_env(&parse, envp);
-	aux = parse.env;
-	while (aux)
-	{
-		printf("Name: %s\n", ((t_var *)aux->content)->name);
-		printf("Content: %s\n", ((t_var *)aux->content)->content);
-		aux = aux->next;
-	}
+	parse.sout = dup(1);
 	while (1)
 	{
 		signal(SIGINT, &new_line);
@@ -457,6 +450,7 @@ int	main(int argc, char **argv, char **envp)
 					j = 0;
 					parse.cmd_parsed = parse_cmd(parse.cmd);
 					parse.cmd_path = get_cmd_path(parse.path, parse.cmd_parsed[0]); //once we hace the command check access
+					check_restdout(parse.cmd);
 					if (!check_builtin(&parse, envp))
 					{
 						parse.child = fork();
