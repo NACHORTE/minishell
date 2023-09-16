@@ -6,7 +6,7 @@
 /*   By: orudek <orudek@student.42madrid.com>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/11 22:37:17 by orudek            #+#    #+#             */
-/*   Updated: 2023/09/14 20:39:09 by orudek           ###   ########.fr       */
+/*   Updated: 2023/09/16 18:33:51 by orudek           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -136,7 +136,6 @@ char	*expand_variables(char *str, t_list *local, t_list *env)
 	out[i] = 0;
 	return out;
 }
-
 
 /*COMENTAR A PARTIR DE AQUI*//*
 #include "t_var.h"
