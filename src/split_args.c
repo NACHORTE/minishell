@@ -3,15 +3,16 @@
 /*                                                        :::      ::::::::   */
 /*   split_args.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: iortega- <iortega-@student.42madrid.com    +#+  +:+       +#+        */
+/*   By: orudek <orudek@student.42madrid.com>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/13 14:28:51 by orudek            #+#    #+#             */
-/*   Updated: 2023/09/14 13:48:07 by iortega-         ###   ########.fr       */
+/*   Updated: 2023/09/16 14:32:43 by orudek           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "libft.h"
 
+void	dup_str(char *out, const char *s, int len);
 void	dup_redirection(char *out, const char *s, int len, char c);
 void	get_str_len(const char *s, char c, int *len, int *i);
 void	get_redirection_len(const char *s, char c, int *len, int *i);
@@ -53,7 +54,7 @@ static char	*get_word(const char **s, char c)
 	if (**s == '<' || **s == '>')
 		dup_redirection(word, *s, len, c);
 	else
-		ft_memcpy(word, *s, len);
+		dup_str(word, *s, len);
 	*s += i;
 	return (word);
 }
@@ -163,8 +164,10 @@ char	**split_args(char const *s, char c)
 /*
 int main(int c, char **v)
 {
+	if (c)
+		c =2;
 	char **s = split_args(v[1], ' ');
 	for (int i = 0; s[i]; i++)
-		printf("str[%d]=[%s]\n",i,s[i]);
+		printf("str[%d]=\'%s\'\n",i,s[i]);
 	return (1);
 }*/

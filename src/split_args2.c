@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   split_args2.c                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: iortega- <iortega-@student.42madrid.com    +#+  +:+       +#+        */
+/*   By: orudek <orudek@student.42madrid.com>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/09 23:37:26 by orudek            #+#    #+#             */
-/*   Updated: 2023/09/15 11:23:34 by iortega-         ###   ########.fr       */
+/*   Updated: 2023/09/16 14:31:05 by orudek           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,6 +19,7 @@
 		out: string where the word will be copied
 		s: string where the word will be searched
 		len: length of the word that will be copied
+		c: delimiter character between words
 	Return:
 		The returned result is the "out" variable
 	Code:
@@ -39,9 +40,6 @@
 		quotation characters don't get counted in the length.
 		With every successful iteration the character is written in "out".
 */
-
-#include "libft.h"
-
 void	dup_str(char *out, const char *s, int len)
 {
 	int	i;
@@ -78,7 +76,8 @@ void	dup_str(char *out, const char *s, int len)
 		After the delimiter there can be [0-n] delimiter characters that will
 		not be counted in the length.
 		The name is gonna be treated a string, allowing "" or '', and
-		ending if it finds '<' or '>'.
+		ending if it finds '<' or '>'. The quotes surrounding a string won't be
+		counted in the length.
 	Parameters:
 		out: string where the word will be copied
 		s: string where the word will be searched
@@ -95,8 +94,7 @@ void	dup_str(char *out, const char *s, int len)
 		If the second character is '<' or '>' but diferent than the first, its
 		skipped.
 		Then "s" is advanced skipping all the delimiter characters
-		Finally the rest of the word is stored using the "ft_memcpy" function
-		as the remaining length is already known.
+		Finally the rest of the word is stored using the "dup_str" function.
 */
 void	dup_redirection(char *out, const char *s, int len, char c)
 {
@@ -110,24 +108,22 @@ void	dup_redirection(char *out, const char *s, int len, char c)
 		s++;
 	while (*s == c)
 		s++;
-	ft_memcpy(&out[i], s, len - i);
+	(void)dup_str(&out[i], s, len - i);
 }
 
 /*	get_str_len:
 		Auxiliary function used in "get_word" and "get_num_words"
-		Counts the length of the word and stopping when a delimiter or '<' '>'
-		is found outside quotes.
+		Counts the length of the word ignoring quotes that surround strings,
+		and ending when a delimiter or '<' '>' is found outside quotes.
 		If quotes are besides more non delimiter characters, it still counts as
 		the same word.
 	Parameters:
 		s: string from which to count the length of the word.
 		c: character used as the delimiter between words.
 		len: reference to the variable where the length of the word will be
-			stored
+			stored (length of the characters without the ignored ones)
 		i: reference to the variable where the total length of the word will be
-			stored. In this version of split_args, "len" and "i" are the same
-			because quotation marks don't get ignored, but the variable is kept
-			so in the functions where it's used it doesn't ruin the format.
+			store (lenght counting ignored characters)
 	Return:
 		The return is done in "len" and "i" variables.
 	Code:
@@ -144,7 +140,9 @@ void	dup_redirection(char *out, const char *s, int len, char c)
 		is 2 and if s[i]=" the result is 1
 		When in either state 1 or 2, if the same quotation type is found, state
 		goes back to 0.
-		With every iteration, the length of the word is increased by
+		In both state transitions, the iteration is skipped so the surrounding
+		quotation characters don't get counted in the length.
+		With every successful iteration, the length of the word is increased by
 		one.
 */
 void	get_str_len(const char *s, char c, int *len, int *i)
@@ -158,9 +156,15 @@ void	get_str_len(const char *s, char c, int *len, int *i)
 		&& (state || (s[*i] != c && s[*i] != '<' && s[*i] != '>')))
 	{
 		if (state == 0 && (s[*i] == '\'' || s[*i] == '"'))
+		{
 			state = (s[*i] == '\'') * 2 + (s[*i] == '"');
-		else if ((state == 1 && s[*i] == '"') || (state == 2 && s[*i] == '\''))
+			continue ;
+		}
+		if ((state == 1 && s[*i] == '"') || (state == 2 && s[*i] == '\''))
+		{
 			state = 0;
+			continue ;
+		}
 		(*len)++;
 	}
 }
@@ -195,7 +199,7 @@ void	get_str_len(const char *s, char c, int *len, int *i)
 		in "len" but still increase "i"
 		Afterwards, increase i with as many delimiter characters there are
 		until a word or '\0' is found.
-		Then calls the "get_str_len" function to get the lenght of the string
+		Then call the "get_str_len" function to get the lenght of the string
 		add the length returned from the function to "len" and "i" to get the
 		total length.
 */
