@@ -349,7 +349,7 @@ int	main(int argc, char **argv, char **envp)
 						signal(SIGINT, SIG_DFL);
 						check_restdin(parse.cmd);  //check if redirections are made (stdin)
 						check_restdout(parse.cmd); //check if redirections are made (stdout)
-						execute(parse, envp);
+						execute(parse, envp); //execute command
 						//exit(0);
 					}
 					else
