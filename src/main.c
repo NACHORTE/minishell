@@ -169,7 +169,7 @@ void	check_restdin(char **input)
 	}
 }
 
-void	check_restdout(char **input)
+int	check_restdout(char **input)
 {
 	int	i;
 	int	j;
@@ -200,7 +200,7 @@ void	check_restdout(char **input)
 		if (fd < 0)
 		{
 			perror(&input[i][j]);
-			exit(1);
+			return (-1);
 		}
 			//break;
 		}
@@ -215,7 +215,7 @@ void	check_restdout(char **input)
 		if (fd < 0)
 		{
 			perror(&input[i][j]);
-			exit(1);
+			return (-1);
 		}
 			//break;
 		}
@@ -232,6 +232,7 @@ void	check_restdout(char **input)
 		dup2(fd, 1);
 		close(fd);
 	}
+	return (fd);
 }
 
 char	**parse_cmd(char **input)
@@ -400,6 +401,7 @@ int	main(int argc, char **argv, char **envp)
 	t_command	parse;
 	int i;
 	int	j;
+	int fd_out;
 
 	//signal(SIGINT, &new_line);
 	//signal(SIGINT, SIG_IGN);
@@ -450,9 +452,13 @@ int	main(int argc, char **argv, char **envp)
 					j = 0;
 					parse.cmd_parsed = parse_cmd(parse.cmd);
 					parse.cmd_path = get_cmd_path(parse.path, parse.cmd_parsed[0]); //once we hace the command check access
-					check_restdout(parse.cmd);
+					fd_out = check_restdout(parse.cmd);
 					if (!check_builtin(&parse, envp))
 					{
+						if (fd_out > 0)
+						{
+							dup2(parse.sout, 1);
+						}
 						parse.child = fork();
 						if (parse.child == 0)
 						{
@@ -465,6 +471,10 @@ int	main(int argc, char **argv, char **envp)
 						else
 							signal(SIGINT, SIG_IGN);
 						waitpid(parse.child, NULL, 0);
+					}
+					else if (fd_out > 0)
+					{
+						dup2(parse.sout, 1);
 					}
 					if (parse.cmd_path)
 						free(parse.cmd_path);
