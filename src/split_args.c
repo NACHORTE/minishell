@@ -6,7 +6,7 @@
 /*   By: iortega- <iortega-@student.42madrid.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/13 14:28:51 by orudek            #+#    #+#             */
-/*   Updated: 2023/09/14 13:48:07 by iortega-         ###   ########.fr       */
+/*   Updated: 2023/09/16 13:52:59 by iortega-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -54,6 +54,7 @@ static char	*get_word(const char **s, char c)
 		dup_redirection(word, *s, len, c);
 	else
 		ft_memcpy(word, *s, len);
+	word[len] = '\0';
 	*s += i;
 	return (word);
 }

@@ -6,14 +6,14 @@
 #    By: iortega- <iortega-@student.42madrid.com    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/09/03 15:02:39 by iortega-          #+#    #+#              #
-#    Updated: 2023/09/15 12:07:29 by iortega-         ###   ########.fr        #
+#    Updated: 2023/09/16 18:37:25 by iortega-         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
 NAME := minishell
 
 CC := gcc
-STANDARD_FLAGS := -I/Users/$(USER)/.brew/opt/readline/include -lreadline -L /Users/$(USER)/.brew/opt/readline/lib #-fsanitize=leak #-Wall -Wextra -Werror
+STANDARD_FLAGS := -I/Users/$(USER)/.brew/opt/readline/include -lreadline -L /Users/$(USER)/.brew/opt/readline/lib -fsanitize=leak #-Wall -Wextra -Werror
 RM := rm -f
 
 SRC_DIR := src
@@ -27,7 +27,9 @@ LIB := readline
 
 SRC_FILES := main.c\
 	split_args.c\
-	split_args2.c
+	split_args2.c\
+	set_variable.c\
+	free_var.c
 
 SRC := $(addprefix $(SRC_DIR)/,$(SRC_FILES))
 LIB_FLAG := $(addprefix -l,$(LIB))

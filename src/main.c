@@ -290,17 +290,131 @@ char	**parse_cmd(char **input)
 	return (parsed);
 }
 
+int	cmd_pwd()
+{
+	char	*dir;
+
+	dir = getcwd(NULL, 0);
+	if (dir == NULL)
+	{
+		printf("ERROR: PWD\n");
+		return (0);
+	}
+	printf("%s\n", dir);
+	free (dir);
+	return (1);
+}
+
+int	cmd_cd(t_command *parse)
+{
+	if (parse->cmd[1] != 0 && parse->cmd[2] != 0)
+	{
+		printf("cd: too many arguments\n");
+		return (0);
+	}
+	if (!parse->cmd[1] || !ft_strncmp(parse->cmd[1], "~", 1))
+	{
+		chdir(getenv("HOME"));
+	}
+	else
+	{
+		if (chdir(parse->cmd[1]) != 0)
+			perror(parse->cmd[1]);
+	}
+	return (0);
+}
+
+int	cmd_env(t_command *parse)
+{
+	t_list	*aux;
+
+	aux = parse->env;
+	while (aux)
+	{
+		printf("%s=%s\n", ((t_var *)aux->content)->name, ((t_var *)aux->content)->content);
+		aux = aux->next;
+	}
+	return (1);
+}
+
+int	check_builtin(t_command *parse, char **envp)
+{
+	if (!ft_strncmp(parse->cmd_parsed[0], "pwd", 3))
+	{
+		cmd_pwd();
+		return (1);
+	}
+	else if (!ft_strncmp(parse->cmd_parsed[0], "cd", 2))
+	{
+		cmd_cd(parse);
+		return (1);
+	}
+	else if (!ft_strncmp(parse->cmd_parsed[0], "env", 3))
+	{
+		cmd_env(parse);
+		return (1);
+	}
+	return (0);
+}
+
+int save_env(t_command *parse, char **envp)
+{
+	t_var *tmp;
+	int	len;
+	int	i;
+	int j;
+	int aux;
+
+	i = 0;
+	while (envp[i])
+	{
+		tmp = malloc(sizeof(t_var));
+		j = 0;
+		len = 0;
+		while (envp[i][j] != '=')
+		{
+			len++;
+			j++;
+		}
+		tmp->name = malloc(sizeof(char) * (len + 1));
+		ft_strlcpy(tmp->name, envp[i], len + 1);
+		j++;
+		aux = j;
+		len = 0;
+		while (envp[i][j] != '\0')
+		{
+			len++;
+			j++;
+		}
+		tmp->content = malloc(sizeof(char) * (len + 1));
+		ft_strlcpy(tmp->content, &envp[i][aux], len + 1);
+		set_variable(&(parse->env), tmp);
+		i++;
+	}
+	return (0);
+}
+
 int	main(int argc, char **argv, char **envp)
 {
 	char	*input;
 	t_command	parse;
 	int i;
 	int	j;
+	t_list *aux;
 
 	//signal(SIGINT, &new_line);
 	//signal(SIGINT, SIG_IGN);
 	//signal(SIGQUIT, SIG_IGN);
+	parse.env = NULL;
 	parse.path = get_path(envp);
+	save_env(&parse, envp);
+	aux = parse.env;
+	while (aux)
+	{
+		printf("Name: %s\n", ((t_var *)aux->content)->name);
+		printf("Content: %s\n", ((t_var *)aux->content)->content);
+		aux = aux->next;
+	}
 	while (1)
 	{
 		signal(SIGINT, &new_line);
@@ -325,7 +439,7 @@ int	main(int argc, char **argv, char **envp)
 					free(input);
 					exit(1);
 				}
-				else if (!ft_strncmp(parse.cmd[0], "cd", 2))
+				/*else if (!ft_strncmp(parse.cmd[0], "cd", 2))
 				{
 					if (!parse.cmd[1] || !ft_strncmp(parse.cmd[1], "~", 1))
 						chdir(getenv("HOME"));
@@ -336,25 +450,28 @@ int	main(int argc, char **argv, char **envp)
 					}
 					free_double(parse.cmd);
 					free(input);
-				}
+				}*/
 				else if (parse.cmd[0])
 				{
 					i = 0;
 					j = 0;
 					parse.cmd_parsed = parse_cmd(parse.cmd);
 					parse.cmd_path = get_cmd_path(parse.path, parse.cmd_parsed[0]); //once we hace the command check access
-					parse.child = fork();
-					if (parse.child == 0)
+					if (!check_builtin(&parse, envp))
 					{
-						signal(SIGINT, SIG_DFL);
-						check_restdin(parse.cmd);  //check if redirections are made (stdin)
-						check_restdout(parse.cmd); //check if redirections are made (stdout)
-						execute(parse, envp); //execute command
-						//exit(0);
+						parse.child = fork();
+						if (parse.child == 0)
+						{
+							signal(SIGINT, SIG_DFL);
+							check_restdin(parse.cmd);  //check if redirections are made (stdin)
+							check_restdout(parse.cmd); //check if redirections are made (stdout)
+							execute(parse, envp); //execute command
+							//exit(0);
+						}
+						else
+							signal(SIGINT, SIG_IGN);
+						waitpid(parse.child, NULL, 0);
 					}
-					else
-						signal(SIGINT, SIG_IGN);
-					waitpid(parse.child, NULL, 0);
 					if (parse.cmd_path)
 						free(parse.cmd_path);
 					free_double(parse.cmd);
