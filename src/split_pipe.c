@@ -6,20 +6,20 @@
 /*   By: orudek <orudek@student.42madrid.com>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/13 14:28:51 by orudek            #+#    #+#             */
-/*   Updated: 2023/09/16 18:23:05 by orudek           ###   ########.fr       */
+/*   Updated: 2023/09/17 14:56:44 by orudek           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "libft.h"
 
-static int get_string_len(char *s)
+static int	get_string_len(char *s)
 {
-	int state;
-	int len;
+	int	state;
+	int	len;
 
 	state = 0;
 	len = 0;
-	while(*s)
+	while (*s)
 	{
 		if (state == 0 && (*s == '\'' || *s == '"'))
 			state = (*s == '\'') * 2 + (*s == '"');
@@ -55,7 +55,7 @@ static char	*get_string(char **s)
 static int	get_num_strings(char *s)
 {
 	int	count;
-	int state;
+	int	state;
 
 	count = 1;
 	state = 0;

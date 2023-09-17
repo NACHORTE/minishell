@@ -6,7 +6,7 @@
 /*   By: orudek <orudek@student.42madrid.com>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/16 14:14:20 by orudek            #+#    #+#             */
-/*   Updated: 2023/09/16 18:49:53 by orudek           ###   ########.fr       */
+/*   Updated: 2023/09/17 15:00:30 by orudek           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,7 +28,7 @@ char	**expand_vars_array(char **str, t_list *local, t_list *env)
 	output = malloc(sizeof(char *) * (len + 1));
 	if (!output)
 		return (0);
-	i = -1;	
+	i = -1;
 	while (str[++i])
 	{
 		output[i] = expand_variables(str[i], local, env);
@@ -49,7 +49,7 @@ void	free_list(t_list *lst)
 	while (lst)
 	{
 		next = lst->next;
-		ft_array_free((char**)lst->content);
+		ft_array_free((char **)lst->content);
 		lst = next;
 	}
 }
@@ -66,7 +66,7 @@ t_list	*save_commands(char **array)
 		if (!args || !ft_lstadd_back_content(&output, args))
 		{
 			free_list(output);
-			return (0);	
+			return (0);
 		}
 		array++;
 	}
@@ -87,12 +87,54 @@ t_list	*parse(char	*input, t_list *local, t_list *env)
 	return (save_commands(expanded));
 }
 
-/*
-int main (int c, char **v)
+//COMENTAR A PARTIR DE AQUI
+/**/
+#include "t_var.h"
+int save_env(t_list **list, char **envp)
+{
+	t_var *tmp;
+	int	len;
+	int	i;
+	int j;
+	int aux;
+
+	i = 0;
+	while (envp[i])
+	{
+		tmp = malloc(sizeof(t_var));
+		j = 0;
+		len = 0;
+		while (envp[i][j] != '=')
+		{
+			len++;
+			j++;
+		}
+		tmp->name = malloc(sizeof(char) * (len + 1));
+		ft_strlcpy(tmp->name, envp[i], len + 1);
+		j++;
+		aux = j;
+		len = 0;
+		while (envp[i][j] != '\0')
+		{
+			len++;
+			j++;
+		}
+		tmp->content = malloc(sizeof(char) * (len + 1));
+		ft_strlcpy(tmp->content, &envp[i][aux], len + 1);
+		set_variable(list, tmp);
+		i++;
+	}
+	return (0);
+}
+int main (int c, char **v, char **env)
 {
 	if (c == 1)
 		return 1;
-	t_list *parsed = parse(v[1], NULL, NULL);
+	t_list	*env_list;
+	save_env(&env_list, env);
+	t_list	*aux;
+	aux = env_list;
+	t_list *parsed = parse(v[1], NULL, env_list);
 	int j = 0;
 	while (parsed)
 	{
