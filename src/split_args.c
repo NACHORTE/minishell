@@ -6,7 +6,7 @@
 /*   By: orudek <orudek@student.42madrid.com>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/13 14:28:51 by orudek            #+#    #+#             */
-/*   Updated: 2023/09/17 16:19:22 by orudek           ###   ########.fr       */
+/*   Updated: 2023/09/17 17:19:47 by orudek           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -154,7 +154,10 @@ char	**split_args(char const *s, char c)
 	{
 		words[i] = get_word(&s, c);
 		if (!words[i])
-			return ((char **)ft_array_free(words));
+		{
+			ft_array_free(words);
+			return (0);
+		}
 		i++;
 	}
 	words[i] = 0;

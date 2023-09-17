@@ -6,7 +6,7 @@
 /*   By: orudek <orudek@student.42madrid.com>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/13 14:28:51 by orudek            #+#    #+#             */
-/*   Updated: 2023/09/17 14:56:44 by orudek           ###   ########.fr       */
+/*   Updated: 2023/09/17 17:20:46 by orudek           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -79,7 +79,6 @@ char	**split_pipe(char *s)
 	int		i;
 
 	num_strings = get_num_strings(s);
-	printf("num_strings: %d\n", num_strings);
 	strings = malloc((sizeof(char *) * (num_strings + 1)));
 	if (strings == NULL)
 		return (NULL);
@@ -88,7 +87,10 @@ char	**split_pipe(char *s)
 	{
 		strings[i] = get_string(&s);
 		if (!strings[i])
-			return ((char **)ft_array_free((void *)strings));
+		{
+			ft_array_free(strings);
+			return (0);
+		}
 		i++;
 	}
 	strings[i] = 0;

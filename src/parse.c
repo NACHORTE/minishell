@@ -6,7 +6,7 @@
 /*   By: orudek <orudek@student.42madrid.com>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/16 14:14:20 by orudek            #+#    #+#             */
-/*   Updated: 2023/09/17 15:01:30 by orudek           ###   ########.fr       */
+/*   Updated: 2023/09/17 17:19:08 by orudek           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,18 +42,6 @@ char	**expand_vars_array(char **str, t_list *local, t_list *env)
 	return (output);
 }
 
-void	free_list(t_list *lst)
-{
-	t_list	*next;
-
-	while (lst)
-	{
-		next = lst->next;
-		ft_array_free((char **)lst->content);
-		lst = next;
-	}
-}
-
 t_list	*save_commands(char **array)
 {
 	t_list	*output;
@@ -65,7 +53,7 @@ t_list	*save_commands(char **array)
 		args = split_args(*array, ' ');
 		if (!args || !ft_lstadd_back_content(&output, args))
 		{
-			free_list(output);
+			ft_lstfree(output, ft_array_free);
 			return (0);
 		}
 		array++;

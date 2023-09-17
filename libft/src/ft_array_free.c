@@ -6,21 +6,23 @@
 /*   By: orudek <orudek@student.42madrid.com>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/08 13:19:48 by orudek            #+#    #+#             */
-/*   Updated: 2023/09/11 14:05:19 by orudek           ###   ########.fr       */
+/*   Updated: 2023/09/17 17:15:48 by orudek           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "libft.h"
 
-long	ft_array_free(char **array)
+//	Function for dealocating char **
+void	ft_array_free(void *array)
 {
-	int	i;
+	int		i;
+	char	**aux;
 
-	if (!array)
-		return (0);
+	aux = (char **)array;
+	if (!aux)
+		return ;
 	i = -1;
-	while (array[++i])
-		free(array[i]);
-	free(array);
-	return (0);
+	while (aux[++i])
+		free(aux[i]);
+	free(aux);
 }
