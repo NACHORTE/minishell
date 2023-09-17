@@ -6,22 +6,14 @@
 /*   By: orudek <orudek@student.42madrid.com>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/11 22:37:17 by orudek            #+#    #+#             */
-/*   Updated: 2023/09/14 20:39:09 by orudek           ###   ########.fr       */
+/*   Updated: 2023/09/17 14:56:13 by orudek           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "libft.h"
 #include "t_var.h"
 
-static void	update_state(int *state, char c)
-{
-	if (*state == 0 && (c == '\'' || c == '"'))
-		*state = (c == '\'') * 2 + (c == '"');
-	else if ((*state == 1 && c == '"') || (*state == 2 && c == '\''))
-		*state = 0;
-}
-
-static char *find_var(char *str, int len, t_list *list)
+static char	*find_var(char *str, int len, t_list *list)
 {
 	int	i;
 
@@ -44,16 +36,13 @@ static char *find_var(char *str, int len, t_list *list)
 
 static int	arg_len(char *str, int *len, t_list *local, t_list *env)
 {
-	int	i;
+	int		i;
 	char	*var;
 
-	i = 1; //the first character of the string is a $ so skip it
-	while (str[i])
-	{
+	i = 0;
+	while (str[++i])
 		if (str[i] == ' ' || str[i] == '"' || str[i] == '\'' || str[i] == '$')
 			break ;
-		i++; // can be optimized initializing i to 0, and doiing ++i on the loop condition
-	}
 	if (i == 1)
 		return (i);
 	var = find_var(str, i - 1, local);
@@ -74,7 +63,10 @@ static int	expanded_len(char *str, t_list *local, t_list *env)
 	state = 0;
 	while (*str)
 	{
-		update_state(&state, *str);
+		if (state == 0 && (*str == '\'' || *str == '"'))
+			state = (*str == '\'') * 2 + (*str == '"');
+		else if ((state == 1 && *str == '"') || (state == 2 && *str == '\''))
+			state = 0;
 		if (state != 2 && *str == '$')
 			str += arg_len(str, &len, local, env);
 		else
@@ -88,10 +80,10 @@ static int	expanded_len(char *str, t_list *local, t_list *env)
 
 static int	dup_arg(char *out, char **str, t_list *local, t_list *env)
 {
-	int	len;
-	int j;
-	int	i;
-	char *var;
+	int		len;
+	int		j;
+	int		i;
+	char	*var;
 
 	len = 0;
 	i = arg_len(*str, &len, local, env);
@@ -119,24 +111,26 @@ char	*expand_variables(char *str, t_list *local, t_list *env)
 	int		i;
 	int		state;
 
-	len = expanded_len(str ,local, env);
+	len = expanded_len(str, local, env);
 	out = malloc(len + 1);
 	if (!out)
 		return (NULL);
 	i = 0;
 	state = 0;
-	while(i < len)
+	while (i < len)
 	{
-		update_state(&state, *str);
+		if (state == 0 && (*str == '\'' || *str == '"'))
+			state = (*str == '\'') * 2 + (*str == '"');
+		else if ((state == 1 && *str == '"') || (state == 2 && *str == '\''))
+			state = 0;
 		if (state != 2 && *str == '$')
 			i += dup_arg(&out[i], &str, local, env);
 		else
 			out[i++] = *str++;
 	}
 	out[i] = 0;
-	return out;
+	return (out);
 }
-
 
 /*COMENTAR A PARTIR DE AQUI*//*
 #include "t_var.h"

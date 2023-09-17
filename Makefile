@@ -3,10 +3,10 @@
 #                                                         :::      ::::::::    #
 #    Makefile                                           :+:      :+:    :+:    #
 #                                                     +:+ +:+         +:+      #
-#    By: iortega- <iortega-@student.42madrid.com    +#+  +:+       +#+         #
+#    By: orudek <orudek@student.42madrid.com>       +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/09/03 15:02:39 by iortega-          #+#    #+#              #
-#    Updated: 2023/09/17 14:51:43 by iortega-         ###   ########.fr        #
+#    Updated: 2023/09/17 16:20:24 by orudek           ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -29,6 +29,9 @@ SRC_FILES := main.c\
 	split_args.c\
 	split_args2.c\
 	set_variable.c\
+	expand_variables.c\
+	parse.c\
+	split_pipe.c\
 	free_var.c\
 	get_variable.c\
 	unset_variable.c
