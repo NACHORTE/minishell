@@ -169,7 +169,7 @@ void	check_restdin(char **input)
 	}
 }
 
-void	check_restdout(char **input)
+int	check_restdout(char **input)
 {
 	int	i;
 	int	j;
@@ -200,7 +200,7 @@ void	check_restdout(char **input)
 		if (fd < 0)
 		{
 			perror(&input[i][j]);
-			exit(1);
+			return (-1);
 		}
 			//break;
 		}
@@ -215,7 +215,7 @@ void	check_restdout(char **input)
 		if (fd < 0)
 		{
 			perror(&input[i][j]);
-			exit(1);
+			return (-1);
 		}
 			//break;
 		}
@@ -232,6 +232,7 @@ void	check_restdout(char **input)
 		dup2(fd, 1);
 		close(fd);
 	}
+	return (fd);
 }
 
 char	**parse_cmd(char **input)
@@ -305,22 +306,42 @@ int	cmd_pwd()
 	return (1);
 }
 
-int	cmd_cd(t_command *parse)
+int	cmd_cd(t_command *parse)   //COMPROBAR MALLOCS
 {
+	t_var	*old;
+	t_var	*curr;
+
 	if (parse->cmd[1] != 0 && parse->cmd[2] != 0)
 	{
 		printf("cd: too many arguments\n");
 		return (0);
 	}
+	old = malloc(sizeof(t_var));
+	curr = malloc(sizeof(t_var));
+	old->name = malloc(sizeof(char) * 7);
+	curr->name = malloc(sizeof(char) * 4);
+	ft_strlcpy(old->name, "OLDPWD", 7);
+	ft_strlcpy(curr->name, "PWD", 4);
+	old->content = getcwd(NULL, 0);
 	if (!parse->cmd[1] || !ft_strncmp(parse->cmd[1], "~", 1))
 	{
 		chdir(getenv("HOME"));
+		curr->content = getcwd(NULL, 0);
+	}
+	else if (!ft_strncmp(parse->cmd[1], "-", 1))    //COMPROBAR QUE HAY OLDPWD
+	{
+		chdir(get_variable(parse->env, "OLDPWD"));
+		curr->content = getcwd(NULL, 0);
 	}
 	else
 	{
 		if (chdir(parse->cmd[1]) != 0)
 			perror(parse->cmd[1]);
+		else
+			curr->content = getcwd(NULL, 0);
 	}
+	set_variable(&(parse->env), old);
+	set_variable(&(parse->env), curr);
 	return (0);
 }
 
@@ -333,6 +354,46 @@ int	cmd_env(t_command *parse)
 	{
 		printf("%s=%s\n", ((t_var *)aux->content)->name, ((t_var *)aux->content)->content);
 		aux = aux->next;
+	}
+	return (1);
+}
+
+int cmd_echo(t_command *parse)
+{
+	int	i;
+	int	flag;
+
+	i = 1;
+	flag = 0;
+	if (!ft_strncmp(parse->cmd_parsed[1], "-n", 2))
+	{
+		flag = 1;
+		i++;
+	}
+	while(parse->cmd_parsed[i])
+	{
+		if (parse->cmd_parsed[i + 1] == 0)
+		{
+			printf("%s", parse->cmd_parsed[i]);
+			if (flag == 0)
+				printf("\n");
+		}
+		else
+			printf("%s ",parse->cmd_parsed[i]);
+		i++;
+	}
+	return (1);
+}
+
+int	cmd_unset(t_command *parse)
+{
+	int	i;
+
+	i = 1;
+	while (parse->cmd_parsed[i])
+	{
+		unset_variable(&(parse->env), parse->cmd_parsed[i]);
+		i++;
 	}
 	return (1);
 }
@@ -352,6 +413,16 @@ int	check_builtin(t_command *parse, char **envp)
 	else if (!ft_strncmp(parse->cmd_parsed[0], "env", 3))
 	{
 		cmd_env(parse);
+		return (1);
+	}
+	else if (!ft_strncmp(parse->cmd_parsed[0], "echo", 4))
+	{
+		cmd_echo(parse);
+		return (1);
+	}
+	else if (!ft_strncmp(parse->cmd_parsed[0], "unset", 5))
+	{
+		cmd_unset(parse);
 		return (1);
 	}
 	return (0);
@@ -400,20 +471,26 @@ int	main(int argc, char **argv, char **envp)
 	t_command	parse;
 	int i;
 	int	j;
+	int fd_out;
 
 	//signal(SIGINT, &new_line);
 	//signal(SIGINT, SIG_IGN);
-	//signal(SIGQUIT, SIG_IGN);
 	parse.env = NULL;
 	parse.path = get_path(envp);
 	save_env(&parse, envp);
 	while (1)
 	{
 		signal(SIGINT, &new_line);
+		signal(SIGQUIT, SIG_IGN);
 		//signal(SIGINT, SIG_DFL);
 		input = readline("\033[36mminishell >> \033[0m");
 		//signal(SIGINT, &new_line_father);
 		//input = readline("\033[36mminishell >> \033[0m");
+		if (input == NULL)
+		{
+			printf("exit\n");
+			exit(1);
+		}
 		if (ft_strlen(input) > 0)
 		{
 			add_history(input);
@@ -429,6 +506,7 @@ int	main(int argc, char **argv, char **envp)
 				{
 					free_double(parse.cmd);
 					free(input);
+					printf("exit\n");
 					exit(1);
 				}
 				/*else if (!ft_strncmp(parse.cmd[0], "cd", 2))
@@ -447,10 +525,16 @@ int	main(int argc, char **argv, char **envp)
 				{
 					i = 0;
 					j = 0;
+					signal(SIGQUIT, SIG_DFL);
 					parse.cmd_parsed = parse_cmd(parse.cmd);
 					parse.cmd_path = get_cmd_path(parse.path, parse.cmd_parsed[0]); //once we hace the command check access
+					fd_out = check_restdout(parse.cmd);
 					if (!check_builtin(&parse, envp))
 					{
+						if (fd_out > 0)
+						{
+							dup2(parse.sout, 1);
+						}
 						parse.child = fork();
 						if (parse.child == 0)
 						{
@@ -463,6 +547,10 @@ int	main(int argc, char **argv, char **envp)
 						else
 							signal(SIGINT, SIG_IGN);
 						waitpid(parse.child, NULL, 0);
+					}
+					else if (fd_out > 0)
+					{
+						dup2(parse.sout, 1);
 					}
 					if (parse.cmd_path)
 						free(parse.cmd_path);
