@@ -457,7 +457,6 @@ int	main(int argc, char **argv, char **envp)
 
 	//signal(SIGINT, &new_line);
 	//signal(SIGINT, SIG_IGN);
-	//signal(SIGQUIT, SIG_IGN);
 	parse.env = NULL;
 	parse.path = get_path(envp);
 	save_env(&parse, envp);
@@ -465,10 +464,16 @@ int	main(int argc, char **argv, char **envp)
 	while (1)
 	{
 		signal(SIGINT, &new_line);
+		signal(SIGQUIT, SIG_IGN);
 		//signal(SIGINT, SIG_DFL);
 		input = readline("\033[36mminishell >> \033[0m");
 		//signal(SIGINT, &new_line_father);
 		//input = readline("\033[36mminishell >> \033[0m");
+		if (input == NULL)
+		{
+			printf("exit\n");
+			exit(1);
+		}
 		if (ft_strlen(input) > 0)
 		{
 			add_history(input);
@@ -484,6 +489,7 @@ int	main(int argc, char **argv, char **envp)
 				{
 					free_double(parse.cmd);
 					free(input);
+					printf("exit\n");
 					exit(1);
 				}
 				/*else if (!ft_strncmp(parse.cmd[0], "cd", 2))
@@ -502,6 +508,7 @@ int	main(int argc, char **argv, char **envp)
 				{
 					i = 0;
 					j = 0;
+					signal(SIGQUIT, SIG_DFL);
 					parse.cmd_parsed = parse_cmd(parse.cmd);
 					parse.cmd_path = get_cmd_path(parse.path, parse.cmd_parsed[0]); //once we hace the command check access
 					fd_out = check_restdout(parse.cmd);
