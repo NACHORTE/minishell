@@ -306,22 +306,42 @@ int	cmd_pwd()
 	return (1);
 }
 
-int	cmd_cd(t_command *parse)
+int	cmd_cd(t_command *parse)   //COMPROBAR MALLOCS
 {
+	t_var	*old;
+	t_var	*curr;
+
 	if (parse->cmd[1] != 0 && parse->cmd[2] != 0)
 	{
 		printf("cd: too many arguments\n");
 		return (0);
 	}
+	old = malloc(sizeof(t_var));
+	curr = malloc(sizeof(t_var));
+	old->name = malloc(sizeof(char) * 7);
+	curr->name = malloc(sizeof(char) * 4);
+	ft_strlcpy(old->name, "OLDPWD", 7);
+	ft_strlcpy(curr->name, "PWD", 4);
+	old->content = getcwd(NULL, 0);
 	if (!parse->cmd[1] || !ft_strncmp(parse->cmd[1], "~", 1))
 	{
 		chdir(getenv("HOME"));
+		curr->content = getcwd(NULL, 0);
+	}
+	else if (!ft_strncmp(parse->cmd[1], "-", 1))    //COMPROBAR QUE HAY OLDPWD
+	{
+		chdir(get_variable(parse->env, "OLDPWD"));
+		curr->content = getcwd(NULL, 0);
 	}
 	else
 	{
 		if (chdir(parse->cmd[1]) != 0)
 			perror(parse->cmd[1]);
+		else
+			curr->content = getcwd(NULL, 0);
 	}
+	set_variable(&(parse->env), old);
+	set_variable(&(parse->env), curr);
 	return (0);
 }
 
@@ -334,6 +354,33 @@ int	cmd_env(t_command *parse)
 	{
 		printf("%s=%s\n", ((t_var *)aux->content)->name, ((t_var *)aux->content)->content);
 		aux = aux->next;
+	}
+	return (1);
+}
+
+int cmd_echo(t_command *parse)
+{
+	int	i;
+	int	flag;
+
+	i = 1;
+	flag = 0;
+	if (!ft_strncmp(parse->cmd_parsed[1], "-n", 2))
+	{
+		flag = 1;
+		i++;
+	}
+	while(parse->cmd_parsed[i])
+	{
+		if (parse->cmd_parsed[i + 1] == 0)
+		{
+			printf("%s", parse->cmd_parsed[i]);
+			if (flag == 0)
+				printf("\n");
+		}
+		else
+			printf("%s ",parse->cmd_parsed[i]);
+		i++;
 	}
 	return (1);
 }
@@ -353,6 +400,11 @@ int	check_builtin(t_command *parse, char **envp)
 	else if (!ft_strncmp(parse->cmd_parsed[0], "env", 3))
 	{
 		cmd_env(parse);
+		return (1);
+	}
+	else if (!ft_strncmp(parse->cmd_parsed[0], "echo", 4))
+	{
+		cmd_echo(parse);
 		return (1);
 	}
 	return (0);
