@@ -6,7 +6,7 @@
 /*   By: orudek <orudek@student.42madrid.com>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/16 14:14:20 by orudek            #+#    #+#             */
-/*   Updated: 2023/09/17 15:00:30 by orudek           ###   ########.fr       */
+/*   Updated: 2023/09/17 15:01:30 by orudek           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -88,7 +88,7 @@ t_list	*parse(char	*input, t_list *local, t_list *env)
 }
 
 //COMENTAR A PARTIR DE AQUI
-/**/
+/*
 #include "t_var.h"
 int save_env(t_list **list, char **envp)
 {
