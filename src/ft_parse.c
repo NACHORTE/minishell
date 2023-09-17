@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   parse.c                                            :+:      :+:    :+:   */
+/*   ft_parse.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: orudek <orudek@student.42madrid.com>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2023/09/16 14:14:20 by orudek            #+#    #+#             */
-/*   Updated: 2023/09/17 17:19:08 by orudek           ###   ########.fr       */
+/*   Created: 2023/09/17 17:24:03 by orudek            #+#    #+#             */
+/*   Updated: 2023/09/17 17:24:15 by orudek           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -61,7 +61,7 @@ t_list	*save_commands(char **array)
 	return (output);
 }
 
-t_list	*parse(char	*input, t_list *local, t_list *env)
+t_list	*ft_parse(char	*input, t_list *local, t_list *env)
 {
 	char	**split_pipes;
 	char	**expanded;

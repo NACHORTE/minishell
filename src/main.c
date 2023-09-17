@@ -313,7 +313,7 @@ int	cmd_cd(t_command *parse)   //COMPROBAR MALLOCS
 	char	*old_pwd;
 	char	*curr_pwd;
 
-	if (parse->cmd[1] != 0 && parse->cmd[2] != 0)
+	if (parse->cmd_parsed[1] != 0 && parse->cmd_parsed[2] != 0)
 	{
 		printf("cd: too many arguments\n");
 		return (0);
@@ -323,20 +323,20 @@ int	cmd_cd(t_command *parse)   //COMPROBAR MALLOCS
 	ft_strlcpy(old, "OLDPWD", 7);
 	ft_strlcpy(curr, "PWD", 4);
 	old_pwd = getcwd(NULL, 0);
-	if (!parse->cmd[1] || !ft_strncmp(parse->cmd[1], "~", 1))
+	if (!parse->cmd_parsed[1] || !ft_strncmp(parse->cmd_parsed[1], "~", 1))
 	{
 		chdir(getenv("HOME"));
 		curr_pwd = getcwd(NULL, 0);
 	}
-	else if (!ft_strncmp(parse->cmd[1], "-", 1))    //COMPROBAR QUE HAY OLDPWD
+	else if (!ft_strncmp(parse->cmd_parsed[1], "-", 1))    //COMPROBAR QUE HAY OLDPWD
 	{
 		chdir(get_variable(parse->env, "OLDPWD"));
 		curr_pwd = getcwd(NULL, 0);
 	}
 	else
 	{
-		if (chdir(parse->cmd[1]) != 0)
-			perror(parse->cmd[1]);
+		if (chdir(parse->cmd_parsed[1]) != 0)
+			perror(parse->cmd_parsed[1]);
 		else
 			curr_pwd = getcwd(NULL, 0);
 	}
@@ -478,6 +478,7 @@ int	main(int argc, char **argv, char **envp)
 	parse.env = NULL;
 	parse.path = get_path(envp);
 	save_env(&parse, envp);
+	parse.sout = dup(1);
 	while (1)
 	{
 		signal(SIGINT, &new_line);
@@ -496,15 +497,15 @@ int	main(int argc, char **argv, char **envp)
 			add_history(input);
 			if (check_closed_quotes(input))
 			{
-				parse.cmd = split_args(input, ' ');
-				if (!parse.cmd[0])
+				parse.cmds = ft_parse(input, NULL, parse.env);
+				if (!parse.cmds)
 					{
 						free(parse.cmd);
 						free(input);
 					}
-				else if (!ft_strncmp(parse.cmd[0], "exit", 4))
+				else if (!ft_strncmp(((char **)parse.cmds->content)[0], "exit", 4))
 				{
-					free_double(parse.cmd);
+					//free_double(parse.cmd);
 					free(input);
 					printf("exit\n");
 					exit(1);
@@ -521,14 +522,14 @@ int	main(int argc, char **argv, char **envp)
 					free_double(parse.cmd);
 					free(input);
 				}*/
-				else if (parse.cmd[0])
+				else if (((char **)parse.cmds->content)[0])
 				{
 					i = 0;
 					j = 0;
 					signal(SIGQUIT, SIG_DFL);
-					parse.cmd_parsed = parse_cmd(parse.cmd);
+					parse.cmd_parsed = parse_cmd((char **)parse.cmds->content);
 					parse.cmd_path = get_cmd_path(parse.path, parse.cmd_parsed[0]); //once we hace the command check access
-					fd_out = check_restdout(parse.cmd);
+					fd_out = check_restdout((char **)parse.cmds->content);
 					if (!check_builtin(&parse, envp))
 					{
 						if (fd_out > 0)
@@ -539,8 +540,8 @@ int	main(int argc, char **argv, char **envp)
 						if (parse.child == 0)
 						{
 							signal(SIGINT, SIG_DFL);
-							check_restdin(parse.cmd);  //check if redirections are made (stdin)
-							check_restdout(parse.cmd); //check if redirections are made (stdout)
+							check_restdin((char **)parse.cmds->content);  //check if redirections are made (stdin)
+							check_restdout((char **)parse.cmds->content); //check if redirections are made (stdout)
 							execute(parse, envp); //execute command
 							//exit(0);
 						}
@@ -554,13 +555,13 @@ int	main(int argc, char **argv, char **envp)
 					}
 					if (parse.cmd_path)
 						free(parse.cmd_path);
-					free_double(parse.cmd);
+					//free_double(parse.cmd);
 					free_double(parse.cmd_parsed);
 					free(input);
 				}
 				else
 				{
-					free_double(parse.cmd);
+					//free_double(parse.cmd);
 					free(input);
 				}
 			}
