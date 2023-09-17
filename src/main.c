@@ -308,40 +308,40 @@ int	cmd_pwd()
 
 int	cmd_cd(t_command *parse)   //COMPROBAR MALLOCS
 {
-	t_var	*old;
-	t_var	*curr;
+	char	*old;
+	char	*curr;
+	char	*old_pwd;
+	char	*curr_pwd;
 
 	if (parse->cmd[1] != 0 && parse->cmd[2] != 0)
 	{
 		printf("cd: too many arguments\n");
 		return (0);
 	}
-	old = malloc(sizeof(t_var));
-	curr = malloc(sizeof(t_var));
-	old->name = malloc(sizeof(char) * 7);
-	curr->name = malloc(sizeof(char) * 4);
-	ft_strlcpy(old->name, "OLDPWD", 7);
-	ft_strlcpy(curr->name, "PWD", 4);
-	old->content = getcwd(NULL, 0);
+	old = malloc(sizeof(char) * 7);
+	curr = malloc(sizeof(char) * 4);
+	ft_strlcpy(old, "OLDPWD", 7);
+	ft_strlcpy(curr, "PWD", 4);
+	old_pwd = getcwd(NULL, 0);
 	if (!parse->cmd[1] || !ft_strncmp(parse->cmd[1], "~", 1))
 	{
 		chdir(getenv("HOME"));
-		curr->content = getcwd(NULL, 0);
+		curr_pwd = getcwd(NULL, 0);
 	}
 	else if (!ft_strncmp(parse->cmd[1], "-", 1))    //COMPROBAR QUE HAY OLDPWD
 	{
 		chdir(get_variable(parse->env, "OLDPWD"));
-		curr->content = getcwd(NULL, 0);
+		curr_pwd = getcwd(NULL, 0);
 	}
 	else
 	{
 		if (chdir(parse->cmd[1]) != 0)
 			perror(parse->cmd[1]);
 		else
-			curr->content = getcwd(NULL, 0);
+			curr_pwd = getcwd(NULL, 0);
 	}
-	set_variable(&(parse->env), old);
-	set_variable(&(parse->env), curr);
+	set_variable(&(parse->env), old, old_pwd);
+	set_variable(&(parse->env), curr, curr_pwd);
 	return (0);
 }
 
@@ -430,16 +430,16 @@ int	check_builtin(t_command *parse, char **envp)
 
 int save_env(t_command *parse, char **envp)
 {
-	t_var *tmp;
 	int	len;
 	int	i;
 	int j;
 	int aux;
+	char	*name;
+	char	*content;
 
 	i = 0;
 	while (envp[i])
 	{
-		tmp = malloc(sizeof(t_var));
 		j = 0;
 		len = 0;
 		while (envp[i][j] != '=')
@@ -447,8 +447,8 @@ int save_env(t_command *parse, char **envp)
 			len++;
 			j++;
 		}
-		tmp->name = malloc(sizeof(char) * (len + 1));
-		ft_strlcpy(tmp->name, envp[i], len + 1);
+		name = malloc(sizeof(char) * (len + 1));
+		ft_strlcpy(name, envp[i], len + 1);
 		j++;
 		aux = j;
 		len = 0;
@@ -457,9 +457,9 @@ int save_env(t_command *parse, char **envp)
 			len++;
 			j++;
 		}
-		tmp->content = malloc(sizeof(char) * (len + 1));
-		ft_strlcpy(tmp->content, &envp[i][aux], len + 1);
-		set_variable(&(parse->env), tmp);
+		content = malloc(sizeof(char) * (len + 1));
+		ft_strlcpy(content, &envp[i][aux], len + 1);
+		set_variable(&(parse->env), name, content);
 		i++;
 	}
 	return (0);
