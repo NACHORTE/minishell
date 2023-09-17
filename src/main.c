@@ -385,6 +385,19 @@ int cmd_echo(t_command *parse)
 	return (1);
 }
 
+int	cmd_unset(t_command *parse)
+{
+	int	i;
+
+	i = 1;
+	while (parse->cmd_parsed[i])
+	{
+		unset_variable(&(parse->env), parse->cmd_parsed[i]);
+		i++;
+	}
+	return (1);
+}
+
 int	check_builtin(t_command *parse, char **envp)
 {
 	if (!ft_strncmp(parse->cmd_parsed[0], "pwd", 3))
@@ -405,6 +418,11 @@ int	check_builtin(t_command *parse, char **envp)
 	else if (!ft_strncmp(parse->cmd_parsed[0], "echo", 4))
 	{
 		cmd_echo(parse);
+		return (1);
+	}
+	else if (!ft_strncmp(parse->cmd_parsed[0], "unset", 5))
+	{
+		cmd_unset(parse);
 		return (1);
 	}
 	return (0);
