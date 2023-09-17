@@ -6,7 +6,7 @@
 /*   By: orudek <orudek@student.42madrid.com>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/10 15:29:51 by orudek            #+#    #+#             */
-/*   Updated: 2023/09/11 17:18:33 by orudek           ###   ########.fr       */
+/*   Updated: 2023/09/17 15:45:52 by orudek           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -54,19 +54,26 @@ static char	replace_variable(t_list **lst, t_var *var, int index)
 	return (1);
 }
 
-char	set_variable(t_list **lst, t_var *var)
+char	set_variable(t_list **lst, char *name, char *content)
 {
 	int		index;
+	t_var	*var;
 
+	if (!name)
+		return (0);
+	var = malloc(sizeof(t_var));
 	if (!var)
 		return (0);
+	var->name = name;
+	var->content = content;
 	index = is_in_list(*lst, var->name);
 	if (index == -1)
 		return (ft_lstadd_back_content(lst, var));
 	return (replace_variable(lst, var, index));
 }
 
-/*COMENTAR A PARTIR DE AQUI*//*
+/*COMENTAR A PARTIR DE AQUI*/
+/*
 void print_list(t_list *list)
 {
 	int i = 0;//COMENTAR ESTA FUNCION SI NO SE USA MAIN
@@ -94,8 +101,8 @@ int main()
 	vars[3] = malloc (sizeof(t_var));
 	vars[4] = malloc (sizeof(t_var));
 	vars[0]->name = ft_strdup("name0");
-	vars[0]->content = ft_strdup("content0");
-	vars[1]->name = ft_strdup("name1");
+	vars[0]->content = NULL;//ft_strdup("content0");
+	vars[1]->name = ft_strdup("name0");
 	vars[1]->content = ft_strdup("content1");
 	vars[2]->name = ft_strdup("name2");
 	vars[2]->content = ft_strdup("content2");
@@ -104,17 +111,20 @@ int main()
 	vars[4]->name = ft_strdup("name4");
 	vars[4]->content = ft_strdup("content4");
 	
-	set_variable(&list, vars[0]);
-	set_variable(&list, vars[1]);
-	set_variable(&list, vars[2]);
-	set_variable(&list, vars[3]);
-	set_variable(&list, vars[4]);
+	set_variable(&list, vars[0]->name, vars[0]->content);
+	//set_variable(&list, vars[1]->name, vars[1]->content);
+	set_variable(&list, vars[2]->name, vars[2]->content);
+	set_variable(&list, vars[3]->name, vars[3]->content);
+	set_variable(&list, vars[4]->name, vars[4]->content);
 	print_list(list);
+	set_variable(&list, vars[1]->name, vars[1]->content);
 	unset_variable(&list, "name2");
-	unset_variable(&list, "name0");
+	//unset_variable(&list, "name0");
 	unset_variable(&list, "name4");
 	print_list(list);
 	ft_lstfree(&list, free_var);
+	for (int i = 0; i < 5; i++)
+		free(vars[i]);
 	free(vars);
 	return (1);
 }*/
