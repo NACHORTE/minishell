@@ -6,7 +6,7 @@
 /*   By: iortega- <iortega-@student.42madrid.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/03 15:58:32 by iortega-          #+#    #+#             */
-/*   Updated: 2023/09/14 16:48:11 by iortega-         ###   ########.fr       */
+/*   Updated: 2023/09/16 21:35:53 by iortega-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,6 +26,7 @@
 # include <readline/readline.h>
 # include <readline/history.h>
 # include <signal.h>
+# include "t_var.h"
 
 typedef struct s_command
 {
@@ -35,6 +36,8 @@ typedef struct s_command
 	char	*cmd_path;
 	pid_t	child;
 	pid_t	terminal;
+	t_list	*env;
+	int		sout;
 }t_command;
 
 char	**split_args(char const *str, char c);
