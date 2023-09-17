@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ft_parse.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: orudek <orudek@student.42madrid.com>       +#+  +:+       +#+        */
+/*   By: iortega- <iortega-@student.42madrid.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/17 17:24:03 by orudek            #+#    #+#             */
-/*   Updated: 2023/09/17 17:24:15 by orudek           ###   ########.fr       */
+/*   Updated: 2023/09/17 17:36:08 by iortega-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -65,14 +65,18 @@ t_list	*ft_parse(char	*input, t_list *local, t_list *env)
 {
 	char	**split_pipes;
 	char	**expanded;
+	t_list	*out;
 
 	split_pipes = split_pipe(input);
 	if (!split_pipes)
 		return (NULL);
 	expanded = expand_vars_array(split_pipes, local, env);
+	ft_array_free(split_pipes);
 	if (!expanded)
 		return (NULL);
-	return (save_commands(expanded));
+	out = save_commands(expanded);
+	ft_array_free(expanded);
+	return (out);
 }
 
 //COMENTAR A PARTIR DE AQUI

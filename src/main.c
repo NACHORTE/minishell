@@ -500,12 +500,12 @@ int	main(int argc, char **argv, char **envp)
 				parse.cmds = ft_parse(input, NULL, parse.env);
 				if (!parse.cmds)
 					{
-						free(parse.cmd);
 						free(input);
 					}
 				else if (!ft_strncmp(((char **)parse.cmds->content)[0], "exit", 4))
 				{
 					//free_double(parse.cmd);
+					ft_lstfree(parse.cmds, ft_array_free);
 					free(input);
 					printf("exit\n");
 					exit(1);
@@ -556,12 +556,14 @@ int	main(int argc, char **argv, char **envp)
 					if (parse.cmd_path)
 						free(parse.cmd_path);
 					//free_double(parse.cmd);
+					ft_lstfree(parse.cmds, ft_array_free);
 					free_double(parse.cmd_parsed);
 					free(input);
 				}
 				else
 				{
 					//free_double(parse.cmd);
+					ft_lstfree(parse.cmds, ft_array_free);
 					free(input);
 				}
 			}
