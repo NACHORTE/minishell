@@ -6,14 +6,14 @@
 /*   By: orudek <orudek@student.42madrid.com>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/11 22:37:17 by orudek            #+#    #+#             */
-/*   Updated: 2023/09/17 14:56:13 by orudek           ###   ########.fr       */
+/*   Updated: 2023/09/18 23:16:27 by orudek           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "libft.h"
 #include "t_var.h"
 
-static char	*find_var(char *str, int len, t_list *list)
+static char	find_var(char **var, char *str, int len, t_list *list)
 {
 	int	i;
 
@@ -27,28 +27,38 @@ static char	*find_var(char *str, int len, t_list *list)
 			if (str[i] != ((t_var *)list->content)->name[i])
 				break ;
 			if (i == len - 1 && ((t_var *)list->content)->name[i + 1] == '\0')
-				return (((t_var *)list->content)->content);
+			{
+				*var = ((t_var *)list->content)->content;
+				return (1);
+			}
 		}
 		list = list->next;
 	}
-	return (NULL);
+	*var = NULL;
+	return (0);
 }
 
-static int	arg_len(char *str, int *len, t_list *local, t_list *env)
+static int	arg_len(char *s, int *len, t_list *local, t_list *env)
 {
 	int		i;
 	char	*var;
 
 	i = 0;
-	while (str[++i])
-		if (str[i] == ' ' || str[i] == '"' || str[i] == '\'' || str[i] == '$')
+	while (s[++i])
+	{
+		if (s[i] == ' ' || s[i] == '"' || s[i] == '\'' || s[i] == '$')
+		{
+			if (i == 1 && s[i] == '$')
+				i++;
 			break ;
+		}
+	}
 	if (i == 1)
+	{
+		(*len) += 1;
 		return (i);
-	var = find_var(str, i - 1, local);
-	if (!var)
-		var = find_var(str, i - 1, env);
-	if (!var)
+	}
+	if (!find_var(&var, s, i - 1, local) && !find_var(&var, s, i - 1, env))
 		return (i);
 	*len += ft_strlen(var);
 	return (i);
@@ -78,7 +88,7 @@ static int	expanded_len(char *str, t_list *local, t_list *env)
 	return (len);
 }
 
-static int	dup_arg(char *out, char **str, t_list *local, t_list *env)
+static int	dup_arg(char *out, char **s, t_list *local, t_list *env)
 {
 	int		len;
 	int		j;
@@ -86,21 +96,24 @@ static int	dup_arg(char *out, char **str, t_list *local, t_list *env)
 	char	*var;
 
 	len = 0;
-	i = arg_len(*str, &len, local, env);
+	i = arg_len(*s, &len, local, env);
 	if (len == 0)
 	{
-		(*str) += i;
+		(*s) += i;
 		return (0);
 	}
-	var = find_var(*str, i - 1, local);
-	if (!var)
-		var = find_var(*str, i - 1, env);
-	if (!var)
+	if (i == 1)
+	{
+		(*s) += i;
+		*out = '$';
+		return (1);
+	}
+	if (!find_var(&var, *s, i - 1, local) && !find_var(&var, *s, i - 1, env))
 		return (i);
 	j = -1;
 	while (++j < len)
 		*out++ = *var++;
-	(*str) += i;
+	(*s) += i;
 	return (len);
 }
 
@@ -167,7 +180,7 @@ int main(int c, char **v)
 	vars[4] = malloc (sizeof(t_var));
 	vars[0]->name = ft_strdup("name0");
 	vars[0]->content = ft_strdup("4567891011");
-	vars[1]->name = ft_strdup("name1");
+	vars[1]->name = ft_strdup("$");
 	vars[1]->content = ft_strdup("content1");
 	vars[2]->name = ft_strdup("name2");
 	vars[2]->content = ft_strdup("content2");
@@ -176,17 +189,17 @@ int main(int c, char **v)
 	vars[4]->name = ft_strdup("name4");
 	vars[4]->content = ft_strdup("content4");
 	
-	set_variable(&local, vars[0]);
-	set_variable(&local, vars[1]);
-	set_variable(&local, vars[2]);
-	set_variable(&env, vars[3]);
-	set_variable(&env, vars[4]);
+	set_variable(&local, vars[0]->name, vars[0]->content);
+	set_variable(&local, vars[1]->name, vars[1]->content);
+	set_variable(&local, vars[2]->name, vars[2]->content);
+	set_variable(&env, vars[3]->name, vars[3]->content);
+	set_variable(&env, vars[4]->name, vars[4]->content);
 	print_list(local);
 	print_list(env);
 	char *expanded = expand_variables(v[1], local, env);
-	printf("expanded: %s$\n",expanded);
-	ft_lstfree(&local, free_var);
-	ft_lstfree(&env, free_var);
+	printf("expanded: \"%s\"\n",expanded);
+	ft_lstfree(local, free_var);
+	ft_lstfree(env, free_var);
 	free(vars);
-	return (1);
+	return (0);
 }*/
