@@ -38,6 +38,18 @@ void	init(t_struct global)
 
 MUCHAS FUNCIONES DE FREEAR COSAS Y QUE SE PONGAN EN NULL
 
+void exec_command(t_list *cmd, t_list **env, t_list **local)
+{
+	Comprobar que el primero es builtin
+		If lo es se ejecuta sin fork
+		Else se ejecuta con fork
+	No hacer el pipe si solo hay un comando
+	Hacer while para crear todos los forks y pipes
+	Hacer el último fork
+	while (wait(&status) != -1) al final
+	Guardar ultimo status en $?
+}
+
 int main(int argc, char **argv, char **envp)
 {
 	t_struct global;
