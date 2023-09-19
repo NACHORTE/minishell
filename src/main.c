@@ -67,23 +67,23 @@ char	**get_path(char **envp)
 	return (path);
 }
 
-void	no_command(t_command parse)
+void	no_command(t_command global)
 {
 	int	len;
 	write(2, &"Command not found: ", 19);
-	len = ft_strlen(parse.cmd_parsed[0]);
-	write(2, parse.cmd_parsed[0], len);
+	len = ft_strlen(global.cmd_parsed[0]);
+	write(2, global.cmd_parsed[0], len);
 	write(2, &"\n", 1);
 }
 
-void	execute(t_command parse, char **envp)
+void	execute(t_command global, char **envp)
 {
-	if (!parse.cmd_path)
+	if (!global.cmd_path)
 	{
-		no_command(parse);
+		no_command(global);
 		exit(127);
 	}
-	execve(parse.cmd_path, parse.cmd_parsed, envp);
+	execve(global.cmd_path, global.cmd_parsed, envp);
 	exit(1);
 }
 
@@ -307,14 +307,14 @@ int	cmd_pwd()
 	return (1);
 }
 
-int	cmd_cd(t_command *parse)   //COMPROBAR MALLOCS
+int	cmd_cd(t_command *global)   //COMPROBAR MALLOCS
 {
 	char	*old;
 	char	*curr;
 	char	*old_pwd;
 	char	*curr_pwd;
 
-	if (parse->cmd_parsed[1] != 0 && parse->cmd_parsed[2] != 0)
+	if (global->cmd_parsed[1] != 0 && global->cmd_parsed[2] != 0)
 	{
 		printf("cd: too many arguments\n");
 		return (0);
@@ -324,33 +324,33 @@ int	cmd_cd(t_command *parse)   //COMPROBAR MALLOCS
 	ft_strlcpy(old, "OLDPWD", 7);
 	ft_strlcpy(curr, "PWD", 4);
 	old_pwd = getcwd(NULL, 0);
-	if (!parse->cmd_parsed[1] || !ft_strncmp(parse->cmd_parsed[1], "~", 1))
+	if (!global->cmd_parsed[1] || !ft_strncmp(global->cmd_parsed[1], "~", 1))
 	{
 		chdir(getenv("HOME"));
 		curr_pwd = getcwd(NULL, 0);
 	}
-	else if (!ft_strncmp(parse->cmd_parsed[1], "-", 1))    //COMPROBAR QUE HAY OLDPWD
+	else if (!ft_strncmp(global->cmd_parsed[1], "-", 1))    //COMPROBAR QUE HAY OLDPWD
 	{
-		chdir(get_variable(parse->env, "OLDPWD"));
+		chdir(get_variable(global->env, "OLDPWD"));
 		curr_pwd = getcwd(NULL, 0);
 	}
 	else
 	{
-		if (chdir(parse->cmd_parsed[1]) != 0)
-			perror(parse->cmd_parsed[1]);
+		if (chdir(global->cmd_parsed[1]) != 0)
+			perror(global->cmd_parsed[1]);
 		else
 			curr_pwd = getcwd(NULL, 0);
 	}
-	set_variable(&(parse->env), old, old_pwd);
-	set_variable(&(parse->env), curr, curr_pwd);
+	set_variable(&(global->env), old, old_pwd);
+	set_variable(&(global->env), curr, curr_pwd);
 	return (0);
 }
 
-int	cmd_env(t_command *parse)
+int	cmd_env(t_command *global)
 {
 	t_list	*aux;
 
-	aux = parse->env;
+	aux = global->env;
 	while (aux)
 	{
 		printf("%s=%s\n", ((t_var *)aux->content)->name, ((t_var *)aux->content)->content);
@@ -359,77 +359,77 @@ int	cmd_env(t_command *parse)
 	return (1);
 }
 
-int cmd_echo(t_command *parse)
+int cmd_echo(t_command *global)
 {
 	int	i;
 	int	flag;
 
 	i = 1;
 	flag = 0;
-	if (!ft_strncmp(parse->cmd_parsed[1], "-n", 2))
+	if (!ft_strncmp(global->cmd_parsed[1], "-n", 2))
 	{
 		flag = 1;
 		i++;
 	}
-	while(parse->cmd_parsed[i])
+	while(global->cmd_parsed[i])
 	{
-		if (parse->cmd_parsed[i + 1] == 0)
+		if (global->cmd_parsed[i + 1] == 0)
 		{
-			printf("%s", parse->cmd_parsed[i]);
+			printf("%s", global->cmd_parsed[i]);
 			if (flag == 0)
 				printf("\n");
 		}
 		else
-			printf("%s ",parse->cmd_parsed[i]);
+			printf("%s ",global->cmd_parsed[i]);
 		i++;
 	}
 	return (1);
 }
 
-int	cmd_unset(t_command *parse)
+int	cmd_unset(t_command *global)
 {
 	int	i;
 
 	i = 1;
-	while (parse->cmd_parsed[i])
+	while (global->cmd_parsed[i])
 	{
-		unset_variable(&(parse->env), parse->cmd_parsed[i]);
+		unset_variable(&(global->env), global->cmd_parsed[i]);
 		i++;
 	}
 	return (1);
 }
 
-int	check_builtin(t_command *parse, char **envp)
+int	check_builtin(t_command *global, char **envp)
 {
-	if (!ft_strncmp(parse->cmd_parsed[0], "pwd", 3))
+	if (!ft_strncmp(global->cmd_parsed[0], "pwd", 3))
 	{
 		cmd_pwd();
 		return (1);
 	}
-	else if (!ft_strncmp(parse->cmd_parsed[0], "cd", 2))
+	else if (!ft_strncmp(global->cmd_parsed[0], "cd", 2))
 	{
-		cmd_cd(parse);
+		cmd_cd(global);
 		return (1);
 	}
-	else if (!ft_strncmp(parse->cmd_parsed[0], "env", 3))
+	else if (!ft_strncmp(global->cmd_parsed[0], "env", 3))
 	{
-		cmd_env(parse);
+		cmd_env(global);
 		return (1);
 	}
-	else if (!ft_strncmp(parse->cmd_parsed[0], "echo", 4))
+	else if (!ft_strncmp(global->cmd_parsed[0], "echo", 4))
 	{
-		cmd_echo(parse);
+		cmd_echo(global);
 		return (1);
 	}
-	else if (!ft_strncmp(parse->cmd_parsed[0], "unset", 5))
+	else if (!ft_strncmp(global->cmd_parsed[0], "unset", 5))
 	{
-		cmd_unset(parse);
+		cmd_unset(global);
 		return (1);
 	}
 	return (0);
 }
 
-int save_env(t_command *parse, char **envp)
+int save_env(t_command *global, char **envp)
 {
 	int	len;
 	int	i;
@@ -460,7 +460,7 @@ int save_env(t_command *parse, char **envp)
 		}
 		content = malloc(sizeof(char) * (len + 1));
 		ft_strlcpy(content, &envp[i][aux], len + 1);
-		set_variable(&(parse->env), name, content);
+		set_variable(&(global->env), name, content);
 		i++;
 	}
 	return (0);
@@ -501,7 +501,7 @@ int redirect_ok(t_list *cmds)
 	return (1);
 }
 
-int local_declare(t_command *parse)
+int local_declare(t_command *global)
 {
 	int	i;
 	char	*name;
@@ -511,13 +511,13 @@ int local_declare(t_command *parse)
 
 	i = 0;
 	size = 0;
-	if (ft_lstsize(parse->cmds) == 1)
+	if (ft_lstsize(global->cmds) == 1)
 	{
-		if (((char **)parse->cmds->content)[1] == 0)
+		if (((char **)global->cmds->content)[1] == 0)
 		{
-			while (((char **)parse->cmds->content)[0][i] != '=')
+			while (((char **)global->cmds->content)[0][i] != '=')
 			{
-				if (((char **)parse->cmds->content)[0][i] == 0)
+				if (((char **)global->cmds->content)[0][i] == 0)
 					return (0);
 				size++;
 				i++;
@@ -525,16 +525,16 @@ int local_declare(t_command *parse)
 			i++;
 			j = i;
 			name = malloc(sizeof(char) * (size + 1));
-			ft_strlcpy(name, ((char **)parse->cmds->content)[0], size + 1);
+			ft_strlcpy(name, ((char **)global->cmds->content)[0], size + 1);
 			size = 0;
-			while (((char **)parse->cmds->content)[0][i])
+			while (((char **)global->cmds->content)[0][i])
 			{
 				size++;
 				i++;
 			}
 			content = malloc(sizeof(char) * (size + 1));
-			ft_strlcpy(content, &((char **)parse->cmds->content)[0][j], size + 1);
-			set_variable(&(parse->local), name, content);
+			ft_strlcpy(content, &((char **)global->cmds->content)[0][j], size + 1);
+			set_variable(&(global->local), name, content);
 			return (1);
 		}
 	}
@@ -544,17 +544,17 @@ int local_declare(t_command *parse)
 int	main(int argc, char **argv, char **envp) //hola
 {
 	char	*input;
-	t_command	parse;
+	t_command	global;
 	int i;
 	int	j;
 	int fd_out;
 	//signal(SIGINT, &new_line);
 	//signal(SIGINT, SIG_IGN);
-	parse.env = NULL;
-	parse.local = NULL;
-	parse.path = get_path(envp);
-	save_env(&parse, envp);
-	parse.sout = dup(1);
+	global.env = NULL;
+	global.local = NULL;
+	global.path = get_path(envp);
+	save_env(&global, envp);
+	global.sout = dup(1);
 	while (1)
 	{
 		signal(SIGINT, &new_line);
@@ -573,83 +573,83 @@ int	main(int argc, char **argv, char **envp) //hola
 			add_history(input);
 			if (check_closed_quotes(input))
 			{
-				parse.cmds = ft_parse(input, parse.local, parse.env);
-				if (!parse.cmds)
+				global.cmds = parse(input, global.local, global.env);
+				if (!global.cmds)
 					{
 						free(input);
 					}
-				else if (local_declare(&parse))
+				else if (local_declare(&global))
 				{
-					ft_lstfree(parse.cmds, ft_array_free);
+					ft_lstfree(global.cmds, ft_array_free);
 					free(input);
 				}
-				else if (!redirect_ok(parse.cmds))
+				else if (!redirect_ok(global.cmds))
 				{
-					ft_lstfree(parse.cmds, ft_array_free);
+					ft_lstfree(global.cmds, ft_array_free);
 					free(input);
 				}
-				else if (!ft_strncmp(((char **)parse.cmds->content)[0], "exit", 4))
+				else if (!ft_strncmp(((char **)global.cmds->content)[0], "exit", 4))
 				{
-					//free_double(parse.cmd);
-					ft_lstfree(parse.cmds, ft_array_free);
+					//free_double(global.cmd);
+					ft_lstfree(global.cmds, ft_array_free);
 					free(input);
 					printf("exit\n");
 					exit(1);
 				}
-				/*else if (!ft_strncmp(parse.cmd[0], "cd", 2))
+				/*else if (!ft_strncmp(global.cmd[0], "cd", 2))
 				{
-					if (!parse.cmd[1] || !ft_strncmp(parse.cmd[1], "~", 1))
+					if (!global.cmd[1] || !ft_strncmp(global.cmd[1], "~", 1))
 						chdir(getenv("HOME"));
 					else
 					{
-						if (chdir(parse.cmd[1]) != 0)
-							perror(parse.cmd[1]);
+						if (chdir(global.cmd[1]) != 0)
+							perror(global.cmd[1]);
 					}
-					free_double(parse.cmd);
+					free_double(global.cmd);
 					free(input);
 				}*/
-				else if (((char **)parse.cmds->content)[0])
+				else if (((char **)global.cmds->content)[0])
 				{
 					i = 0;
 					j = 0;
 					signal(SIGQUIT, SIG_DFL);
-					parse.cmd_parsed = parse_cmd((char **)parse.cmds->content);
-					parse.cmd_path = get_cmd_path(parse.path, parse.cmd_parsed[0]); //once we hace the command check access
-					fd_out = check_restdout((char **)parse.cmds->content);
-					if (!check_builtin(&parse, envp))
+					global.cmd_parsed = parse_cmd((char **)global.cmds->content);
+					global.cmd_path = get_cmd_path(global.path, global.cmd_parsed[0]); //once we hace the command check access
+					fd_out = check_restdout((char **)global.cmds->content);
+					if (!check_builtin(&global, envp))
 					{
 						if (fd_out > 0)
 						{
-							dup2(parse.sout, 1);
+							dup2(global.sout, 1);
 						}
-						parse.child = fork();
-						if (parse.child == 0)
+						global.child = fork();
+						if (global.child == 0)
 						{
 							signal(SIGINT, SIG_DFL);
-							check_restdin((char **)parse.cmds->content);  //check if redirections are made (stdin)
-							check_restdout((char **)parse.cmds->content); //check if redirections are made (stdout)
-							execute(parse, envp); //execute command
+							check_restdin((char **)global.cmds->content);  //check if redirections are made (stdin)
+							check_restdout((char **)global.cmds->content); //check if redirections are made (stdout)
+							execute(global, envp); //execute command
 							//exit(0);
 						}
 						else
 							signal(SIGINT, SIG_IGN);
-						waitpid(parse.child, NULL, 0);
+						waitpid(global.child, NULL, 0);
 					}
 					else if (fd_out > 0)
 					{
-						dup2(parse.sout, 1);
+						dup2(global.sout, 1);
 					}
-					if (parse.cmd_path)
-						free(parse.cmd_path);
-					//free_double(parse.cmd);
-					ft_lstfree(parse.cmds, ft_array_free);
-					free_double(parse.cmd_parsed);
+					if (global.cmd_path)
+						free(global.cmd_path);
+					//free_double(global.cmd);
+					ft_lstfree(global.cmds, ft_array_free);
+					free_double(global.cmd_parsed);
 					free(input);
 				}
 				else
 				{
-					//free_double(parse.cmd);
-					ft_lstfree(parse.cmds, ft_array_free);
+					//free_double(global.cmd);
+					ft_lstfree(global.cmds, ft_array_free);
 					free(input);
 				}
 			}
@@ -658,7 +658,7 @@ int	main(int argc, char **argv, char **envp) //hola
 			free(input);
 	}
 	rl_clear_history();
-	free_double(parse.path);
+	free_double(global.path);
 	/*free_double(parsed);
 	free(input);*/
 	return (0);
