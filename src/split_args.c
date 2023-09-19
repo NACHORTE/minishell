@@ -6,7 +6,7 @@
 /*   By: orudek <orudek@student.42madrid.com>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/13 14:28:51 by orudek            #+#    #+#             */
-/*   Updated: 2023/09/17 17:19:47 by orudek           ###   ########.fr       */
+/*   Updated: 2023/09/19 20:52:11 by orudek           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -54,7 +54,7 @@ static char	*get_word(const char **s, char c)
 	if (**s == '<' || **s == '>')
 		dup_redirection(word, *s, len, c);
 	else
-		ft_memcpy(word, *s, len);
+		dup_str(word, *s, len);
 	*s += i;
 	return (word);
 }
