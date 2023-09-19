@@ -206,7 +206,7 @@ int	check_restdout(char **input)
 			j++;
 			flag = 1;
 			redi = &input[i][j];
-			if (input[i][j] == '>')				//preguntar rudek como hace > >out
+			if (input[i][j] == '>')
 			{
 				j++;
 				fd = open(&input[i][j], O_WRONLY | O_APPEND, 0666);
@@ -574,8 +574,21 @@ int	main(int argc, char **argv, char **envp) //hola
 			if (check_closed_quotes(input))
 			{
 				global.cmds = parse(input, global.local, global.env);
-				if (!global.cmds)
+/* 				t_list *aux = global.cmds;
+				int j = 0;
+				while (aux)
+				{
+					printf("List %d\n",j++);
+					int i = 0;
+					for (i = 0; ((char **)aux->content)[i]; i++)
+						printf("\tstr[%d]=%s$\n",i,((char **)aux->content)[i]);
+					printf("\tstr[%d]=%s$\n",i,((char **)aux->content)[i]);
+					aux = aux->next;
+				} */
+				if (!global.cmds || !((char **)global.cmds->content)[0])
 					{
+						if( global.cmds)
+							ft_lstfree(global.cmds, ft_array_free);
 						free(input);
 					}
 				else if (local_declare(&global))
@@ -596,18 +609,6 @@ int	main(int argc, char **argv, char **envp) //hola
 					printf("exit\n");
 					exit(1);
 				}
-				/*else if (!ft_strncmp(global.cmd[0], "cd", 2))
-				{
-					if (!global.cmd[1] || !ft_strncmp(global.cmd[1], "~", 1))
-						chdir(getenv("HOME"));
-					else
-					{
-						if (chdir(global.cmd[1]) != 0)
-							perror(global.cmd[1]);
-					}
-					free_double(global.cmd);
-					free(input);
-				}*/
 				else if (((char **)global.cmds->content)[0])
 				{
 					i = 0;
