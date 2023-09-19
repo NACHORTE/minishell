@@ -211,7 +211,13 @@ int	check_restdout(char **input)
 			j++;
 			flag = 1;
 			redi = &input[i][j];
-			fd = open(&input[i][j], O_WRONLY | O_TRUNC | O_CREAT, 0666);
+			if (input[i][j] == '>')				//preguntar rudek como hace > >out
+			{
+				j++;
+				fd = open(&input[i][j], O_WRONLY | O_APPEND, 0666);
+			}
+			else
+				fd = open(&input[i][j], O_WRONLY | O_TRUNC | O_CREAT, 0666);
 		if (fd < 0)
 		{
 			perror(&input[i][j]);
