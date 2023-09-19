@@ -142,28 +142,23 @@ void	check_restdin(char **input)
 	while (input[i])   //if we have < " " file we get flag 1 and check file, else if we have <file we check file without "<"
 	{
 		j = 0;
-		if (ft_strlen(input[i]) == 1 && input[i][j] == '<')
+		if (input[i][j] == '<')
 		{
-			i++;
-			flag = 1;
-			break;
-		}
-		else if (input[i][j] == '<')
-		{
+			if (fd != 0)
+				close (fd);
 			j++;
+			fd = open(&input[i][j], O_RDONLY);
+			if (fd < 0)
+			{
+				perror(&input[i][j]);
+				exit(1);
+			}
 			flag = 1;
-			break;
 		}
 		i++;
 	}
 	if (flag)
 	{
-		fd = open(&input[i][j], O_RDONLY);
-		if (fd < 0)
-		{
-			perror(&input[i][j]);
-			exit(1);
-		}
 		dup2(fd, 0);
 		close(fd);
 	}
@@ -471,6 +466,41 @@ int save_env(t_command *parse, char **envp)
 	return (0);
 }
 
+int	check_redi(char **cmd)
+{
+	int	i;
+	int	j;
+
+	i = 0;
+	while (cmd[i])
+	{
+		if (cmd[i][0] == '>' && cmd[i + 1])
+		{
+			if (cmd[i + 1][0] == '>')
+			{
+				printf("syntax error near unexpected token '>'\n");
+				return (0);
+			}
+		}
+		i++;
+	}
+	return (1);
+}
+
+int redirect_ok(t_list *cmds)
+{
+	t_list	*aux;
+	
+	aux = cmds;
+	while (aux)
+	{
+		if (!check_redi((char **)aux->content))
+			return (0);
+		aux = aux->next;
+	}
+	return (1);
+}
+
 int	main(int argc, char **argv, char **envp) //hola
 {
 	char	*input;
@@ -478,7 +508,6 @@ int	main(int argc, char **argv, char **envp) //hola
 	int i;
 	int	j;
 	int fd_out;
-
 	//signal(SIGINT, &new_line);
 	//signal(SIGINT, SIG_IGN);
 	parse.env = NULL;
@@ -508,6 +537,11 @@ int	main(int argc, char **argv, char **envp) //hola
 					{
 						free(input);
 					}
+				else if (!redirect_ok(parse.cmds))
+				{
+					ft_lstfree(parse.cmds, ft_array_free);
+					free(input);
+				}
 				else if (!ft_strncmp(((char **)parse.cmds->content)[0], "exit", 4))
 				{
 					//free_double(parse.cmd);
