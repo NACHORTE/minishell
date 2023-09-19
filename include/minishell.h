@@ -6,7 +6,7 @@
 /*   By: iortega- <iortega-@student.42madrid.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/03 15:58:32 by iortega-          #+#    #+#             */
-/*   Updated: 2023/09/17 16:42:06 by iortega-         ###   ########.fr       */
+/*   Updated: 2023/09/19 20:22:33 by iortega-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,6 +38,7 @@ typedef struct s_command
 	pid_t	terminal;
 	t_list	*env;
 	t_list	*cmds;
+	t_list	*local;
 	int		sout;
 }t_command;
 

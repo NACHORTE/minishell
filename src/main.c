@@ -501,6 +501,46 @@ int redirect_ok(t_list *cmds)
 	return (1);
 }
 
+int local_declare(t_command *parse)
+{
+	int	i;
+	char	*name;
+	char	*content;
+	int	size;
+	int j;
+
+	i = 0;
+	size = 0;
+	if (ft_lstsize(parse->cmds) == 1)
+	{
+		if (((char **)parse->cmds->content)[1] == 0)
+		{
+			while (((char **)parse->cmds->content)[0][i] != '=')
+			{
+				if (((char **)parse->cmds->content)[0][i] == 0)
+					return (0);
+				size++;
+				i++;
+			}
+			i++;
+			j = i;
+			name = malloc(sizeof(char) * (size + 1));
+			ft_strlcpy(name, ((char **)parse->cmds->content)[0], size + 1);
+			size = 0;
+			while (((char **)parse->cmds->content)[0][i])
+			{
+				size++;
+				i++;
+			}
+			content = malloc(sizeof(char) * (size + 1));
+			ft_strlcpy(content, &((char **)parse->cmds->content)[0][j], size + 1);
+			set_variable(&(parse->local), name, content);
+			return (1);
+		}
+	}
+	return (0);
+}
+
 int	main(int argc, char **argv, char **envp) //hola
 {
 	char	*input;
@@ -511,6 +551,7 @@ int	main(int argc, char **argv, char **envp) //hola
 	//signal(SIGINT, &new_line);
 	//signal(SIGINT, SIG_IGN);
 	parse.env = NULL;
+	parse.local = NULL;
 	parse.path = get_path(envp);
 	save_env(&parse, envp);
 	parse.sout = dup(1);
@@ -532,11 +573,16 @@ int	main(int argc, char **argv, char **envp) //hola
 			add_history(input);
 			if (check_closed_quotes(input))
 			{
-				parse.cmds = ft_parse(input, NULL, parse.env);
+				parse.cmds = ft_parse(input, parse.local, parse.env);
 				if (!parse.cmds)
 					{
 						free(input);
 					}
+				else if (local_declare(&parse))
+				{
+					ft_lstfree(parse.cmds, ft_array_free);
+					free(input);
+				}
 				else if (!redirect_ok(parse.cmds))
 				{
 					ft_lstfree(parse.cmds, ft_array_free);
