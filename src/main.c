@@ -400,6 +400,30 @@ void	cmd_exit()
 	exit(1);
 }
 
+void	cmd_export(t_command *global)
+{
+	char	*name;
+	char	*content;
+	int	i;
+
+	i = 1;
+	while (((char **)global->cmds->content)[i])
+	{
+		name = ft_strdup(((char **)global->cmds->content)[i]);
+		content = ft_strdup(get_variable(global->local, name));
+		if (!content)
+		{
+			free(name);
+		}
+		else
+		{
+			set_variable(&(global->env), name, content);
+			unset_variable(&(global->local), name);
+		}
+		i++;
+	}
+}
+
 int	check_builtin(t_command *global, char **envp)
 {
 	if (!ft_strncmp(global->cmd_parsed[0], "pwd", 3))
@@ -414,6 +438,8 @@ int	check_builtin(t_command *global, char **envp)
 		cmd_unset(global);
 	else if (!ft_strncmp(global->cmd_parsed[0], "exit", 4))
 		cmd_exit();
+	else if (!ft_strncmp(global->cmd_parsed[0], "export", 6))
+		cmd_export(global);
 	else
 		return (0);
 	return (1);
