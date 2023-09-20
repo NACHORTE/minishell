@@ -6,7 +6,7 @@
 /*   By: oscar <oscar@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/20 21:29:18 by oscar             #+#    #+#             */
-/*   Updated: 2023/09/20 22:00:07 by oscar            ###   ########.fr       */
+/*   Updated: 2023/09/20 22:03:57 by oscar            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,6 +37,7 @@
 		[ ] perror with cmd name after excve
 		[ ] use nice names :)
 		[ ] algo de signals nose
+		[ ] norminette
 */
 void    child(int infile, int outfile, char **cmd, char **env)
 {
