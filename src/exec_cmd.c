@@ -6,35 +6,21 @@
 /*   By: oscar <oscar@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/20 13:56:41 by oscar             #+#    #+#             */
-/*   Updated: 2023/09/20 21:53:35 by oscar            ###   ########.fr       */
+/*   Updated: 2023/09/20 22:33:15 by oscar            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-//[ ] Change function names
-//[ ] Remove creating files functionality from parse_cmd
-//[ ] Create a tester for exec_cmd
 
-void child(int infile, int outfile, char **cmd, char **env)
-{
-    //makes the needed dup2, creates the files if there are multiple output redirections
-	// and opens the correct file.
-    redirect_streams(infile, outfile, cmd); 
-    //removes the redirections from the command returning a new char **array
-    cmd_parsed = parse_cmd(); 
-    //gets the full path of the command
-    cmd_path = get_cmd_path();
-    excve(cmd_path, cmd_parsed, env);
-	perror(cmd_parsed[0]);
-	exit(errno); //NOTE maybe just exit 1 is OK
-}
+
+
 /*  If the command given is a builtin, then no fork must be made and executes
     the function for builtins. If it is a normal command, creates a fork and
     calls the child process setting infile=stdin, outfile=stdout
     If the command contains redirections, they will be handled inside the child
 */
-void exec_one_cmd(char **cmd, char **path)
+void exec_one_cmd(char **cmd, char **env)
 {
     if (check_builtin)
         return;
@@ -42,7 +28,7 @@ void exec_one_cmd(char **cmd, char **path)
     if (pid == -1)
         algo de error;
     if (!pid)
-        child(0, 1, cmd ,path);
+        child(0, 1, cmd ,env);
 }
 
 void exec_multi_cmd(t_list *cmds, char **env)
@@ -91,13 +77,33 @@ void exec_multi_cmd(t_list *cmds, char **env)
 	while (wait(NULL) != -1)
 	    ;
 }
-/*  This function only executes if the command is not an assignation
-    first it removes all the assignations before the command
-    If the size of the command list is 1, then execute the special function for
-    the case, and if it is greater than one, execute the general function for
-    executing commands
+/*  exec_cmd:
+		Executes each command from the "cmds" list.
+		If there is only one command, it will make a fork to execute it unless
+		the command is a builtin.
+		Otherwise it will make a fork for each command no matter if it's a
+		builtin or not.
+	parameters:
+		cmds: linked list containing arrays of strings. Every element of the
+			list represents a command, and every string inside the cmd is an
+			argument.
+		env: linked list where each element is a struct containing the name and
+			the content of each variable in the environment.
+	Return:
+		Nothing :)
+	Todo:
+		[ ] Create a tester
+		[ ] OK function names
+		[ ] Convert env to an array (method from t_var)
+		[ ] If 1 cmd and is builtin, don't fork it
+		[ ] If 1 cmd and not builtin, fork the command
+		[ ] Execute builtins with multiple commands
+		[ ] Pipes link between forks
+		[ ] Leaks
+		[ ] close pipes, files
+		[ ] norminette
 */
-void    exec_cmd(t_list *cmds, t_list *env, t_list *local)
+void    exec_cmd(t_list *cmds, t_list *env)
 {
     char    **env_array;
     if (!cmds)
