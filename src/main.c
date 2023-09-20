@@ -563,7 +563,7 @@ int	main(int argc, char **argv, char **envp) //hola
 		input = readline("\033[36mminishell >> \033[0m");
 		//signal(SIGINT, &new_line_father);
 		//input = readline("\033[36mminishell >> \033[0m");
-		if (input == NULL)
+		if (iw)
 		{
 			printf("exit\n");
 			exit(1);
