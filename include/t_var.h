@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   t_var.h                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: orudek <orudek@student.42madrid.com>       +#+  +:+       +#+        */
+/*   By: oscar <oscar@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/11 13:20:58 by orudek            #+#    #+#             */
-/*   Updated: 2023/09/17 15:39:47 by orudek           ###   ########.fr       */
+/*   Updated: 2023/09/20 22:37:24 by oscar            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,6 +25,8 @@ typedef struct s_variable
 char	set_variable(t_list **lst, char *name, char *content);
 char	*get_variable(t_list *lst, char *name);
 void	unset_variable(t_list **lst, char *name);
+t_list	*array_to_var(char **array);
+char	**var_to_array(t_list *lst);
 void	free_var(void *var);
 
 #endif
