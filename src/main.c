@@ -541,15 +541,13 @@ int local_declare(t_command *global)
 	return (0);
 }
 
-int	main(int argc, char **argv, char **envp) //hola
+int	main(int argc, char **argv, char **envp)
 {
 	char	*input;
 	t_command	global;
 	int i;
 	int	j;
 	int fd_out;
-	//signal(SIGINT, &new_line);
-	//signal(SIGINT, SIG_IGN);
 	global.env = NULL;
 	global.local = NULL;
 	global.path = get_path(envp);
@@ -559,10 +557,7 @@ int	main(int argc, char **argv, char **envp) //hola
 	{
 		signal(SIGINT, &new_line);
 		signal(SIGQUIT, SIG_IGN);
-		//signal(SIGINT, SIG_DFL);
 		input = readline("\033[36mminishell >> \033[0m");
-		//signal(SIGINT, &new_line_father);
-		//input = readline("\033[36mminishell >> \033[0m");
 		if (input == NULL)
 		{
 			printf("exit\n");
