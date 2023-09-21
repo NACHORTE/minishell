@@ -160,7 +160,7 @@ int	here_doc(char *str)
 	return (1);*/
 }
 
-void	check_restdin(char **input)
+int	check_restdin(char **input)
 {
 	int	i;
 	int	j;
@@ -169,6 +169,7 @@ void	check_restdin(char **input)
 
 	i = 0;
 	flag = 0;
+	fd = 0;
 	/*while (input[i])
 	{
 		printf("%s\n", input[i]);
@@ -193,16 +194,17 @@ void	check_restdin(char **input)
 			if (fd < 0)
 			{
 				perror(&input[i][j]);
-				exit(1);
+				return (-1);
 			}
 		}
 		i++;
 	}
-	if (flag)
+	/*if (flag)
 	{
 		dup2(fd, 0);
 		close(fd);
-	}
+	}*/
+	return (fd);
 }
 
 int	check_restdout(char **input)
@@ -340,7 +342,13 @@ void	cmd_cd(t_command *global)   //COMPROBAR MALLOCS
 	else
 	{
 		if (chdir(global->cmd_parsed[1]) != 0)
+		{
 			perror(global->cmd_parsed[1]);
+			free(old);
+			free(curr);
+			free(old_pwd);
+			return ;
+		}
 		else
 			curr_pwd = getcwd(NULL, 0);
 	}
@@ -671,11 +679,13 @@ int	main(int argc, char **argv, char **envp)
 	int i;
 	int	j;
 	int fd_out;
+	int	fd_in;
 	global.env = NULL;
 	global.local = NULL;
 	global.path = get_path(envp);
 	save_env(&global, envp);
 	global.sout = dup(1);
+	global.sin = dup(0);
 	while (1)
 	{
 		signal(SIGINT, &new_line);
@@ -708,31 +718,35 @@ int	main(int argc, char **argv, char **envp)
 				signal(SIGQUIT, SIG_DFL);
 				global.cmd_parsed = parse_cmd((char **)global.cmds->content);
 				global.cmd_path = get_cmd_path(global.path, global.cmd_parsed[0]); //once we hace the command check access
+				fd_in = check_restdin((char **)global.cmds->content);
 				fd_out = check_restdout((char **)global.cmds->content);
 				if (!check_builtin(&global, envp))
 				{
-					if (fd_out > 0)
-					{
-						dup2(global.sout, 1);
-					}
 					global.child = fork();
 					if (global.child == 0)
 					{
+						if (fd_in > 0)
+						{
+							dup2(fd_in, 0);
+						}
 						signal(SIGINT, SIG_DFL);
-						check_restdin((char **)global.cmds->content);  //check if redirections are made (stdin)
-						check_restdout((char **)global.cmds->content); //check if redirections are made (stdout)
+						//check_restdin((char **)global.cmds->content);  //check if redirections are made (stdin)
+						//check_restdout((char **)global.cmds->content); //check if redirections are made (stdout)
 						execute(global, envp); //execute command
 					}
 					else
 					{
+						if (fd_in > 0)
+							close(fd_in);
 						signal(SIGQUIT, SIG_IGN);
 						signal(SIGINT, SIG_IGN);
 					}
 					waitpid(global.child, NULL, 0);
 				}
-				else if (fd_out > 0)
+				else
 				{
-					dup2(global.sout, 1);
+					if (fd_out > 0)
+						dup2(global.sout, 1);
 				}
 				if (global.cmd_path)
 					free(global.cmd_path);

@@ -6,7 +6,7 @@
 /*   By: iortega- <iortega-@student.42madrid.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/03 15:58:32 by iortega-          #+#    #+#             */
-/*   Updated: 2023/09/19 20:57:10 by iortega-         ###   ########.fr       */
+/*   Updated: 2023/09/21 14:07:12 by iortega-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,6 +40,7 @@ typedef struct s_command
 	t_list	*cmds;
 	t_list	*local;
 	int		sout;
+	int		sin;
 }t_command;
 
 char	**split_args(char const *str, char c);
