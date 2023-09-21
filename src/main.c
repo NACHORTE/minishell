@@ -33,6 +33,8 @@ char	*get_cmd_path(char **paths, char *cmd)
 	int		abs;
 
 	abs = 0;
+	if (!cmd)
+		return (NULL);
 	command = absolute_route(cmd, &abs);
 	if (!abs)
 		return (command);
@@ -141,7 +143,7 @@ int	here_doc(char *str)
 		{
 			dup2(old, 1);
 			input = readline("> ");
-			if (!ft_strncmp(input, str, ft_strlen(str)))
+			if (!ft_strcmp(input, str))
 			{
 				free(input);
 				exit (1);
@@ -329,12 +331,12 @@ void	cmd_cd(t_command *global)   //COMPROBAR MALLOCS
 	ft_strlcpy(old, "OLDPWD", 7);
 	ft_strlcpy(curr, "PWD", 4);
 	old_pwd = getcwd(NULL, 0);
-	if (!global->cmd_parsed[1] || !ft_strncmp(global->cmd_parsed[1], "~", 1))
+	if (!global->cmd_parsed[1] || !ft_strcmp(global->cmd_parsed[1], "~"))
 	{
 		chdir(getenv("HOME"));
 		curr_pwd = getcwd(NULL, 0);
 	}
-	else if (!ft_strncmp(global->cmd_parsed[1], "-", 1))    //COMPROBAR QUE HAY OLDPWD
+	else if (!ft_strcmp(global->cmd_parsed[1], "-"))    //COMPROBAR QUE HAY OLDPWD
 	{
 		chdir(get_variable(global->env, "OLDPWD"));
 		curr_pwd = getcwd(NULL, 0);
@@ -375,7 +377,7 @@ void cmd_echo(t_command *global)
 
 	i = 1;
 	flag = 0;
-	if (!ft_strncmp(global->cmd_parsed[1], "-n", 2))
+	if (!ft_strcmp(global->cmd_parsed[1], "-n"))
 	{
 		flag = 1;
 		i++;
@@ -438,19 +440,19 @@ void	cmd_export(t_command *global)
 
 int	check_builtin(t_command *global, char **envp)
 {
-	if (!ft_strncmp(global->cmd_parsed[0], "pwd", 3))
+	if (!ft_strcmp(global->cmd_parsed[0], "pwd"))
 		cmd_pwd();
-	else if (!ft_strncmp(global->cmd_parsed[0], "cd", 2))
+	else if (!ft_strcmp(global->cmd_parsed[0], "cd"))
 		cmd_cd(global);
-	else if (!ft_strncmp(global->cmd_parsed[0], "env", 3))
+	else if (!ft_strcmp(global->cmd_parsed[0], "env"))
 		cmd_env(global);
-	else if (!ft_strncmp(global->cmd_parsed[0], "echo", 4))
+	else if (!ft_strcmp(global->cmd_parsed[0], "echo"))
 		cmd_echo(global);
-	else if (!ft_strncmp(global->cmd_parsed[0], "unset", 5))
+	else if (!ft_strcmp(global->cmd_parsed[0], "unset"))
 		cmd_unset(global);
-	else if (!ft_strncmp(global->cmd_parsed[0], "exit", 4))
+	else if (!ft_strcmp(global->cmd_parsed[0], "exit"))
 		cmd_exit();
-	else if (!ft_strncmp(global->cmd_parsed[0], "export", 6))
+	else if (!ft_strcmp(global->cmd_parsed[0], "export"))
 		cmd_export(global);
 	else
 		return (0);
@@ -720,7 +722,7 @@ int	main(int argc, char **argv, char **envp)
 				global.cmd_path = get_cmd_path(global.path, global.cmd_parsed[0]); //once we hace the command check access
 				fd_in = check_restdin((char **)global.cmds->content);
 				fd_out = check_restdout((char **)global.cmds->content);
-				if (!check_builtin(&global, envp))
+				if (global.cmd_parsed[0] && !check_builtin(&global, envp))
 				{
 					global.child = fork();
 					if (global.child == 0)
@@ -738,6 +740,8 @@ int	main(int argc, char **argv, char **envp)
 					{
 						if (fd_in > 0)
 							close(fd_in);
+						if (fd_out > 0)
+							dup2(global.sout, 1);
 						signal(SIGQUIT, SIG_IGN);
 						signal(SIGINT, SIG_IGN);
 					}
@@ -750,7 +754,10 @@ int	main(int argc, char **argv, char **envp)
 				}
 				if (global.cmd_path)
 					free(global.cmd_path);
-				free_double(global.cmd_parsed);
+				if (!global.cmd_parsed[0])
+					free(global.cmd_parsed);
+				else
+					free_double(global.cmd_parsed);
 			}
 			if( global.cmds)
 				ft_lstfree(global.cmds, ft_array_free);

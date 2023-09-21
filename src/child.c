@@ -6,7 +6,7 @@
 /*   By: iortega- <iortega-@student.42madrid.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/20 21:29:18 by oscar             #+#    #+#             */
-/*   Updated: 2023/09/21 13:35:09 by iortega-         ###   ########.fr       */
+/*   Updated: 2023/09/21 18:55:56 by iortega-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,7 +28,7 @@
 	Todo:
 		In a separate function
 		[X] REDIR: Create all files from the redirections in cmd
-		[ ] REDIR: <<Here Doc
+		[X] REDIR: <<Here Doc
 		[X] REDIR: >>append mode
 		[X] REDIR: If no redirection in the cmd, redirect to infile/outfile
 		[X]	CHECK_BUILTINS
