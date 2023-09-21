@@ -124,6 +124,42 @@ int check_closed_quotes(char *input)
 	}
 }
 
+int	here_doc(char *str)
+{
+	int	redi[2];
+	char	*input;
+	pid_t	sin;
+	int	old;
+
+	pipe(redi);
+	old = dup(1);
+	sin = fork();
+	if (sin == 0)
+	{
+		close(redi[0]);
+		while (1)
+		{
+			dup2(old, 1);
+			input = readline("> ");
+			if (!ft_strncmp(input, str, ft_strlen(str)))
+			{
+				free(input);
+				exit (1);
+			}
+			dup2(redi[1], 1);
+			printf("%s\n", input);
+			free(input);
+		}
+	}
+	else
+		waitpid(sin, NULL, 0);
+	close(redi[1]);
+	return (redi[0]);
+	/*dup2(redi[0], 0);
+	close(redi[0]);
+	return (1);*/
+}
+
 void	check_restdin(char **input)
 {
 	int	i;
@@ -147,13 +183,18 @@ void	check_restdin(char **input)
 			if (fd != 0)
 				close (fd);
 			j++;
-			fd = open(&input[i][j], O_RDONLY);
+			flag = 1;
+			if (input[i][j] == '<')
+			{
+				fd = here_doc(&input[i][j + 1]);
+			}
+			else
+				fd = open(&input[i][j], O_RDONLY);
 			if (fd < 0)
 			{
 				perror(&input[i][j]);
 				exit(1);
 			}
-			flag = 1;
 		}
 		i++;
 	}
@@ -170,7 +211,6 @@ int	check_restdout(char **input)
 	int	j;
 	int	flag;
 	int	fd;
-	char	*redi;
 
 	i = 0;
 	flag = 0;
@@ -194,7 +234,6 @@ int	check_restdout(char **input)
 				close (fd);
 			j++;
 			flag = 1;
-			redi = &input[i][j];
 			if (input[i][j] == '>')
 			{
 				j++;
@@ -213,12 +252,6 @@ int	check_restdout(char **input)
 	}
 	if (flag)
 	{
-		/*fd = open(&input[i][j], O_WRONLY | O_TRUNC | O_CREAT, 0666);
-		if (fd < 0)
-		{
-			perror(&input[i][j]);
-			exit(1);
-		}*/
 		dup2(fd, 1);
 		close(fd);
 	}
@@ -232,21 +265,11 @@ char	**parse_cmd(char **input)
 	int	args;
 
 	i = 0;
-	/*while(input[i])
-	{
-		printf("%s\n", input[i]);
-		i++;
-	}
-	i = 0;*/
 	args = 0;
 	while(input[i])
 	{
 		if (input[i][0] != '<' && input[i][0] != '>')
 			args++;
-		/*else
-			i++;
-		if (!input[i])
-			break;*/
 		i++;
 	}
 	parsed = malloc(sizeof(char *) * (args + 1));
@@ -270,12 +293,6 @@ char	**parse_cmd(char **input)
 		i++;
 	}
 	parsed[args] = 0;
-	/*i = 0;
-	while(parsed[i])
-	{
-		printf("%s\n", parsed[i]);
-		i++;
-	}*/
 	return (parsed);
 }
 
@@ -469,6 +486,20 @@ int save_env(t_command *global, char **envp)
 	return (0);
 }
 
+int	just_redi(char *str)
+{
+	int	i;
+
+	i = 0;
+	while (str[i])
+	{
+		if (str[i] != '<' && str[i] != '>')
+			return (0);
+		i++;
+	}
+	return (1);
+}
+
 int	check_redi(char **cmd)
 {
 	int	i;
@@ -477,13 +508,15 @@ int	check_redi(char **cmd)
 	i = 0;
 	while (cmd[i])
 	{
-		printf("%c",cmd[i][0]);
-		if ((cmd[i][0] == '>' || cmd[i][0] == '<')  && cmd[i + 1])
+		if (just_redi(cmd[i]))
 		{
-			if (cmd[i + 1][0] == '>' || cmd[i + 1][0] == '<')
+			if ((cmd[i][0] == '>' || cmd[i][0] == '<')  && cmd[i + 1])
 			{
-				printf("syntax error near unexpected token '%c'\n", cmd[i + 1][0]);
-				return (0);
+				if (cmd[i + 1][0] == '>' || cmd[i + 1][0] == '<')
+				{
+					printf("syntax error near unexpected token '%c'\n", cmd[i + 1][0]);
+					return (0);
+				}
 			}
 		}
 		i++;
