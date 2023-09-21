@@ -108,7 +108,7 @@ int check_closed_quotes(char *input)
 	{
 		if (input[i] == '"')
 			quotes++;
-		if (input[i] == '\\' || input[i] == ';')
+		if ((quotes % 2 == 0) && (input[i] == '\\' || input[i] == ';'))
 		{
 			printf("Invalid character: \"%c\"\n", input[i]);
 			return (0);
@@ -186,18 +186,7 @@ int	check_restdout(char **input)
 		j = 0;
 		if (ft_strlen(input[i]) == 1 && input[i][j] == '>')
 		{
-			if (fd != 0)
-				close (fd);
-			i++;
-			flag = 1;
-			redi = &input[i][j];
-			fd = open(&input[i][j], O_WRONLY | O_TRUNC | O_CREAT, 0666);
-		if (fd < 0)
-		{
-			perror(&input[i][j]);
-			return (-1);
-		}
-			//break;
+			break;
 		}
 		else if (input[i][j] == '>')
 		{
@@ -209,7 +198,7 @@ int	check_restdout(char **input)
 			if (input[i][j] == '>')
 			{
 				j++;
-				fd = open(&input[i][j], O_WRONLY | O_APPEND, 0666);
+				fd = open(&input[i][j], O_WRONLY | O_APPEND | O_CREAT, 0666);
 			}
 			else
 				fd = open(&input[i][j], O_WRONLY | O_TRUNC | O_CREAT, 0666);
@@ -278,8 +267,6 @@ char	**parse_cmd(char **input)
 			}
 			args++;
 		}
-		else if (ft_strlen(input[i]) == 1)
-			i++;
 		i++;
 	}
 	parsed[args] = 0;
@@ -490,11 +477,29 @@ int	check_redi(char **cmd)
 	i = 0;
 	while (cmd[i])
 	{
-		if (cmd[i][0] == '>' && cmd[i + 1])
+		printf("%c",cmd[i][0]);
+		if ((cmd[i][0] == '>' || cmd[i][0] == '<')  && cmd[i + 1])
 		{
-			if (cmd[i + 1][0] == '>')
+			if (cmd[i + 1][0] == '>' || cmd[i + 1][0] == '<')
 			{
-				printf("syntax error near unexpected token '>'\n");
+				printf("syntax error near unexpected token '%c'\n", cmd[i + 1][0]);
+				return (0);
+			}
+		}
+		i++;
+	}
+	i = 0;
+	while (cmd[i])
+	{
+		j = 0;
+		while (cmd[i][j])
+		{
+			if (cmd[i][j] != '>' && cmd[i][j] != '<')
+				break;
+			j++;
+			if (!cmd[i][j])
+			{
+				printf("syntax error near unexpected token `newline'\n");
 				return (0);
 			}
 		}
@@ -606,14 +611,6 @@ int	save_variables(t_command *global)
 
 int local_declare(t_command *global)
 {
-	int	i;
-	char	*name;
-	char	*content;
-	int	size;
-	int j;
-
-	i = 0;
-	size = 0;
 	if (ft_lstsize(global->cmds) == 1 && is_allasignation((char **)global->cmds->content))
 	{
 		save_variables(global);
@@ -671,20 +668,6 @@ int	main(int argc, char **argv, char **envp)
 				printf("\tstr[%d]=%s$\n",i,((char **)aux->content)[i]);
 				aux = aux->next;
 			} */
-			/*if (!global.cmds || !((char **)global.cmds->content)[0])
-				{
-					if( global.cmds)
-						ft_lstfree(global.cmds, ft_array_free);
-				}
-			else if (local_declare(&global))
-			{
-				ft_lstfree(global.cmds, ft_array_free);
-			}
-			else if (!redirect_ok(global.cmds))
-			{
-				ft_lstfree(global.cmds, ft_array_free);
-			}
-			else if (((char **)global.cmds->content)[0])*/
 			if (is_command(&global))
 			{
 				i = 0;
@@ -708,7 +691,10 @@ int	main(int argc, char **argv, char **envp)
 						execute(global, envp); //execute command
 					}
 					else
+					{
+						signal(SIGQUIT, SIG_IGN);
 						signal(SIGINT, SIG_IGN);
+					}
 					waitpid(global.child, NULL, 0);
 				}
 				else if (fd_out > 0)
@@ -730,7 +716,5 @@ int	main(int argc, char **argv, char **envp)
 	}
 	rl_clear_history();
 	free_double(global.path);
-	/*free_double(parsed);
-	free(input);*/
 	return (0);
 }
