@@ -6,7 +6,7 @@
 /*   By: orudek <orudek@student.42madrid.com>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/11 13:20:58 by orudek            #+#    #+#             */
-/*   Updated: 2023/09/21 17:03:17 by orudek           ###   ########.fr       */
+/*   Updated: 2023/09/22 22:19:51 by orudek           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,7 +22,7 @@ typedef struct s_variable
 }	t_var;
 
 char	set_variable(t_list **lst, char *name, char *content);
-char	*get_variable(t_list *lst, char *name);
+int		get_variable(t_list *lst, char *name, char **content);
 void	unset_variable(t_list **lst, char *name);
 t_list	*array_to_varlist(char **array);
 char	**varlist_to_array(t_list *lst);
