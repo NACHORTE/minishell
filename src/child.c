@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   child.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: iortega- <iortega-@student.42madrid.com    +#+  +:+       +#+        */
+/*   By: orudek <orudek@student.42madrid.com>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/20 21:29:18 by oscar             #+#    #+#             */
-/*   Updated: 2023/09/21 18:55:56 by iortega-         ###   ########.fr       */
+/*   Updated: 2023/09/22 22:14:46 by orudek           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,11 +27,11 @@
 		NOTHING! it must exit the program at the end of this function
 	Todo:
 		In a separate function
-		[X] REDIR: Create all files from the redirections in cmd
-		[X] REDIR: <<Here Doc
-		[X] REDIR: >>append mode
-		[X] REDIR: If no redirection in the cmd, redirect to infile/outfile
-		[X]	CHECK_BUILTINS
+		[x] REDIR: Create all files from the redirections in cmd
+		[x] REDIR: <<Here Doc
+		[x] REDIR: >>append mode
+		[x] REDIR: If no redirection in the cmd, redirect to infile/outfile
+		[x]	CHECK_BUILTINS
 		[ ] ACCESS: "./" "../" "/"
 		[ ] ACCESS: [OPTIONAL] if no path, add ./ to cmd if it doesn't have it
 		[ ] ACCESS: if cmd[i]="\0", don't crash and print "'': cmd not found"
