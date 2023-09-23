@@ -6,7 +6,7 @@
 /*   By: iortega- <iortega-@student.42madrid.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/20 21:29:18 by oscar             #+#    #+#             */
-/*   Updated: 2023/09/23 20:28:04 by iortega-         ###   ########.fr       */
+/*   Updated: 2023/09/23 21:01:54 by iortega-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -53,6 +53,19 @@ static void	new_line(int sig)
 	//exit(1);
 }
 
+static char	*absolute_route(char *cmd, int *abs)
+{
+	if (cmd[0] == '/' || cmd[0] == '.')
+	{
+		if (access(cmd, X_OK) == 0)
+			return (ft_strdup(cmd));
+		else
+			return (NULL);
+	}
+	*abs = 1;
+	return (NULL);
+}
+
 static char	*get_cmd_path(char **paths, char *cmd)
 {
 	char	*tmp;
@@ -90,7 +103,6 @@ static void	cmd_pwd()
 		printf("ERROR: PWD\n");
 		return ;
 	}
-	printf("%s\n", dir);
 	free (dir);
 }
 
@@ -313,6 +325,7 @@ static int	check_restdin(char **input)
 		i++;
 	}
 	i = 0;*/
+	printf("%s\n", input[0]);
 	while (input[i])   //if we have < " " file we get flag 1 and check file, else if we have <file we check file without "<"
 	{
 		j = 0;
@@ -426,7 +439,7 @@ static char	**parse_cmd(char **input)
 			if (!parsed[args])
 			{
 				printf("problema dup\n");
-				free_double(parsed);
+				ft_array_free(parsed);
 				return (NULL);
 			}
 			args++;
@@ -439,26 +452,34 @@ static char	**parse_cmd(char **input)
 
 static void	redirect_streams(int infile, int outfile, char **cmd)
 {
-	if (check_restdin(cmd) <= 0)
+	int	fd_in;
+
+	fd_in = check_restdin(cmd);
+	if (fd_in <= 0)
 		dup2(infile, 0);
+	else
+	{
+		dup2(fd_in, 0);
+		close(fd_in);
+	}
 	if (check_restdout(cmd) <= 0)
 		dup2(outfile, 1);
 }
 
-void    child(int infile, int outfile, t_command *global)
+void    child(int infile, int outfile, char **cmd, t_command *global)
 {
 	char	**cmd_parsed;
 	char	*cmd_path;
 	//makes the needed dup2, creates the files if there are multiple output redirections
 	// and opens the correct file.
-    redirect_streams(infile, outfile, global->cmd);
+    redirect_streams(infile, outfile, cmd);
     //removes the redirections from the command returning a new char **array
-    cmd_parsed = parse_cmd(global->cmd);
+    cmd_parsed = parse_cmd(cmd);
     //gets the full path of the command
-    cmd_path = get_cmd_path(global->path, global->cmd_parsed[0]);
-	if (check_builtin(global))
-		exit (1);
-    excve(cmd_path, cmd_parsed, varlist_to_array(global->env));
+    cmd_path = get_cmd_path(global->path, cmd_parsed[0]);
+	/*if (check_builtin(global))
+		exit (1);*/
+    execve(cmd_path, cmd_parsed, varlist_to_array(global->env));
 	perror(cmd_parsed[0]);
 	exit(errno); //NOTE maybe just exit 1 is OK
 }

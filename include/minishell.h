@@ -6,7 +6,7 @@
 /*   By: iortega- <iortega-@student.42madrid.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/03 15:58:32 by iortega-          #+#    #+#             */
-/*   Updated: 2023/09/21 14:07:12 by iortega-         ###   ########.fr       */
+/*   Updated: 2023/09/23 20:53:26 by iortega-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,5 +45,7 @@ typedef struct s_command
 
 char	**split_args(char const *str, char c);
 t_list	*parse(char	*input, t_list *local, t_list *env);
+int    exec_cmd(t_list *cmds, t_list *env, t_command *global);
+void    child(int infile, int outfile, char ** cmd, t_command *global);
 
 #endif

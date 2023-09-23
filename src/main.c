@@ -729,7 +729,7 @@ int	main(int argc, char **argv, char **envp)
 				i = 0;
 				j = 0;
 				signal(SIGQUIT, SIG_DFL);
-				global.cmd_parsed = parse_cmd((char **)global.cmds->content);
+				/*global.cmd_parsed = parse_cmd((char **)global.cmds->content);
 				global.cmd_path = get_cmd_path(global.path, global.cmd_parsed[0]); //once we hace the command check access
 				fd_in = check_restdin((char **)global.cmds->content);
 				fd_out = check_restdout((char **)global.cmds->content);
@@ -767,13 +767,14 @@ int	main(int argc, char **argv, char **envp)
 				{
 					if (fd_out > 0)
 						dup2(global.sout, 1);
-				}
-				if (global.cmd_path)
+				}*/
+				exec_cmd(global.cmds, global.env, &global);
+				/*if (global.cmd_path)
 					free(global.cmd_path);
 				if (!global.cmd_parsed[0])
 					free(global.cmd_parsed);
 				else
-					ft_array_free(global.cmd_parsed);
+					ft_array_free(global.cmd_parsed);*/
 			}
 			if( global.cmds)
 				ft_lstfree(global.cmds, ft_array_free);
