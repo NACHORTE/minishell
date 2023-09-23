@@ -1,18 +1,5 @@
 #include "minishell.h"
 
-void	free_double(char **arr)
-{
-	int	i;
-
-	i = 0;
-	while (arr[i])
-	{
-		free(arr[i]);
-		i++;
-	}
-	free(arr);
-}
-
 static char	*absolute_route(char *cmd, int *abs)
 {
 	if (cmd[0] == '/' || cmd[0] == '.')
@@ -126,27 +113,38 @@ int check_closed_quotes(char *input)
 	}
 }
 
+void	sig_here(int sig)
+{
+	write(1, "\n", 1);
+	exit (1);
+}
+
 int	here_doc(char *str)
 {
 	int	redi[2];
 	char	*input;
 	pid_t	sin;
 	int	old;
+	int	stat;
 
 	pipe(redi);
 	old = dup(1);
+	signal(SIGINT, SIG_IGN);
 	sin = fork();
 	if (sin == 0)
 	{
+		signal(SIGINT, &sig_here);
 		close(redi[0]);
 		while (1)
 		{
 			dup2(old, 1);
 			input = readline("> ");
+			if (!input)
+				exit (1);
 			if (!ft_strcmp(input, str))
 			{
 				free(input);
-				exit (1);
+				exit (0);
 			}
 			dup2(redi[1], 1);
 			printf("%s\n", input);
@@ -154,8 +152,12 @@ int	here_doc(char *str)
 		}
 	}
 	else
-		waitpid(sin, NULL, 0);
+		waitpid(sin, &stat, 0);
+	signal(SIGINT, &new_line);
+	stat = WEXITSTATUS(stat);
 	close(redi[1]);
+	if (stat == 1)
+		return (-1);
 	return (redi[0]);
 	/*dup2(redi[0], 0);
 	close(redi[0]);
@@ -192,11 +194,13 @@ int	check_restdin(char **input)
 				fd = here_doc(&input[i][j + 1]);
 			}
 			else
-				fd = open(&input[i][j], O_RDONLY);
-			if (fd < 0)
 			{
-				perror(&input[i][j]);
-				return (-1);
+				fd = open(&input[i][j], O_RDONLY);
+				if (fd < 0)
+				{
+					perror(&input[i][j]);
+					return (-1);
+				}
 			}
 		}
 		i++;
@@ -289,7 +293,7 @@ char	**parse_cmd(char **input)
 			if (!parsed[args])
 			{
 				printf("problema dup\n");
-				free_double(parsed);
+				ft_array_free(parsed);
 				return (NULL);
 			}
 			args++;
@@ -722,7 +726,12 @@ int	main(int argc, char **argv, char **envp)
 				global.cmd_path = get_cmd_path(global.path, global.cmd_parsed[0]); //once we hace the command check access
 				fd_in = check_restdin((char **)global.cmds->content);
 				fd_out = check_restdout((char **)global.cmds->content);
-				if (global.cmd_parsed[0] && !check_builtin(&global, envp))
+				if (fd_in < 0)
+				{
+					if (fd_out > 0)
+						dup2(global.sout, 1);
+				}
+				else if (global.cmd_parsed[0] && !check_builtin(&global, envp))
 				{
 					global.child = fork();
 					if (global.child == 0)
@@ -757,7 +766,7 @@ int	main(int argc, char **argv, char **envp)
 				if (!global.cmd_parsed[0])
 					free(global.cmd_parsed);
 				else
-					free_double(global.cmd_parsed);
+					ft_array_free(global.cmd_parsed);
 			}
 			if( global.cmds)
 				ft_lstfree(global.cmds, ft_array_free);
@@ -769,6 +778,6 @@ int	main(int argc, char **argv, char **envp)
 		free(input);
 	}
 	rl_clear_history();
-	free_double(global.path);
+	ft_array_free(global.path);
 	return (0);
 }
