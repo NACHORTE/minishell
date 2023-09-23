@@ -324,10 +324,16 @@ void	cmd_cd(t_command *global)   //COMPROBAR MALLOCS
 	char	*curr;
 	char	*old_pwd;
 	char	*curr_pwd;
+	char	*dst;
 
 	if (global->cmd_parsed[1] != 0 && global->cmd_parsed[2] != 0)
 	{
 		printf("cd: too many arguments\n");
+		return ;
+	}
+	if (!get_variable(global->env, "OLDPWD", &dst))
+	{
+		printf("cd: OLDPWD not set\n");
 		return ;
 	}
 	old = malloc(sizeof(char) * 7);
@@ -342,7 +348,7 @@ void	cmd_cd(t_command *global)   //COMPROBAR MALLOCS
 	}
 	else if (!ft_strcmp(global->cmd_parsed[1], "-"))    //COMPROBAR QUE HAY OLDPWD
 	{
-		chdir(get_variable(global->env, "OLDPWD"));
+		chdir(dst);
 		curr_pwd = getcwd(NULL, 0);
 	}
 	else
@@ -428,7 +434,8 @@ void	cmd_export(t_command *global)
 	while (((char **)global->cmds->content)[i])
 	{
 		name = ft_strdup(((char **)global->cmds->content)[i]);
-		content = ft_strdup(get_variable(global->local, name));
+		get_variable(global->local, name, &content);
+		content = ft_strdup(content);
 		if (!content)
 		{
 			free(name);

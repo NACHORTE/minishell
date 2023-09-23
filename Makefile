@@ -6,7 +6,7 @@
 #    By: iortega- <iortega-@student.42madrid.com    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/09/03 15:02:39 by iortega-          #+#    #+#              #
-#    Updated: 2023/09/17 16:42:11 by iortega-         ###   ########.fr        #
+#    Updated: 2023/09/23 20:29:43 by iortega-         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -34,6 +34,9 @@ SRC_FILES := main.c\
 	split_pipe.c\
 	free_var.c\
 	get_variable.c\
+	varlist_to_array.c\
+	array_to_varlist.c\
+	child.c\
 	unset_variable.c
 
 SRC := $(addprefix $(SRC_DIR)/,$(SRC_FILES))

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   child.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: orudek <orudek@student.42madrid.com>       +#+  +:+       +#+        */
+/*   By: iortega- <iortega-@student.42madrid.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/20 21:29:18 by oscar             #+#    #+#             */
-/*   Updated: 2023/09/22 22:14:46 by orudek           ###   ########.fr       */
+/*   Updated: 2023/09/23 20:28:04 by iortega-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,7 +41,46 @@
 		[ ] norminette
 */
 
-void	cmd_pwd()
+#include "minishell.h"
+
+static void	new_line(int sig)
+{
+	//printf("\n\033[36mminishell >> \033[0m");
+	write(1, "\n", 1);
+    rl_on_new_line();
+    rl_replace_line("", 0);
+    rl_redisplay();
+	//exit(1);
+}
+
+static char	*get_cmd_path(char **paths, char *cmd)
+{
+	char	*tmp;
+	char	*command;
+	int		abs;
+
+	abs = 0;
+	if (!cmd)
+		return (NULL);
+	command = absolute_route(cmd, &abs);
+	if (!abs)
+		return (command);
+	while (*paths)
+	{
+		tmp = ft_strjoin(*paths, "/");
+		command = ft_strjoin(tmp, cmd);
+		free(tmp);
+		if (access(command, X_OK) == 0)
+			return (command);
+		free(command);
+		paths++;
+	}
+	if (access(cmd, X_OK) == 0)
+		return (ft_strdup(cmd));
+	return (NULL);
+}
+
+static void	cmd_pwd()
 {
 	char	*dir;
 
@@ -55,16 +94,22 @@ void	cmd_pwd()
 	free (dir);
 }
 
-void	cmd_cd(t_command *global)   //COMPROBAR MALLOCS
+static void	cmd_cd(t_command *global)   //COMPROBAR MALLOCS
 {
 	char	*old;
 	char	*curr;
 	char	*old_pwd;
 	char	*curr_pwd;
+	char	*dst;
 
 	if (global->cmd_parsed[1] != 0 && global->cmd_parsed[2] != 0)
 	{
 		printf("cd: too many arguments\n");
+		return ;
+	}
+	if (!get_variable(global->env, "OLDPWD", &dst))
+	{
+		printf("cd: OLDPWD not set\n");
 		return ;
 	}
 	old = malloc(sizeof(char) * 7);
@@ -72,20 +117,26 @@ void	cmd_cd(t_command *global)   //COMPROBAR MALLOCS
 	ft_strlcpy(old, "OLDPWD", 7);
 	ft_strlcpy(curr, "PWD", 4);
 	old_pwd = getcwd(NULL, 0);
-	if (!global->cmd_parsed[1] || !ft_strncmp(global->cmd_parsed[1], "~", 1))
+	if (!global->cmd_parsed[1] || !ft_strcmp(global->cmd_parsed[1], "~"))
 	{
 		chdir(getenv("HOME"));
 		curr_pwd = getcwd(NULL, 0);
 	}
-	else if (!ft_strncmp(global->cmd_parsed[1], "-", 1))    //COMPROBAR QUE HAY OLDPWD
+	else if (!ft_strcmp(global->cmd_parsed[1], "-"))    //COMPROBAR QUE HAY OLDPWD
 	{
-		chdir(get_variable(global->env, "OLDPWD"));
+		chdir(dst);
 		curr_pwd = getcwd(NULL, 0);
 	}
 	else
 	{
 		if (chdir(global->cmd_parsed[1]) != 0)
+		{
 			perror(global->cmd_parsed[1]);
+			free(old);
+			free(curr);
+			free(old_pwd);
+			return ;
+		}
 		else
 			curr_pwd = getcwd(NULL, 0);
 	}
@@ -93,7 +144,7 @@ void	cmd_cd(t_command *global)   //COMPROBAR MALLOCS
 	set_variable(&(global->env), curr, curr_pwd);
 }
 
-void	cmd_env(t_command *global)
+static void	cmd_env(t_command *global)
 {
 	t_list	*aux;
 
@@ -105,7 +156,7 @@ void	cmd_env(t_command *global)
 	}
 }
 
-void cmd_echo(t_command *global)
+static void cmd_echo(t_command *global)
 {
 	int	i;
 	int	flag;
@@ -131,7 +182,7 @@ void cmd_echo(t_command *global)
 	}
 }
 
-void	cmd_unset(t_command *global)
+static void	cmd_unset(t_command *global)
 {
 	int	i;
 
@@ -143,13 +194,13 @@ void	cmd_unset(t_command *global)
 	}
 }
 
-void	cmd_exit()
+static void	cmd_exit()
 {
 	printf("exit\n");
 	exit(1);
 }
 
-void	cmd_export(t_command *global)
+static void	cmd_export(t_command *global)
 {
 	char	*name;
 	char	*content;
@@ -159,7 +210,8 @@ void	cmd_export(t_command *global)
 	while (((char **)global->cmds->content)[i])
 	{
 		name = ft_strdup(((char **)global->cmds->content)[i]);
-		content = ft_strdup(get_variable(global->local, name));
+		get_variable(global->local, name, &content);
+		content = ft_strdup(content);
 		if (!content)
 		{
 			free(name);
@@ -173,7 +225,7 @@ void	cmd_export(t_command *global)
 	}
 }
 
-int	check_builtin(t_command *global, char **envp)
+static int	check_builtin(t_command *global)
 {
 	if (!ft_strncmp(global->cmd_parsed[0], "pwd", 3))
 		cmd_pwd();
@@ -194,43 +246,58 @@ int	check_builtin(t_command *global, char **envp)
 	return (1);
 }
 
-int	check_restdin(char **input)
+static void	sig_here(int sig)
 {
-	int	i;
-	int	j;
-	int	flag;
-	int	fd;
-
-	i = 0;
-	flag = 0;
-	while (input[i])   //if we have < " " file we get flag 1 and check file, else if we have <file we check file without "<"
-	{
-		j = 0;
-		if (input[i][j] == '<')
-		{
-			if (fd != 0)
-				close (fd);
-			j++;
-			fd = open(&input[i][j], O_RDONLY);
-			if (fd < 0)
-			{
-				perror(&input[i][j]);
-				exit(1);
-			}
-			flag = 1;
-		}
-		i++;
-	}
-	if (flag)
-	{
-		dup2(fd, 0);
-		close(fd);
-		return (1);
-	}
-	return (0);
+	write(1, "\n", 1);
+	exit (1);
 }
 
-int	check_restdout(char **input)
+static int	here_doc(char *str)
+{
+	int	redi[2];
+	char	*input;
+	pid_t	sin;
+	int	old;
+	int	stat;
+
+	pipe(redi);
+	old = dup(1);
+	signal(SIGINT, SIG_IGN);
+	sin = fork();
+	if (sin == 0)
+	{
+		signal(SIGINT, &sig_here);
+		close(redi[0]);
+		while (1)
+		{
+			dup2(old, 1);
+			input = readline("> ");
+			if (!input)
+				exit (1);
+			if (!ft_strcmp(input, str))
+			{
+				free(input);
+				exit (0);
+			}
+			dup2(redi[1], 1);
+			printf("%s\n", input);
+			free(input);
+		}
+	}
+	else
+		waitpid(sin, &stat, 0);
+	signal(SIGINT, &new_line);
+	stat = WEXITSTATUS(stat);
+	close(redi[1]);
+	if (stat == 1)
+		return (-1);
+	return (redi[0]);
+	/*dup2(redi[0], 0);
+	close(redi[0]);
+	return (1);*/
+}
+
+static int	check_restdin(char **input)
 {
 	int	i;
 	int	j;
@@ -240,10 +307,69 @@ int	check_restdout(char **input)
 	i = 0;
 	flag = 0;
 	fd = 0;
+	/*while (input[i])
+	{
+		printf("%s\n", input[i]);
+		i++;
+	}
+	i = 0;*/
+	while (input[i])   //if we have < " " file we get flag 1 and check file, else if we have <file we check file without "<"
+	{
+		j = 0;
+		if (input[i][j] == '<')
+		{
+			if (fd != 0)
+				close (fd);
+			j++;
+			flag = 1;
+			if (input[i][j] == '<')
+			{
+				fd = here_doc(&input[i][j + 1]);
+			}
+			else
+			{
+				fd = open(&input[i][j], O_RDONLY);
+				if (fd < 0)
+				{
+					perror(&input[i][j]);
+					return (-1);
+				}
+			}
+		}
+		i++;
+	}
+	/*if (flag)
+	{
+		dup2(fd, 0);
+		close(fd);
+	}*/
+	return (fd);
+}
+
+static int	check_restdout(char **input)
+{
+	int	i;
+	int	j;
+	int	flag;
+	int	fd;
+
+	i = 0;
+	flag = 0;
+	fd = 0;
+	/*while (input[i])
+	{
+		printf("%s\n", input[i]);
+		i++;
+	}
+	i=0;*/
 	while (input[i])   //if we have > " " file we get flag 1 and check file, else if we have >file we check file without ">"
 	{
 		j = 0;
-		if (input[i][j] == '>')
+		if (ft_strlen(input[i]) == 1 && input[i][j] == '>')
+		{
+			break;
+		}
+		else if (input[i][j] == '>')
 		{
 			if (fd != 0)
 				close (fd);
@@ -273,7 +399,7 @@ int	check_restdout(char **input)
 	return (fd);
 }
 
-char	**parse_cmd(char **input)
+static char	**parse_cmd(char **input)
 {
 	int	i;
 	char	**parsed;
@@ -311,7 +437,7 @@ char	**parse_cmd(char **input)
 	return (parsed);
 }
 
-void	redirect_streams(int infile, int outfile, char **cmd)
+static void	redirect_streams(int infile, int outfile, char **cmd)
 {
 	if (check_restdin(cmd) <= 0)
 		dup2(infile, 0);
@@ -319,18 +445,20 @@ void	redirect_streams(int infile, int outfile, char **cmd)
 		dup2(outfile, 1);
 }
 
-void    child(int infile, int outfile, char **cmd, char **env)
+void    child(int infile, int outfile, t_command *global)
 {
+	char	**cmd_parsed;
+	char	*cmd_path;
 	//makes the needed dup2, creates the files if there are multiple output redirections
 	// and opens the correct file.
-    redirect_streams(infile, outfile, cmd);
+    redirect_streams(infile, outfile, global->cmd);
     //removes the redirections from the command returning a new char **array
-    cmd_parsed = parse_cmd(cmd);
+    cmd_parsed = parse_cmd(global->cmd);
     //gets the full path of the command
-    cmd_path = get_cmd_path();
-	if (check_builtin())
+    cmd_path = get_cmd_path(global->path, global->cmd_parsed[0]);
+	if (check_builtin(global))
 		exit (1);
-    excve(cmd_path, cmd_parsed, env);
+    excve(cmd_path, cmd_parsed, varlist_to_array(global->env));
 	perror(cmd_parsed[0]);
 	exit(errno); //NOTE maybe just exit 1 is OK
 }
