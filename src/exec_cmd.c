@@ -6,37 +6,23 @@
 /*   By: orudek <orudek@student.42madrid.com>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/20 13:56:41 by oscar             #+#    #+#             */
-/*   Updated: 2023/09/22 21:35:07 by orudek           ###   ########.fr       */
+/*   Updated: 2023/09/23 20:11:55 by orudek           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
-
-#include <sys/types.h>	//XXX
-#include <sys/wait.h>	//XXX
-#include <semaphore.h>
-#include <fcntl.h>
-
-void	child(int infile, int outfile, char **cmd, char **env, sem_t *sem)
-{
-	sem_wait(sem);
-	printf("CHILD:\n\tinfile=%d\n\toutfile=%d\n", infile, outfile);
-	sem_post(sem);
-	sem_close(sem);
-	exit (0);
-}
 
 /*  If the command given is a builtin, then no fork must be made and executes
     the function for builtins. If it is a normal command, creates a fork and
     calls the child process setting infile=stdin, outfile=stdout
     If the command contains redirections, they will be handled inside the child
 */
-int	exec_one_cmd(char **cmd, char **env, sem_t *sem)
+int	exec_one_cmd(char **cmd, char **env)
 {
 	int	status;
 
-    //if (check_builtin(cmd, env))
-    //    return;
+    if (check_builtin(cmd, env))
+        return;
     int pid = fork();
     if (pid == -1)
 	{
@@ -44,12 +30,12 @@ int	exec_one_cmd(char **cmd, char **env, sem_t *sem)
 		return 1;
 	}
 	if (pid == 0)
-        child(0, 1, cmd, env, sem);
+        child(0, 1, cmd, env);
 	wait(&status);
 	return (status);
 }
 
-int exec_multi_cmd(t_list *cmds, char **env, sem_t *sem)
+int exec_multi_cmd(t_list *cmds, char **env)
 {
 	int i;
 	int last_pipe[2];
@@ -58,7 +44,6 @@ int exec_multi_cmd(t_list *cmds, char **env, sem_t *sem)
     int cmds_len;
 	int	status;
 
-	sem_wait(sem);
     cmds_len = ft_lstsize(cmds);
 	if (pipe(last_pipe) == -1)
 	{
@@ -75,7 +60,7 @@ int exec_multi_cmd(t_list *cmds, char **env, sem_t *sem)
 	if (pid == 0)
 	{
 		close(last_pipe[0]);
-		child(0, last_pipe[1], (char **)cmds->content, env, sem);
+		child(0, last_pipe[1], (char **)cmds->content, env);
 	}
     cmds = cmds->next;
 	i = 0;
@@ -97,7 +82,7 @@ int exec_multi_cmd(t_list *cmds, char **env, sem_t *sem)
 		else if (pid == 0)
 		{
 			close(new_pipe[0]);
-			child(last_pipe[0], new_pipe[1], (char **)cmds->content, env, sem);
+			child(last_pipe[0], new_pipe[1], (char **)cmds->content, env);
 		}
 		else
 		{
@@ -111,11 +96,9 @@ int exec_multi_cmd(t_list *cmds, char **env, sem_t *sem)
 	pid = fork();
 	if (pid == 0)
 	{
-		child(last_pipe[0], 1, (char **)cmds->content, env, sem);
+		child(last_pipe[0], 1, (char **)cmds->content, env);
 	}
 	close (last_pipe[0]);
-		sem_post(sem);
-	sem_close(sem);
 	while (wait(&status) != -1)
 	    ;
 	return (status);
@@ -134,21 +117,22 @@ int exec_multi_cmd(t_list *cmds, char **env, sem_t *sem)
 		env: linked list where each element is a struct containing the name and
 			the content of each variable in the environment.
 	Return:
-		Nothing :)
+		Exit status of the last function executed
 	Todo:
 		[ ] Create a tester
 		[ ] OK function names
-		[ ] Convert env to an array (method from t_var)
-		[ ] If 1 cmd and is builtin, don't fork it
-		[ ] If 1 cmd and not builtin, fork the command
-		[ ] Execute builtins with multiple commands
-		[ ] return exit status on some variable
-		[ ] Pipes link between forks
-		[ ] Leaks
-		[ ] close pipes, files
+		[x] Convert env to an array (method from t_var)
+		[x] If 1 cmd and is builtin, don't fork it
+		[x] If 1 cmd and not builtin, fork the command
+		[ ] Execute builtins with multiple commands (child)
+		[x] return exit status
+		[x] Pipes link between forks
+		[x] Leaks (no malloc in this func)
+		[x] close pipes
+		[ ] close files (child)
 		[ ] norminette
 */
-int    exec_cmd(t_list *cmds, t_list *env, sem_t *sem)
+int    exec_cmd(t_list *cmds, t_list *env)
 {
     char    **env_array;
 
@@ -159,22 +143,16 @@ int    exec_cmd(t_list *cmds, t_list *env, sem_t *sem)
 	}
     env_array = varlist_to_array(env);
     if (ft_lstsize(cmds) == 1)
-        return (exec_one_cmd((char **)cmds->content, env_array,sem));
+        return (exec_one_cmd((char **)cmds->content, env_array));
     else
-        return (exec_multi_cmd(cmds, env_array,sem));
+        return (exec_multi_cmd(cmds, env_array));
 }
 
-int main(int c, char **v, char **e)
+/*int main(int c, char **v, char **e)
 {
 	if (c == 1)
 		return (printf("1 arg\n"), 1);
-	sem_t *sem = sem_open("my_semaphore", O_CREAT, 0666, 1);
-    if (sem == SEM_FAILED) {
-        perror("sem_open");
-        return 1;
-    }
-	(void)c;
 	t_list *env = array_to_varlist(e);
 	t_list *cmd = parse(v[1], NULL, env);
-	return (exec_cmd(cmd, env,sem));
-}
+	return (exec_cmd(cmd, env));
+}*/
