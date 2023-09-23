@@ -6,12 +6,13 @@
 /*   By: orudek <orudek@student.42madrid.com>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/10 15:22:39 by orudek            #+#    #+#             */
-/*   Updated: 2023/09/21 21:14:09 by orudek           ###   ########.fr       */
+/*   Updated: 2023/09/23 20:24:47 by orudek           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "t_var.h"
 
+//	[ ] Write description of function
 /*	[x] Differentiate between name exists and content is null \
 		and name doesn't exist
 		get_variable(nacho) "doesnt exist here"
@@ -29,12 +30,15 @@ int	get_variable(t_list *lst, char *name, char **content)
 {
 	t_var *aux;
 
+	if (!name)
+		return (0);
 	while(lst)
 	{
 		aux = (t_var *)(lst->content);
 		if (!ft_strcmp(aux->name, name))
 		{
-			*content = aux->content;
+			if (content) //if content is NULL then don't return the content (only to check if var exists)
+				*content = aux->content;
 			return (1);
 		}
 		lst = lst->next;
