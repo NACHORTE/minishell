@@ -6,7 +6,7 @@
 /*   By: orudek <orudek@student.42madrid.com>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/20 22:46:57 by oscar             #+#    #+#             */
-/*   Updated: 2023/09/21 20:35:46 by orudek           ###   ########.fr       */
+/*   Updated: 2023/09/21 20:59:23 by orudek           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -53,7 +53,7 @@ char	**varlist_to_array(t_list *lst)
 	out[i] = 0;
 	return (out);
 }
-/* Text colors
+/*
 #define BLACK "\x1b[30m"     	// Black text
 #define RED "\x1b[31m"       	// Red text
 #define GREEN "\x1b[32m"     	// Green text
