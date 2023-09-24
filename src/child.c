@@ -6,7 +6,7 @@
 /*   By: orudek <orudek@student.42madrid.com>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/20 21:29:18 by oscar             #+#    #+#             */
-/*   Updated: 2023/09/24 16:20:45 by orudek           ###   ########.fr       */
+/*   Updated: 2023/09/24 17:07:33 by orudek           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -313,16 +313,15 @@ void    child(int infile, int outfile, char **cmd, t_command *global)
 {
 	char	**cmd_parsed;
 	char	*cmd_path;
-	int	status;
 	//makes the needed dup2, creates the files if there are multiple output redirections
 	// and opens the correct file.
     redirect_streams(infile, outfile, cmd);
     //removes the redirections from the command returning a new char **array
     cmd_parsed = parse_cmd(cmd);
     //gets the full path of the command
+	if (is_builtin(cmd_parsed[0]))
+		exit(exec_builtin(cmd_parsed, &global->local, &global->env));
     cmd_path = get_cmd_path(global->path, cmd_parsed[0]);
-	if (exec_builtin(cmd, &global->local, &global->env, &status))
-		exit (status);
 	if (!cmd_path)
 	{
 		no_command(cmd_parsed);

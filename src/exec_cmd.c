@@ -6,7 +6,7 @@
 /*   By: orudek <orudek@student.42madrid.com>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/20 13:56:41 by oscar             #+#    #+#             */
-/*   Updated: 2023/09/24 16:27:42 by orudek           ###   ########.fr       */
+/*   Updated: 2023/09/24 17:08:16 by orudek           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,11 +20,16 @@ int	exec_one_builtin(char **cmd, t_list **local, t_list **env, int *status)
 	int	out;
 	char **cmd_parsed;
 
+	cmd_parsed = parse_cmd(cmd); //XXX cambiale el nombre machito
+	if (!is_builtin(cmd_parsed[0]))
+	{
+		ft_array_free(cmd_parsed);
+		return (0);
+	}
 	std_in = dup(0);
 	std_out = dup(1);
     redirect_streams(0, 1, cmd);
-    cmd_parsed = parse_cmd(cmd); //XXX cambiale el nombre machito
-	out = exec_builtin(cmd_parsed, local, env, status);
+	out = exec_builtin(cmd_parsed, local, env);
 	ft_array_free(cmd_parsed);
 	dup2(std_in, 0);
 	dup2(std_out, 1);

@@ -6,7 +6,7 @@
 /*   By: orudek <orudek@student.42madrid.com>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/03 15:58:32 by iortega-          #+#    #+#             */
-/*   Updated: 2023/09/24 16:17:46 by orudek           ###   ########.fr       */
+/*   Updated: 2023/09/24 17:07:56 by orudek           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,7 +47,8 @@ char	**split_args(char const *str, char c);
 t_list	*parse(char	*input, t_list *local, t_list *env);
 int    exec_cmd(t_list *cmds, t_list *env, t_command *global);
 void    child(int infile, int outfile, char ** cmd, t_command *global);
-int	exec_builtin(char **cmd, t_list **local, t_list **env, int *exit_status);
+int	is_builtin(char *cmd);
+int	exec_builtin(char **cmd, t_list **local, t_list **env);
 void	redirect_streams(int infile, int outfile, char **cmd);
 char	**parse_cmd(char **input);
 #endif

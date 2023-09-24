@@ -6,7 +6,7 @@
 /*   By: orudek <orudek@student.42madrid.com>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/23 12:22:38 by orudek            #+#    #+#             */
-/*   Updated: 2023/09/24 12:13:50 by orudek           ###   ########.fr       */
+/*   Updated: 2023/09/24 17:09:00 by orudek           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -289,23 +289,38 @@ int	cmd_export(char **cmd, t_list **local, t_list **env)
 	return (exit_status);
 }
 
-int	exec_builtin(char **cmd, t_list **local, t_list **env, int *exit_status)
+int	is_builtin(char *cmd)
 {
+	if (!cmd || !*cmd)
+		return (0);
+	if (!ft_strcmp(cmd, "pwd")
+		|| !ft_strcmp(cmd, "cd")
+		|| !ft_strcmp(cmd, "env")
+		|| !ft_strcmp(cmd, "echo")
+		|| !ft_strcmp(cmd, "unset")
+		|| !ft_strcmp(cmd, "exit")
+		|| !ft_strcmp(cmd, "export"))
+		return (1);
+	return (0);
+}
+
+int	exec_builtin(char **cmd, t_list **local, t_list **env)
+{
+	if (!cmd || !*cmd)
+		return (1);
 	if (!ft_strcmp(cmd[0], "pwd"))
-		*exit_status = cmd_pwd();
+		return (cmd_pwd());
 	else if (!ft_strcmp(cmd[0], "cd"))
-		*exit_status = cmd_cd(cmd, env);
+		return (cmd_cd(cmd, env));
 	else if (!ft_strcmp(cmd[0], "env"))
-		*exit_status = cmd_env(*env);
+		return (cmd_env(*env));
 	else if (!ft_strcmp(cmd[0], "echo"))
-		*exit_status = cmd_echo(cmd);
+		return (cmd_echo(cmd));
 	else if (!ft_strcmp(cmd[0], "unset"))
-		*exit_status = cmd_unset(cmd, local, env);
+		return (cmd_unset(cmd, local, env));
 	else if (!ft_strcmp(cmd[0], "exit"))
 		cmd_exit();
 	else if (!ft_strcmp(cmd[0], "export"))
-		*exit_status = cmd_export(cmd, local, env);
-	else
-		return (0);
+		return (cmd_export(cmd, local, env));
 	return (1);
 }
