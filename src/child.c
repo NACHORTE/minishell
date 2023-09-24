@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   child.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: iortega- <iortega-@student.42madrid.com    +#+  +:+       +#+        */
+/*   By: orudek <orudek@student.42madrid.com>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/20 21:29:18 by oscar             #+#    #+#             */
-/*   Updated: 2023/09/24 11:52:30 by iortega-         ###   ########.fr       */
+/*   Updated: 2023/09/24 16:20:45 by orudek           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -255,7 +255,7 @@ static int	check_restdout(char **input)
 	return (fd);
 }
 
-static char	**parse_cmd(char **input)
+char	**parse_cmd(char **input)
 {
 	int	i;
 	char	**parsed;
@@ -293,7 +293,7 @@ static char	**parse_cmd(char **input)
 	return (parsed);
 }
 
-static void	redirect_streams(int infile, int outfile, char **cmd)
+void	redirect_streams(int infile, int outfile, char **cmd)
 {
 	int	fd_in;
 
@@ -328,7 +328,7 @@ void    child(int infile, int outfile, char **cmd, t_command *global)
 		no_command(cmd_parsed);
 		exit(127);
 	}
-    execve(cmd_path, cmd_parsed, varlist_to_array(global->env));
+    execve(cmd_path, cmd_parsed, varlist_to_array(global->env, 1));
 	perror(cmd_parsed[0]);
 	exit(errno); //NOTE maybe just exit 1 is OK
 }

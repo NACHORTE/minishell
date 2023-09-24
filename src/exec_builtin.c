@@ -6,7 +6,7 @@
 /*   By: orudek <orudek@student.42madrid.com>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/23 12:22:38 by orudek            #+#    #+#             */
-/*   Updated: 2023/09/24 12:09:09 by orudek           ###   ########.fr       */
+/*   Updated: 2023/09/24 12:13:50 by orudek           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -128,6 +128,7 @@ int	cmd_cd(char **cmd, t_list **env)   //COMPROBAR MALLOCS
 
 int	cmd_env(t_list *env)
 {
+	//NOTE leaks after using env
 	//[x] Don't print variables with content=NULL
 	while (env)
 	{

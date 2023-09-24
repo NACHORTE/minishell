@@ -6,7 +6,7 @@
 /*   By: orudek <orudek@student.42madrid.com>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/21 16:58:17 by orudek            #+#    #+#             */
-/*   Updated: 2023/09/21 17:32:34 by orudek           ###   ########.fr       */
+/*   Updated: 2023/09/24 12:38:13 by orudek           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,12 +48,21 @@ void 	print_varlist(t_list *varlist)
 	int j;
 
 	j = 0;
+	if (!varlist)
+	{
+		printf(BLUE"list %d: "CYAN"(%p)\n"RESET, j, varlist);
+		return ;
+	}
 	while (varlist)
 	{
 		printf(BLUE"List %d: "CYAN"(%p)"BLUE", next "CYAN"(%p)\n"RESET, j++, varlist, varlist->next);
+		if (!varlist->content)
+			printf(GREEN"\t(NULL)"RESET"\n");
+		else
+		{
 		printf(GREEN"\tname = "RESET"%s\n", ((t_var *)varlist->content)->name);
 		printf(GREEN"\tcontent = "RESET"%s\n", ((t_var *)varlist->content)->content);
+		}
 		varlist = varlist->next;
 	}
-	printf("list %d: (%p)\n", j, varlist);
 }

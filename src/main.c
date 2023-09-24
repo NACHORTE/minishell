@@ -266,7 +266,7 @@ int	check_restdout(char **input)
 	return (fd);
 }
 
-char	**parse_cmd(char **input)
+/*char	**parse_cmd(char **input)
 {
 	int	i;
 	char	**parsed;
@@ -302,7 +302,7 @@ char	**parse_cmd(char **input)
 	}
 	parsed[args] = 0;
 	return (parsed);
-}
+}*/
 
 /*void	cmd_pwd()
 {

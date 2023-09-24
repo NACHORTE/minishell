@@ -3,28 +3,35 @@
 /*                                                        :::      ::::::::   */
 /*   exec_cmd.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: iortega- <iortega-@student.42madrid.com    +#+  +:+       +#+        */
+/*   By: orudek <orudek@student.42madrid.com>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/20 13:56:41 by oscar             #+#    #+#             */
-/*   Updated: 2023/09/24 11:53:03 by iortega-         ###   ########.fr       */
+/*   Updated: 2023/09/24 16:27:42 by orudek           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-#include <sys/types.h>	//XXX
-#include <sys/wait.h>	//XXX
-#include <semaphore.h>
-#include <fcntl.h>
 
-/*void	child(int infile, int outfile, char **cmd, char **env, sem_t *sem)
+int	exec_one_builtin(char **cmd, t_list **local, t_list **env, int *status)
 {
-	sem_wait(sem);
-	printf("CHILD:\n\tinfile=%d\n\toutfile=%d\n", infile, outfile);
-	sem_post(sem);
-	sem_close(sem);
-	exit (0);
-}*/
+	int	std_in;
+	int	std_out;
+	int	out;
+	char **cmd_parsed;
+
+	std_in = dup(0);
+	std_out = dup(1);
+    redirect_streams(0, 1, cmd);
+    cmd_parsed = parse_cmd(cmd); //XXX cambiale el nombre machito
+	out = exec_builtin(cmd_parsed, local, env, status);
+	ft_array_free(cmd_parsed);
+	dup2(std_in, 0);
+	dup2(std_out, 1);
+	close(std_in);
+	close(std_out);
+	return (out);
+}
 
 /*  If the command given is a builtin, then no fork must be made and executes
     the function for builtins. If it is a normal command, creates a fork and
@@ -35,7 +42,7 @@ int	exec_one_cmd(char **cmd, char **env, t_command *global)
 {
 	int	status;
 
-    if (exec_builtin(cmd, &global->local, &global->env, &status))
+    if (exec_one_builtin(cmd, &global->local, &global->env, &status))
         return (status);
     int pid = fork();
     if (pid == -1)
@@ -46,7 +53,6 @@ int	exec_one_cmd(char **cmd, char **env, t_command *global)
 	if (pid == 0)
         child(0, 1, cmd, global);
 	wait(&status);
-	ft_array_free(env);
 	return (status);
 }
 
@@ -116,7 +122,6 @@ int exec_multi_cmd(t_list *cmds, char **env, t_command *global)
 	close (last_pipe[0]);
 	while (wait(&status) != -1)
 	    ;
-	ft_array_free(env);
 	return (status);
 }
 
@@ -151,17 +156,20 @@ int exec_multi_cmd(t_list *cmds, char **env, t_command *global)
 int    exec_cmd(t_list *cmds, t_list *env, t_command *global)
 {
     char    **env_array;
+	int		status;
 
 	if (!cmds)
 	{
 		printf("EXEC_CMD: no cmds\n");
-		return 1;
+		return (1);
 	}
-    env_array = varlist_to_array(env);
+    env_array = varlist_to_array(env, 1);
     if (ft_lstsize(cmds) == 1)
-        return (exec_one_cmd((char **)cmds->content, env_array, global));
+        status = exec_one_cmd((char **)cmds->content, env_array, global);
     else
-        return (exec_multi_cmd(cmds, env_array, global));
+        status = exec_multi_cmd(cmds, env_array, global);
+	ft_array_free(env_array);
+	return (status);
 }
 
 /*int main(int c, char **v, char **e)
