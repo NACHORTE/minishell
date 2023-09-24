@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   exec_builtin.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: iortega- <iortega-@student.42madrid.com    +#+  +:+       +#+        */
+/*   By: orudek <orudek@student.42madrid.com>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/23 12:22:38 by orudek            #+#    #+#             */
-/*   Updated: 2023/09/24 11:56:24 by iortega-         ###   ########.fr       */
+/*   Updated: 2023/09/24 12:09:09 by orudek           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -162,12 +162,16 @@ int	cmd_echo(char **cmd)
 	return (0);
 }
 
-int	cmd_unset(char *name, t_list **local, t_list **env)
+int	cmd_unset(char **cmd, t_list **local, t_list **env)
 {
-	if (get_variable(*local, name, NULL))
-		unset_variable(local, name);
-	if (get_variable(*env, name, NULL))
-		unset_variable(env, name);
+	while (*cmd)
+	{
+		if (get_variable(*local, cmd[0], NULL))
+			unset_variable(local, cmd[0]);
+		if (get_variable(*env, cmd[0], NULL))
+			unset_variable(env, cmd[0]);
+		cmd++;
+	}
 	return (0);
 }
 
@@ -295,7 +299,7 @@ int	exec_builtin(char **cmd, t_list **local, t_list **env, int *exit_status)
 	else if (!ft_strcmp(cmd[0], "echo"))
 		*exit_status = cmd_echo(cmd);
 	else if (!ft_strcmp(cmd[0], "unset"))
-		*exit_status = cmd_unset(cmd[1], local, env);
+		*exit_status = cmd_unset(cmd, local, env);
 	else if (!ft_strcmp(cmd[0], "exit"))
 		cmd_exit();
 	else if (!ft_strcmp(cmd[0], "export"))
