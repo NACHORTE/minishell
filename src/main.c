@@ -685,24 +685,32 @@ int	is_command(t_command *global)
 		return (1);
 }
 
+void	refresh_status(t_command *global)
+{
+	char	*name;
+	char	*content;
+
+	name = ft_strdup("?");
+	content = ft_itoa(global->last_status);
+	set_variable(&(global->local), name, content);
+}
+
 int	main(int argc, char **argv, char **envp)
 {
 	char	*input;
 	t_command	global;
-	int i;
-	int	j;
-	int fd_out;
-	int	fd_in;
+
 	global.env = NULL;
 	global.local = NULL;
 	global.path = get_path(envp);
 	save_env(&global, envp);
 	global.sout = dup(1);
 	global.sin = dup(0);
+	global.last_status = 0;
+	refresh_status(&global);
+	signal(SIGINT, &new_line);
 	while (1)
 	{
-		signal(SIGINT, &new_line);
-		//signal(SIGQUIT, SIG_IGN);
 		input = readline("\033[36mminishell >> \033[0m");
 		if (input == NULL)
 		{
@@ -713,75 +721,13 @@ int	main(int argc, char **argv, char **envp)
 		if (check_closed_quotes(input))
 		{
 			global.cmds = parse(input, global.local, global.env);
- 			/* t_list *aux = global.cmds;
-			int j = 0;
-			while (aux)
-			{
-				printf("List %d\n",j++);
-				int i = 0;
-				for (i = 0; ((char **)aux->content)[i]; i++)
-					printf("\tstr[%d]=%s$\n",i,((char **)aux->content)[i]);
-				printf("\tstr[%d]=%s$\n",i,((char **)aux->content)[i]);
-				aux = aux->next;
-			} */
 			if (is_command(&global))
 			{
-				i = 0;
-				j = 0;
-				//signal(SIGQUIT, SIG_DFL);
-				/*global.cmd_parsed = parse_cmd((char **)global.cmds->content);
-				global.cmd_path = get_cmd_path(global.path, global.cmd_parsed[0]); //once we hace the command check access
-				fd_in = check_restdin((char **)global.cmds->content);
-				fd_out = check_restdout((char **)global.cmds->content);
-				if (fd_in < 0)
-				{
-					if (fd_out > 0)
-						dup2(global.sout, 1);
-				}
-				else if (global.cmd_parsed[0] && !check_builtin(&global, envp))
-				{
-					global.child = fork();
-					if (global.child == 0)
-					{
-						if (fd_in > 0)
-						{
-							dup2(fd_in, 0);
-						}
-						signal(SIGINT, SIG_DFL);
-						//check_restdin((char **)global.cmds->content);  //check if redirections are made (stdin)
-						//check_restdout((char **)global.cmds->content); //check if redirections are made (stdout)
-						execute(global, envp); //execute command
-					}
-					else
-					{
-						if (fd_in > 0)
-							close(fd_in);
-						if (fd_out > 0)
-							dup2(global.sout, 1);
-						signal(SIGQUIT, SIG_IGN);
-						signal(SIGINT, SIG_IGN);
-					}
-					waitpid(global.child, NULL, 0);
-				}
-				else
-				{
-					if (fd_out > 0)
-						dup2(global.sout, 1);
-				}*/
-				exec_cmd(global.cmds, global.env, &global);
-				/*if (global.cmd_path)
-					free(global.cmd_path);
-				if (!global.cmd_parsed[0])
-					free(global.cmd_parsed);
-				else
-					ft_array_free(global.cmd_parsed);*/
+				global.last_status = exec_cmd(global.cmds, global.env, &global);
+				refresh_status(&global);
 			}
 			if( global.cmds)
 				ft_lstfree(global.cmds, ft_array_free);
-			/*else
-			{
-				ft_lstfree(global.cmds, ft_array_free);
-			}*/
 		}
 		free(input);
 	}
