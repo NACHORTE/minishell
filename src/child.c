@@ -6,7 +6,7 @@
 /*   By: iortega- <iortega-@student.42madrid.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/20 21:29:18 by oscar             #+#    #+#             */
-/*   Updated: 2023/09/23 21:01:54 by iortega-         ###   ########.fr       */
+/*   Updated: 2023/09/24 11:04:31 by iortega-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -64,6 +64,15 @@ static char	*absolute_route(char *cmd, int *abs)
 	}
 	*abs = 1;
 	return (NULL);
+}
+
+static void	no_command(char **cmd_parsed)
+{
+	int	len;
+	write(2, &"Command not found: ", 19);
+	len = ft_strlen(cmd_parsed[0]);
+	write(2, cmd_parsed[0], len);
+	write(2, &"\n", 1);
 }
 
 static char	*get_cmd_path(char **paths, char *cmd)
@@ -325,7 +334,6 @@ static int	check_restdin(char **input)
 		i++;
 	}
 	i = 0;*/
-	printf("%s\n", input[0]);
 	while (input[i])   //if we have < " " file we get flag 1 and check file, else if we have <file we check file without "<"
 	{
 		j = 0;
@@ -479,6 +487,11 @@ void    child(int infile, int outfile, char **cmd, t_command *global)
     cmd_path = get_cmd_path(global->path, cmd_parsed[0]);
 	/*if (check_builtin(global))
 		exit (1);*/
+	if (!cmd_path)
+	{
+		no_command(cmd_parsed);
+		exit(127);
+	}
     execve(cmd_path, cmd_parsed, varlist_to_array(global->env));
 	perror(cmd_parsed[0]);
 	exit(errno); //NOTE maybe just exit 1 is OK
