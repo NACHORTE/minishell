@@ -304,7 +304,7 @@ char	**parse_cmd(char **input)
 	return (parsed);
 }
 
-void	cmd_pwd()
+/*void	cmd_pwd()
 {
 	char	*dir;
 
@@ -468,7 +468,7 @@ int	check_builtin(t_command *global, char **envp)
 	else
 		return (0);
 	return (1);
-}
+}*/
 
 int save_env(t_command *global, char **envp)
 {

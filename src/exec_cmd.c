@@ -6,7 +6,7 @@
 /*   By: iortega- <iortega-@student.42madrid.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/20 13:56:41 by oscar             #+#    #+#             */
-/*   Updated: 2023/09/24 11:05:46 by iortega-         ###   ########.fr       */
+/*   Updated: 2023/09/24 11:53:03 by iortega-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,8 +35,8 @@ int	exec_one_cmd(char **cmd, char **env, t_command *global)
 {
 	int	status;
 
-    /*if (check_builtin(cmd, env))
-        return;*/
+    if (exec_builtin(cmd, &global->local, &global->env, &status))
+        return (status);
     int pid = fork();
     if (pid == -1)
 	{

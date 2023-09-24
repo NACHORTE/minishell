@@ -6,7 +6,7 @@
 #    By: iortega- <iortega-@student.42madrid.com    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/09/03 15:02:39 by iortega-          #+#    #+#              #
-#    Updated: 2023/09/23 20:42:02 by iortega-         ###   ########.fr        #
+#    Updated: 2023/09/24 12:02:58 by iortega-         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -30,7 +30,7 @@ SRC_FILES := main.c\
 	split_args2.c\
 	set_variable.c\
 	expand_variables.c\
-	ft_parse.c\
+	parse.c\
 	split_pipe.c\
 	free_var.c\
 	get_variable.c\
@@ -38,6 +38,7 @@ SRC_FILES := main.c\
 	array_to_varlist.c\
 	child.c\
 	exec_cmd.c\
+	exec_builtin.c\
 	unset_variable.c
 
 SRC := $(addprefix $(SRC_DIR)/,$(SRC_FILES))

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   exec_builtin.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: orudek <orudek@student.42madrid.com>       +#+  +:+       +#+        */
+/*   By: iortega- <iortega-@student.42madrid.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/23 12:22:38 by orudek            #+#    #+#             */
-/*   Updated: 2023/09/24 11:38:45 by orudek           ###   ########.fr       */
+/*   Updated: 2023/09/24 11:56:24 by iortega-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,7 +43,7 @@ int	cmd_cd(char **cmd, t_list **env)   //COMPROBAR MALLOCS
 		printf("cd: too many arguments\n");
 		return (1);
 	}
-	if (!get_variable(env, "OLDPWD", &dst))
+	if (!get_variable(*env, "OLDPWD", &dst))
 	{
 		printf("cd: OLDPWD not set\n");
 		return (1);
@@ -111,13 +111,13 @@ int	cmd_cd(char **cmd, t_list **env)   //COMPROBAR MALLOCS
 			}
 		}
 	}
-	if (!set_variable(&(env), old, old_pwd))
+	if (!set_variable(env, old, old_pwd))
 	{
 		free(old);
 		free(old_pwd);
 		return (1);
 	}
-	if (!set_variable(&(env), curr, curr_pwd))
+	if (!set_variable(env, curr, curr_pwd))
 	{
 		free(curr);
 		free(curr_pwd);
@@ -132,8 +132,8 @@ int	cmd_env(t_list *env)
 	while (env)
 	{
 		if (((t_var *)env->content)->content);
-			printf("%s=%s\n", ((t_var *)aux->content)->name,
-				((t_var *)aux->content)->content);
+			printf("%s=%s\n", ((t_var *)env->content)->name,
+				((t_var *)env->content)->content);
 		env = env->next;
 	}
 	return (0);
@@ -165,9 +165,9 @@ int	cmd_echo(char **cmd)
 int	cmd_unset(char *name, t_list **local, t_list **env)
 {
 	if (get_variable(*local, name, NULL))
-		unset_variable(name, local);
+		unset_variable(local, name);
 	if (get_variable(*env, name, NULL))
-		unset_variable(name, env);
+		unset_variable(env, name);
 	return (0);
 }
 
@@ -188,7 +188,7 @@ static int	get_name(char *str, char **name)
 	int	len;
 	char *new_str;
 	
-	len = 0
+	len = 0;
 	while (str[len] != '=' && str[len] != 0)
 		len++;
 	new_str= malloc(len + 1);
@@ -295,7 +295,7 @@ int	exec_builtin(char **cmd, t_list **local, t_list **env, int *exit_status)
 	else if (!ft_strcmp(cmd[0], "echo"))
 		*exit_status = cmd_echo(cmd);
 	else if (!ft_strcmp(cmd[0], "unset"))
-		*exit_status = cmd_unset(cmd, local, env);
+		*exit_status = cmd_unset(cmd[1], local, env);
 	else if (!ft_strcmp(cmd[0], "exit"))
 		cmd_exit();
 	else if (!ft_strcmp(cmd[0], "export"))

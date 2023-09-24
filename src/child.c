@@ -6,7 +6,7 @@
 /*   By: iortega- <iortega-@student.42madrid.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/20 21:29:18 by oscar             #+#    #+#             */
-/*   Updated: 2023/09/24 11:04:31 by iortega-         ###   ########.fr       */
+/*   Updated: 2023/09/24 11:52:30 by iortega-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -100,171 +100,6 @@ static char	*get_cmd_path(char **paths, char *cmd)
 	if (access(cmd, X_OK) == 0)
 		return (ft_strdup(cmd));
 	return (NULL);
-}
-
-static void	cmd_pwd()
-{
-	char	*dir;
-
-	dir = getcwd(NULL, 0);
-	if (dir == NULL)
-	{
-		printf("ERROR: PWD\n");
-		return ;
-	}
-	free (dir);
-}
-
-static void	cmd_cd(t_command *global)   //COMPROBAR MALLOCS
-{
-	char	*old;
-	char	*curr;
-	char	*old_pwd;
-	char	*curr_pwd;
-	char	*dst;
-
-	if (global->cmd_parsed[1] != 0 && global->cmd_parsed[2] != 0)
-	{
-		printf("cd: too many arguments\n");
-		return ;
-	}
-	if (!get_variable(global->env, "OLDPWD", &dst))
-	{
-		printf("cd: OLDPWD not set\n");
-		return ;
-	}
-	old = malloc(sizeof(char) * 7);
-	curr = malloc(sizeof(char) * 4);
-	ft_strlcpy(old, "OLDPWD", 7);
-	ft_strlcpy(curr, "PWD", 4);
-	old_pwd = getcwd(NULL, 0);
-	if (!global->cmd_parsed[1] || !ft_strcmp(global->cmd_parsed[1], "~"))
-	{
-		chdir(getenv("HOME"));
-		curr_pwd = getcwd(NULL, 0);
-	}
-	else if (!ft_strcmp(global->cmd_parsed[1], "-"))    //COMPROBAR QUE HAY OLDPWD
-	{
-		chdir(dst);
-		curr_pwd = getcwd(NULL, 0);
-	}
-	else
-	{
-		if (chdir(global->cmd_parsed[1]) != 0)
-		{
-			perror(global->cmd_parsed[1]);
-			free(old);
-			free(curr);
-			free(old_pwd);
-			return ;
-		}
-		else
-			curr_pwd = getcwd(NULL, 0);
-	}
-	set_variable(&(global->env), old, old_pwd);
-	set_variable(&(global->env), curr, curr_pwd);
-}
-
-static void	cmd_env(t_command *global)
-{
-	t_list	*aux;
-
-	aux = global->env;
-	while (aux)
-	{
-		printf("%s=%s\n", ((t_var *)aux->content)->name, ((t_var *)aux->content)->content);
-		aux = aux->next;
-	}
-}
-
-static void cmd_echo(t_command *global)
-{
-	int	i;
-	int	flag;
-
-	i = 1;
-	flag = 0;
-	if (!ft_strncmp(global->cmd_parsed[1], "-n", 2))
-	{
-		flag = 1;
-		i++;
-	}
-	while(global->cmd_parsed[i])
-	{
-		if (global->cmd_parsed[i + 1] == 0)
-		{
-			printf("%s", global->cmd_parsed[i]);
-			if (flag == 0)
-				printf("\n");
-		}
-		else
-			printf("%s ",global->cmd_parsed[i]);
-		i++;
-	}
-}
-
-static void	cmd_unset(t_command *global)
-{
-	int	i;
-
-	i = 1;
-	while (global->cmd_parsed[i])
-	{
-		unset_variable(&(global->env), global->cmd_parsed[i]);
-		i++;
-	}
-}
-
-static void	cmd_exit()
-{
-	printf("exit\n");
-	exit(1);
-}
-
-static void	cmd_export(t_command *global)
-{
-	char	*name;
-	char	*content;
-	int	i;
-
-	i = 1;
-	while (((char **)global->cmds->content)[i])
-	{
-		name = ft_strdup(((char **)global->cmds->content)[i]);
-		get_variable(global->local, name, &content);
-		content = ft_strdup(content);
-		if (!content)
-		{
-			free(name);
-		}
-		else
-		{
-			set_variable(&(global->env), name, content);
-			unset_variable(&(global->local), name);
-		}
-		i++;
-	}
-}
-
-static int	check_builtin(t_command *global)
-{
-	if (!ft_strncmp(global->cmd_parsed[0], "pwd", 3))
-		cmd_pwd();
-	else if (!ft_strncmp(global->cmd_parsed[0], "cd", 2))
-		cmd_cd(global);
-	else if (!ft_strncmp(global->cmd_parsed[0], "env", 3))
-		cmd_env(global);
-	else if (!ft_strncmp(global->cmd_parsed[0], "echo", 4))
-		cmd_echo(global);
-	else if (!ft_strncmp(global->cmd_parsed[0], "unset", 5))
-		cmd_unset(global);
-	else if (!ft_strncmp(global->cmd_parsed[0], "exit", 4))
-		cmd_exit();
-	else if (!ft_strncmp(global->cmd_parsed[0], "export", 6))
-		cmd_export(global);
-	else
-		return (0);
-	return (1);
 }
 
 static void	sig_here(int sig)
@@ -478,6 +313,7 @@ void    child(int infile, int outfile, char **cmd, t_command *global)
 {
 	char	**cmd_parsed;
 	char	*cmd_path;
+	int	status;
 	//makes the needed dup2, creates the files if there are multiple output redirections
 	// and opens the correct file.
     redirect_streams(infile, outfile, cmd);
@@ -485,8 +321,8 @@ void    child(int infile, int outfile, char **cmd, t_command *global)
     cmd_parsed = parse_cmd(cmd);
     //gets the full path of the command
     cmd_path = get_cmd_path(global->path, cmd_parsed[0]);
-	/*if (check_builtin(global))
-		exit (1);*/
+	if (exec_builtin(cmd, &global->local, &global->env, &status))
+		exit (status);
 	if (!cmd_path)
 	{
 		no_command(cmd_parsed);
