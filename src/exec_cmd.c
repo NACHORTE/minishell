@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   exec_cmd.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: orudek <orudek@student.42madrid.com>       +#+  +:+       +#+        */
+/*   By: iortega- <iortega-@student.42madrid.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/20 13:56:41 by oscar             #+#    #+#             */
-/*   Updated: 2023/09/24 17:08:16 by orudek           ###   ########.fr       */
+/*   Updated: 2023/09/24 18:49:51 by iortega-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -58,7 +58,7 @@ int	exec_one_cmd(char **cmd, char **env, t_command *global)
 	if (pid == 0)
         child(0, 1, cmd, global);
 	wait(&status);
-	return (status);
+	return (WEXITSTATUS(status));
 }
 
 int exec_multi_cmd(t_list *cmds, char **env, t_command *global)
@@ -127,7 +127,7 @@ int exec_multi_cmd(t_list *cmds, char **env, t_command *global)
 	close (last_pipe[0]);
 	while (wait(&status) != -1)
 	    ;
-	return (status);
+	return (WEXITSTATUS(status));
 }
 
 /*  exec_cmd:

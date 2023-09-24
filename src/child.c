@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   child.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: orudek <orudek@student.42madrid.com>       +#+  +:+       +#+        */
+/*   By: iortega- <iortega-@student.42madrid.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/20 21:29:18 by oscar             #+#    #+#             */
-/*   Updated: 2023/09/24 17:07:33 by orudek           ###   ########.fr       */
+/*   Updated: 2023/09/24 18:48:48 by iortega-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -313,8 +313,10 @@ void    child(int infile, int outfile, char **cmd, t_command *global)
 {
 	char	**cmd_parsed;
 	char	*cmd_path;
+	char	**env;
 	//makes the needed dup2, creates the files if there are multiple output redirections
 	// and opens the correct file.
+	env = varlist_to_array(global->env, 1);
     redirect_streams(infile, outfile, cmd);
     //removes the redirections from the command returning a new char **array
     cmd_parsed = parse_cmd(cmd);
@@ -327,7 +329,7 @@ void    child(int infile, int outfile, char **cmd, t_command *global)
 		no_command(cmd_parsed);
 		exit(127);
 	}
-    execve(cmd_path, cmd_parsed, varlist_to_array(global->env, 1));
+    execve(cmd_path, cmd_parsed, env);
 	perror(cmd_parsed[0]);
 	exit(errno); //NOTE maybe just exit 1 is OK
 }

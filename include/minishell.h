@@ -6,7 +6,7 @@
 /*   By: orudek <orudek@student.42madrid.com>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/03 15:58:32 by iortega-          #+#    #+#             */
-/*   Updated: 2023/09/24 19:09:49 by orudek           ###   ########.fr       */
+/*   Updated: 2023/09/24 19:10:49 by orudek           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,6 +41,7 @@ typedef struct s_command
 	t_list	*local;
 	int		sout;
 	int		sin;
+	int		last_status;
 }t_command;
 
 char	**split_args(char const *str, char c);

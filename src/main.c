@@ -685,20 +685,29 @@ int	is_command(t_command *global)
 		return (1);
 }
 
+void	refresh_status(t_command *global)
+{
+	char	*name;
+	char	*content;
+
+	name = ft_strdup("?");
+	content = ft_itoa(global->last_status);
+	set_variable(&(global->local), name, content);
+}
+
 int	main(int argc, char **argv, char **envp)
 {
 	char	*input;
 	t_command	global;
-	int i;
-	int	j;
-	int fd_out;
-	int	fd_in;
+
 	global.env = NULL;
 	global.local = NULL;
 	global.path = get_path(envp);
 	save_env(&global, envp);
 	global.sout = dup(1);
 	global.sin = dup(0);
+	global.last_status = 0;
+	refresh_status(&global);
 	signal(SIGINT, &new_line);
 	while (1)
 	{
@@ -713,7 +722,10 @@ int	main(int argc, char **argv, char **envp)
 		{
 			global.cmds = parse(input, global.local, global.env);
 			if (is_command(&global))
-				exec_cmd(global.cmds, global.env, &global);
+			{
+				global.last_status = exec_cmd(global.cmds, global.env, &global);
+				refresh_status(&global);
+			}
 			if( global.cmds)
 				ft_lstfree(global.cmds, ft_array_free);
 		}
