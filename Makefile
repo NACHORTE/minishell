@@ -3,10 +3,10 @@
 #                                                         :::      ::::::::    #
 #    Makefile                                           :+:      :+:    :+:    #
 #                                                     +:+ +:+         +:+      #
-#    By: iortega- <iortega-@student.42madrid.com    +#+  +:+       +#+         #
+#    By: orudek <orudek@student.42madrid.com>       +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/09/03 15:02:39 by iortega-          #+#    #+#              #
-#    Updated: 2023/09/24 12:02:58 by iortega-         ###   ########.fr        #
+#    Updated: 2023/09/24 19:15:54 by orudek           ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -39,7 +39,8 @@ SRC_FILES := main.c\
 	child.c\
 	exec_cmd.c\
 	exec_builtin.c\
-	unset_variable.c
+	unset_variable.c\
+	is_varname_ok.c
 
 SRC := $(addprefix $(SRC_DIR)/,$(SRC_FILES))
 LIB_FLAG := $(addprefix -l,$(LIB))

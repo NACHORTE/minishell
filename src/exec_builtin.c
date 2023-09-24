@@ -6,7 +6,7 @@
 /*   By: orudek <orudek@student.42madrid.com>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/23 12:22:38 by orudek            #+#    #+#             */
-/*   Updated: 2023/09/24 17:09:00 by orudek           ###   ########.fr       */
+/*   Updated: 2023/09/24 19:16:32 by orudek           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -245,6 +245,12 @@ int	cmd_export(char **cmd, t_list **local, t_list **env)
 	{
 		if (!get_name(cmd[i], &name)) //[x] get_name, returns the first half of the assignation
 		{
+			exit_status = 1;
+			continue ;
+		}
+		if (!is_varname_ok(name))
+		{
+			free(name);
 			exit_status = 1;
 			continue ;
 		}
