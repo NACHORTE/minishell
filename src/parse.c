@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ft_parse.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: iortega- <iortega-@student.42madrid.com    +#+  +:+       +#+        */
+/*   By: orudek <orudek@student.42madrid.com>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/17 17:24:03 by orudek            #+#    #+#             */
-/*   Updated: 2023/09/17 17:36:08 by iortega-         ###   ########.fr       */
+/*   Updated: 2023/09/19 20:51:17 by orudek           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -61,7 +61,7 @@ t_list	*save_commands(char **array)
 	return (output);
 }
 
-t_list	*ft_parse(char	*input, t_list *local, t_list *env)
+t_list	*parse(char	*input, t_list *local, t_list *env)
 {
 	char	**split_pipes;
 	char	**expanded;
@@ -84,7 +84,8 @@ t_list	*ft_parse(char	*input, t_list *local, t_list *env)
 #include "t_var.h"
 int save_env(t_list **list, char **envp)
 {
-	t_var *tmp;
+	char *name;
+	char *content;
 	int	len;
 	int	i;
 	int j;
@@ -93,7 +94,6 @@ int save_env(t_list **list, char **envp)
 	i = 0;
 	while (envp[i])
 	{
-		tmp = malloc(sizeof(t_var));
 		j = 0;
 		len = 0;
 		while (envp[i][j] != '=')
@@ -101,8 +101,8 @@ int save_env(t_list **list, char **envp)
 			len++;
 			j++;
 		}
-		tmp->name = malloc(sizeof(char) * (len + 1));
-		ft_strlcpy(tmp->name, envp[i], len + 1);
+		name = malloc(sizeof(char) * (len + 1));
+		ft_strlcpy(name, envp[i], len + 1);
 		j++;
 		aux = j;
 		len = 0;
@@ -111,9 +111,9 @@ int save_env(t_list **list, char **envp)
 			len++;
 			j++;
 		}
-		tmp->content = malloc(sizeof(char) * (len + 1));
-		ft_strlcpy(tmp->content, &envp[i][aux], len + 1);
-		set_variable(list, tmp);
+		content = malloc(sizeof(char) * (len + 1));
+		ft_strlcpy(content, &envp[i][aux], len + 1);
+		set_variable(list, name, content);
 		i++;
 	}
 	return (0);
@@ -124,17 +124,17 @@ int main (int c, char **v, char **env)
 		return 1;
 	t_list	*env_list;
 	save_env(&env_list, env);
-	t_list	*aux;
-	aux = env_list;
 	t_list *parsed = parse(v[1], NULL, env_list);
+	t_list *aux = parsed;
 	int j = 0;
-	while (parsed)
+	while (aux)
 	{
 		printf("List %d\n",j++);
 		int i = 0;
-		for (i = 0; ((char **)parsed->content)[i]; i++)
-			printf("\tstr[%d]=%s$\n",i,((char **)parsed->content)[i]);
-		printf("\tstr[%d]=%s$\n",i,((char **)parsed->content)[i]);
-		parsed = parsed->next;
+		for (i = 0; ((char **)aux->content)[i]; i++)
+			printf("\tstr[%d]=%s$\n",i,((char **)aux->content)[i]);
+		printf("\tstr[%d]=%s$\n",i,((char **)aux->content)[i]);
+		aux = aux->next;
 	}
+	exit (1);
 }*/

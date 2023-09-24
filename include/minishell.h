@@ -6,7 +6,7 @@
 /*   By: orudek <orudek@student.42madrid.com>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/03 15:58:32 by iortega-          #+#    #+#             */
-/*   Updated: 2023/09/17 18:00:40 by orudek           ###   ########.fr       */
+/*   Updated: 2023/09/24 22:30:11 by orudek           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,9 +40,18 @@ typedef struct s_command
 	t_list	*local;
 	t_list	*cmds;
 	int		sout;
+	int		sin;
+	int		last_status;
 }t_command;
 
 char	**split_args(char const *str, char c);
-t_list	*ft_parse(char	*input, t_list *local, t_list *env);
+t_list	*parse(char	*input, t_list *local, t_list *env);
+int    exec_cmd(t_list *cmds, t_list *env, t_command *global);
+void    child(int infile, int outfile, char ** cmd, t_command *global);
+int	is_builtin(char *cmd);
+int	exec_builtin(char **cmd, t_list **local, t_list **env);
+void	redirect_streams(int infile, int outfile, char **cmd);
+char	**parse_cmd(char **input);
+int		is_varname_ok(char *name);
 
 #endif
