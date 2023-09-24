@@ -6,7 +6,7 @@
 /*   By: orudek <orudek@student.42madrid.com>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/03 15:58:32 by iortega-          #+#    #+#             */
-/*   Updated: 2023/09/24 17:07:56 by orudek           ###   ########.fr       */
+/*   Updated: 2023/09/24 19:09:49 by orudek           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,4 +51,6 @@ int	is_builtin(char *cmd);
 int	exec_builtin(char **cmd, t_list **local, t_list **env);
 void	redirect_streams(int infile, int outfile, char **cmd);
 char	**parse_cmd(char **input);
+int		is_varname_ok(char *name);
+
 #endif
