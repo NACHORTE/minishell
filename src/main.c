@@ -702,7 +702,7 @@ int	main(int argc, char **argv, char **envp)
 	while (1)
 	{
 		signal(SIGINT, &new_line);
-		signal(SIGQUIT, SIG_IGN);
+		//signal(SIGQUIT, SIG_IGN);
 		input = readline("\033[36mminishell >> \033[0m");
 		if (input == NULL)
 		{
@@ -728,7 +728,7 @@ int	main(int argc, char **argv, char **envp)
 			{
 				i = 0;
 				j = 0;
-				signal(SIGQUIT, SIG_DFL);
+				//signal(SIGQUIT, SIG_DFL);
 				/*global.cmd_parsed = parse_cmd((char **)global.cmds->content);
 				global.cmd_path = get_cmd_path(global.path, global.cmd_parsed[0]); //once we hace the command check access
 				fd_in = check_restdin((char **)global.cmds->content);
