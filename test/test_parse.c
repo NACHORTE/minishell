@@ -2,6 +2,9 @@
 #include "t_var.h"
 #include <stdio.h>
 #include <sys/wait.h>
+#include <fcntl.h>
+#include <unistd.h>
+#include <string.h>
 
 t_list	*parse(char	*input, t_list *local, t_list *env);
 
@@ -26,7 +29,7 @@ t_list	*parse(char	*input, t_list *local, t_list *env);
 #define ORANGE "\x1b[38;5;208m"	// Orange text
 #define GREY "\x1B[90m"			// Grey text
 #define LIME "\x1B[92m"			// Lime text
-
+#define PINK "\033[38;5;225m"   // Pink text
 // Background colors
 #define BG_BLACK "\x1b[40m"  // Black background
 #define BG_RED "\x1b[41m"    // Red background
@@ -37,8 +40,39 @@ t_list	*parse(char	*input, t_list *local, t_list *env);
 #define BG_CYAN "\x1b[46m"   // Cyan background
 #define BG_WHITE "\x1b[47m"  // White background
 
-int test_number = 1;
 
+int test_number = 1;
+int	flags = 0;
+#define PRINT_ALL_FLAG_NAME "-all"
+#define PRINT_ALL_FLAG 0x1
+#define PRINT_ERR_FLAG_NAME "-err"
+#define PRINT_ERR_FLAG 0x10
+
+#define compare_result(result,expected) \
+	if (same_result(result, expected)) \
+	{\
+		printf(GREEN BOLD"%d.OK"RESET"\t"GREY"test:[%s]"RESET"\n",test_number,input);\
+		if (flags & PRINT_ALL_FLAG)\
+		{\
+			printf(BLUE BOLD"\tExpected:\n"CYAN DIM);\
+			print_list(expected);\
+			printf(NORMAL GREEN BOLD"\tResult:\n"LIME DIM);\
+			print_list(result);\
+			printf(RESET NORMAL); \
+		}\
+	}\
+	else\
+	{\
+		printf(RED BOLD"%d.KO"RESET"\t"GREY"test:[%s]"RESET"\n",test_number,input);\
+		if (flags & PRINT_ALL_FLAG || flags & PRINT_ERR_FLAG)\
+		{\
+			printf(BLUE BOLD"\tExpected:\n"CYAN DIM);\
+			print_list(expected);\
+			printf(NORMAL GREEN BOLD"\tResult:\n"LIME DIM);\
+			print_list(result);\
+			printf(RESET NORMAL); \
+		}\
+	}
 int	array_cmp(char **array1, char **array2)
 {
 	int i = 0;
@@ -90,38 +124,54 @@ void print_error(t_list *expected, t_list *result)
 
 }
 
-#define compare_result(result,expected) \
-	if (same_result(result, expected))\
-		printf(GREEN BOLD"%d.OK"RESET"\t"GREY"test:[%s]"RESET"\n",test_number++,input);\
-	else\
-	{\
-		printf(RED BOLD"%d.KO"RESET"\t"GREY"test:[%s]"RESET"\n",test_number++,input);\
-		printf(BLUE BOLD"\tExpected:\n"CYAN DIM);\
-		print_list(expected);\
-		printf(NORMAL GREEN BOLD"\tResult:\n"LIME DIM);\
-		print_list(result);\
-		printf(RESET NORMAL); \
+void	exec_test(char *input, t_list *expected, t_list *local, t_list *env)
+{
+	int pid = fork();
+	if (pid == -1)
+	{
+		perror("Fork_failed");
+		return ;
 	}
+	if (pid == 0)
+	{
+		int fd_NULL = open("/dev/null", O_WRONLY);
+		if (fd_NULL == -1)
+		{
+			perror("/dev/null");
+			exit(1);
+		}
+		if (!dup2(fd_NULL, 2))
+		{
+			perror("dup2");
+			exit (1);
+		}
+		t_list *result = parse(input, local, env);
+		compare_result(result, expected)
+		ft_lstfree(result, ft_array_free);
+		exit (0);
+	}
+	int status;
+	waitpid(pid, &status, 0);
+	if (WEXITSTATUS(status))
+		printf(RED BOLD"%d.A"RESET"\t"GREY"test:[%s]"RESET"\n",test_number,input);
+	test_number++;
+}
+
+//TESTS
 ////////////////////////////////////////////////////////////////////
-////////////////////////////////////////////////////////////////////
-////////////////////////////////////////////////////////////////////
-////////////////////////////////////////////////////////////////////
-////////////////////////////////////////////////////////////////////
+
 void	test_NULL_input()
 {
 // INPUT VARIABLES
 	//set input string
 	char *input = NULL;
 	//set expected result with no mallocs so its easier to check
-	char *aux[]= {NULL};
-	t_list expected[1] = {{aux, NULL}};
+	t_list *expected = NULL;
 	//set local and env variables
 	t_list *local = NULL;
 	t_list *env = NULL;
 // EXECUTE TEST (DON'T TOUCH)
-	t_list *result = parse(input, local, env);
-	compare_result(result, expected)
-	ft_lstfree(result, ft_array_free);
+	exec_test(input, expected, local, env);
 }
 void	test_empty_cmd()
 {
@@ -135,9 +185,7 @@ void	test_empty_cmd()
 	t_list *local = NULL;
 	t_list *env = NULL;
 // EXECUTE TEST (DON'T TOUCH)
-	t_list *result = parse(input, local, env);
-	compare_result(result, expected)
-	ft_lstfree(result, ft_array_free);
+	exec_test(input, expected, local, env);
 }
 
 void	test_1arg_1cmd()
@@ -152,9 +200,7 @@ void	test_1arg_1cmd()
 	t_list *local = NULL;
 	t_list *env = NULL;
 // EXECUTE TEST (DON'T TOUCH)
-	t_list *result = parse(input, local, env);
-	compare_result(result, expected)
-	ft_lstfree(result, ft_array_free);
+	exec_test(input, expected, local, env);
 }
 
 void	test_1pipe()
@@ -170,31 +216,27 @@ void	test_1pipe()
 	t_list *local = NULL;
 	t_list *env = NULL;
 // EXECUTE TEST (DON'T TOUCH)
-	//int pid = fork();
-	//if (pid == -1)
-	//{
-	//	perror("Fork_failed");
-	//	return ;
-//	}
-	//if (pid == 0)
-	//{
-		t_list *result = parse(input, local, env);
-		compare_result(result, expected)
-		ft_lstfree(result, ft_array_free);
-		exit (0);
-	//}
-	//int status;
-	//wait(&status);
-	//if (WIFEXITED(status))
-
+	exec_test(input, expected, local, env);
 }
 
-int main(int c, char **v, char **env_in)
+void	set_flags(int argc, char **argv)
 {
-	printf(BOLD UNDERLINE MAGENTA"TESTER: PARSE"RESET"\n");
+	for (int i = 1; i < argc; i++)
+	{
+		if (!strcmp(argv[i],PRINT_ALL_FLAG_NAME))
+			flags |= PRINT_ALL_FLAG;
+		if (!strcmp(argv[i],PRINT_ERR_FLAG_NAME))
+			flags |= PRINT_ERR_FLAG;
+	}
+}
+
+int main(int argc, char **argv, char **envp)
+{
+	set_flags(argc, argv);
+	printf(BOLD UNDERLINE MAGENTA"TESTER: PARSE"RESET PINK" (use -all and -err for results)"RESET"\n");
 	test_NULL_input();
 	test_empty_cmd();
 	test_1arg_1cmd();
 	test_1pipe();
 }
-//gcc -fsanitize=leak -Iinclude -Ilibft/include src/parse.c src/expand_variables.c src/split* test/test_parse.c src/print_varlist.c src/array_to_varlist.c src/set_variable.c src/free_var.c libft/libft.a
+//gcc -fsanitize=leak -Iinclude -Ilibft/include src/parse.c src/expand_variables.c src/split* test/test_parse.c src/print_varlist.c src/array_to_varlist.c src/set_variable.c src/free_var.c libft/libft.a -o parse_test
