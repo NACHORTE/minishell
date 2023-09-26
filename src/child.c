@@ -6,7 +6,7 @@
 /*   By: iortega- <iortega-@student.42madrid.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/20 21:29:18 by oscar             #+#    #+#             */
-/*   Updated: 2023/09/24 18:48:48 by iortega-         ###   ########.fr       */
+/*   Updated: 2023/09/26 20:43:04 by iortega-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -180,7 +180,10 @@ static int	check_restdin(char **input)
 			flag = 1;
 			if (input[i][j] == '<')
 			{
-				fd = here_doc(&input[i][j + 1]);
+				//fd = here_doc(&input[i][j + 1]);
+				if (fd != 0)
+					close (fd);
+				fd = 0;
 			}
 			else
 			{
