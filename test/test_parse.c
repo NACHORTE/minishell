@@ -51,7 +51,7 @@ int	flags = 0;
 #define compare_result(result,expected) \
 	if (same_result(result, expected)) \
 	{\
-		printf(GREEN BOLD"%d.OK"RESET"\t"GREY"test:[%s]"RESET"\n",test_number,input);\
+		printf(GREEN BOLD"%2d.OK"RESET"\t%s\t"GREY"input:[%s]"RESET"\n",test_number,name,input);\
 		if (flags & PRINT_ALL_FLAG)\
 		{\
 			printf(BLUE BOLD"\tExpected:\n"CYAN DIM);\
@@ -63,7 +63,7 @@ int	flags = 0;
 	}\
 	else\
 	{\
-		printf(RED BOLD"%d.KO"RESET"\t"GREY"test:[%s]"RESET"\n",test_number,input);\
+		printf(RED BOLD"%2d.KO"RESET"\t%s\t"GREY"input:[%s]"RESET"\n",test_number,name,input);\
 		if (flags & PRINT_ALL_FLAG || flags & PRINT_ERR_FLAG)\
 		{\
 			printf(BLUE BOLD"\tExpected:\n"CYAN DIM);\
@@ -120,7 +120,7 @@ void print_var(t_list *list)
 	}
 }
 
-void	exec_test(char *input, t_list *expected, t_list *local, t_list *env)
+void	exec_test(char *input, t_list *expected, t_list *local, t_list *env, char *name)
 {
 	int pid = fork();
 	if (pid == -1)
@@ -149,8 +149,19 @@ void	exec_test(char *input, t_list *expected, t_list *local, t_list *env)
 	int status;
 	waitpid(pid, &status, 0);
 	if (WEXITSTATUS(status))
-		printf(RED BOLD"%d.A"RESET"\t"GREY"test:[%s]"RESET"\n",test_number,input);
+		printf(RED BOLD"%2d.A"RESET"\t%s\t"GREY"input:[%s]"RESET"\n",test_number,name,input);
 	test_number++;
+}
+
+void	set_flags(int argc, char **argv)
+{
+	for (int i = 1; i < argc; i++)
+	{
+		if (!strcmp(argv[i],PRINT_ALL_FLAG_NAME))
+			flags |= PRINT_ALL_FLAG;
+		if (!strcmp(argv[i],PRINT_ERR_FLAG_NAME))
+			flags |= PRINT_ERR_FLAG;
+	}
 }
 
 //TESTS
@@ -179,6 +190,7 @@ void	test_NULL_input()
 {
 // INPUT VARIABLES
 	//set input string
+	char *name = "input is NULL";
 	char *input = NULL;
 	//set expected result with no mallocs so its easier to check
 	t_list *expected = NULL;
@@ -186,12 +198,13 @@ void	test_NULL_input()
 	t_list *local = NULL;
 	t_list *env = NULL;
 // EXECUTE TEST (DON'T TOUCH)
-	exec_test(input, expected, local, env);
+	exec_test(input, expected, local, env, name);
 }
 void	test_empty_cmd()
 {
 // INPUT VARIABLES
 	//set input string
+	char *name = "input is empty string";
 	char *input = "";
 	//set expected result with no mallocs so its easier to check
 	char *aux[]= {NULL};
@@ -200,13 +213,13 @@ void	test_empty_cmd()
 	t_list *local = NULL;
 	t_list *env = NULL;
 // EXECUTE TEST (DON'T TOUCH)
-	exec_test(input, expected, local, env);
+	exec_test(input, expected, local, env, name);
 }
-
 void	test_1arg_1cmd()
 {
 // INPUT VARIABLES
 	//set input string
+	char *name = "1 cmd 1 arg";
 	char *input = "cat";
 	//set expected result with no mallocs so its easier to check
 	char *aux[]= {"cat",NULL};
@@ -215,13 +228,28 @@ void	test_1arg_1cmd()
 	t_list *local = NULL;
 	t_list *env = NULL;
 // EXECUTE TEST (DON'T TOUCH)
-	exec_test(input, expected, local, env);
+	exec_test(input, expected, local, env, name);
 }
-
+void	test_multi_arg_1cmd()
+{
+// INPUT VARIABLES
+	//set input string
+	char *name = "1 cmd multi arg";
+	char *input = "cat Makefile outfile";
+	//set expected result with no mallocs so its easier to check
+	char *aux[]= {"cat", "Makefile", "outfile",NULL};
+	t_list expected[1] = {{aux, NULL}};
+	//set local and env variables
+	t_list *local = NULL;
+	t_list *env = NULL;
+// EXECUTE TEST (DON'T TOUCH)
+	exec_test(input, expected, local, env, name);
+}
 void	test_1pipe()
 {
 // INPUT VARIABLES
 	//set input string
+	char *name = "normal cmd with 1 pipe";
 	char *input = "cat Makefile | ls -la";
 	//set expected result with no mallocs so its easier to check
 	char *aux[]= {"cat", "Makefile", NULL};
@@ -231,44 +259,221 @@ void	test_1pipe()
 	t_list *local = NULL;
 	t_list *env = NULL;
 // EXECUTE TEST (DON'T TOUCH)
-	exec_test(input, expected, local, env);
+	exec_test(input, expected, local, env, name);
 }
-
-void test_multiple_pipes_with_redir()
+void	test_multiple_pipes_with_redir()
 {
 // INPUT VARIABLES
 	//set input string
-	char *input = "cat Makefile | ls -la";
+	char *name = "multi cmd, multi arg, multi redirs";
+	char *input = "cat Makefile >>outfile <infile | <> in2  >< out2 ls -la | <<<here_doc cat";
 	//set expected result with no mallocs so its easier to check
-	char *aux[]= {"cat", "Makefile", NULL};
-	char *aux2[]= {"ls", "-la", NULL};
-	t_list expected[2] = {{aux, &expected[1]}, {aux2, NULL}};
+	char *aux[]= {"cat", "Makefile",">>outfile","<infile", NULL};
+	char *aux2[]= {"<in2",">out2","ls", "-la", NULL};
+	char *aux3[]= {"<<", "<here_doc", "cat", NULL};
+	t_list expected[] = {{aux, &expected[1]}, {aux2, &expected[2]}, {aux3, NULL}};
 	//set local and env variables
 	t_list *local = NULL;
 	t_list *env = NULL;
 // EXECUTE TEST (DON'T TOUCH)
-	exec_test(input, expected, local, env);
+	exec_test(input, expected, local, env, name);
 }
-
-void	set_flags(int argc, char **argv)
+void	test_double_pipe()
 {
-	for (int i = 1; i < argc; i++)
-	{
-		if (!strcmp(argv[i],PRINT_ALL_FLAG_NAME))
-			flags |= PRINT_ALL_FLAG;
-		if (!strcmp(argv[i],PRINT_ERR_FLAG_NAME))
-			flags |= PRINT_ERR_FLAG;
-	}
+// INPUT VARIABLES
+	//set input string
+	char *name = "double pipe between 2 cmd";
+	char *input = "cat Makefile || command2";
+	//set expected result with no mallocs so its easier to check
+	char *aux[]= {"cat", "Makefile", NULL};
+	char *aux2[]= {NULL};
+	char *aux3[]= {"command2", NULL};
+	t_list expected[] = {{aux, &expected[1]}, {aux2, &expected[2]}, {aux3, NULL}};
+	//set local and env variables
+	t_list *local = NULL;
+	t_list *env = NULL;
+// EXECUTE TEST (DON'T TOUCH)
+	exec_test(input, expected, local, env, name);
 }
-
+void	test_only_1pipe()
+{
+// INPUT VARIABLES
+	//set input string
+	char *name = "only a pipe";
+	char *input = "|";
+	//set expected result with no mallocs so its easier to check
+	char *aux[]= {NULL};
+	char *aux2[]= {NULL};
+	t_list expected[] = {{aux, &expected[1]}, {aux2, NULL}};
+	//set local and env variables
+	t_list *local = NULL;
+	t_list *env = NULL;
+// EXECUTE TEST (DON'T TOUCH)
+	exec_test(input, expected, local, env, name);
+}
+void	test_expand_1dollar()
+{
+// INPUT VARIABLES
+	//set input string
+	char *name = "only a $";
+	char *input = "$";
+	//set expected result with no mallocs so its easier to check
+	char *aux[]= {"$",NULL};
+	t_list expected[] = {{aux, NULL}};
+	//set local and env variables
+	t_list local[] = {NULL};
+	t_list env[] = {NULL};
+// EXECUTE TEST (DON'T TOUCH)
+	exec_test(input, expected, local, env, name);
+}
+void	test_expand_non_existing_var()
+{
+// INPUT VARIABLES
+	//set input string
+	char *name = "only not existing var";
+	char *input = "$no_exist";
+	//set expected result with no mallocs so its easier to check
+	char *aux[]= {NULL};
+	t_list expected[] = {{aux, NULL}};
+	//set local and env variables
+	t_var var[] = {{"name1","content1"},{"name2","content2"},{"name3","content3"}};
+	t_list local[] = {{&var[0],&local[1]},{&var[1],&local[2]},{&var[2],NULL}};
+	t_list *env = NULL;
+// EXECUTE TEST (DON'T TOUCH)
+	exec_test(input, expected, local, env, name);
+}
+void	test_env_contains_null()
+{
+// INPUT VARIABLES
+	//set input string
+	char *name = "env[0]={NULL},local=NULL";
+	char *input = "$no_exist";
+	//set expected result with no mallocs so its easier to check
+	char *aux[]= {NULL};
+	t_list expected[] = {{aux, NULL}};
+	//set local and env variables
+	t_var var[] = {{"name1","content1"},{"name2","content2"},{"name3","content3"}};
+	t_list *local = NULL;
+	t_list env[] = {NULL};
+// EXECUTE TEST (DON'T TOUCH)
+	exec_test(input, expected, local, env, name);
+}
+void	test_local_contains_null()
+{
+// INPUT VARIABLES
+	//set input string
+	char *name = "local[0]={NULL},env=NULL, try use var";
+	char *input = "$no_exist";
+	//set expected result with no mallocs so its easier to check
+	char *aux[]= {NULL};
+	t_list expected[] = {{aux, NULL}};
+	//set local and env variables
+	t_var var[] = {{"name1","content1"},{"name2","content2"},{"name3","content3"}};
+	t_list local[] = {NULL};
+	t_list *env = NULL;
+// EXECUTE TEST (DON'T TOUCH)
+	exec_test(input, expected, local, env, name);
+}
+void	test_pipe_in_var()
+{
+// INPUT VARIABLES
+	//set input string
+	char *name = "pipe=\"|\", should not split command";
+	char *input = "cat Makefile $pipe grep hola";
+	//set expected result with no mallocs so its easier to check
+	char *aux[]= {"cat", "Makefile", "|", "grep", "hola",NULL};
+	t_list expected[] = {{aux, NULL}};
+	//set local and env variables
+	t_var var[] = {{"name1","content1"},{"pipe","|"},{"name3","content3"}};
+	t_list local[] = {{&var[0],&local[1]},{&var[1],&local[2]},{&var[2],NULL}};
+	t_list *env = NULL;
+// EXECUTE TEST (DON'T TOUCH)
+	exec_test(input, expected, local, env, name);
+}
+void	test_existing_vars()
+{
+// INPUT VARIABLES
+	//set input string
+	char *name = "Multiple existing vars in env and local";
+	char *input = "$name1 $name2 $name3 $name4";
+	//set expected result with no mallocs so its easier to check
+	char *aux[]= {"content1", "content2", "content3", "content4",NULL};
+	t_list expected[] = {{aux, NULL}};
+	//set local and env variables
+	t_var var[] = {{"name1","content1"},{"name2","content2"},{"name3","content3"},{"name4","content4"}};
+	t_list local[] = {{&var[0],&local[1]},{&var[1],NULL}};
+	t_list env[] = {{&var[2], &env[1]}, {&var[3],NULL}};
+// EXECUTE TEST (DON'T TOUCH)
+	exec_test(input, expected, local, env, name);
+}
+void	test_existing_closevars()
+{
+// INPUT VARIABLES
+	//set input string
+	char *name = "Multiple existing vars in env and local close to each other";
+	char *input = "$name1$name2$name3$name4";
+	//set expected result with no mallocs so its easier to check
+	char *aux[]= {"content1content2content3content4",NULL};
+	t_list expected[] = {{aux, NULL}};
+	//set local and env variables
+	t_var var[] = {{"name1","content1"},{"name2","content2"},{"name3","content3"},{"name4","content4"}};
+	t_list local[] = {{&var[0],&local[1]},{&var[1],NULL}};
+	t_list env[] = {{&var[2], &env[1]}, {&var[3],NULL}};
+// EXECUTE TEST (DON'T TOUCH)
+	exec_test(input, expected, local, env, name);
+}
+void	test_double_dollar()
+{
+// INPUT VARIABLES
+	//set input string
+	char *name = "Double dollar";
+	char *input = "$$";
+	//set expected result with no mallocs so its easier to check
+	char *aux[]= {"dollarcontent",NULL};
+	t_list expected[] = {{aux, NULL}};
+	//set local and env variables
+	t_var var[] = {{"$","dollarcontent"},{"name2","content2"},{"name3","content3"},{"name4","content4"}};
+	t_list local[] = {{&var[0],&local[1]},{&var[1],NULL}};
+	t_list env[] = {{&var[2], &env[1]}, {&var[3],NULL}};
+// EXECUTE TEST (DON'T TOUCH)
+	exec_test(input, expected, local, env, name);
+}
+void	test_cmd_closeredir()
+{
+	// INPUT VARIABLES
+	//set input string
+	char *name = "close arg to redir";
+	char *input = "cat>outfile";
+	//set expected result with no mallocs so its easier to check
+	char *aux[]= {"cat",">outfile",NULL};
+	t_list expected[] = {{aux, NULL}};
+	//set local and env variables
+	t_list *local = NULL;
+	t_list *env = NULL;
+// EXECUTE TEST (DON'T TOUCH)
+	exec_test(input, expected, local, env, name);
+}
 int main(int argc, char **argv, char **envp)
 {
 	set_flags(argc, argv);
 	printf(BOLD UNDERLINE MAGENTA"TESTER: PARSE"RESET PINK" (use -all and -err for results)"RESET"\n");
 	test_norminette("norminette src/parse.c src/expand_variables.c src/split*");
 	test_NULL_input();
-	test_empty_cmd();
+	test_empty_cmd(); //maybe this test should return a NULL list.
 	test_1arg_1cmd();
+	test_multi_arg_1cmd();
 	test_1pipe();
+	test_multiple_pipes_with_redir();
+	test_double_pipe();
+	test_only_1pipe();
+	test_expand_1dollar();
+	test_expand_non_existing_var();
+	test_env_contains_null();
+	test_local_contains_null();
+	test_pipe_in_var();
+	test_existing_vars();
+	test_existing_closevars();
+	test_double_dollar();
+	test_cmd_closeredir();
 }
 //gcc -fsanitize=leak -Iinclude -Ilibft/include src/parse.c src/expand_variables.c src/split* test/test_parse.c src/print_varlist.c src/array_to_varlist.c src/set_variable.c src/free_var.c libft/libft.a -o parse_test
