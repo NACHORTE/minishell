@@ -6,7 +6,7 @@
 /*   By: orudek <orudek@student.42madrid.com>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/23 12:22:38 by orudek            #+#    #+#             */
-/*   Updated: 2023/09/24 19:16:32 by orudek           ###   ########.fr       */
+/*   Updated: 2023/09/25 22:46:27 by orudek           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,94 +30,60 @@ int	cmd_pwd()
 	return (0);
 }
 
-int	cmd_cd(char **cmd, t_list **env)   //COMPROBAR MALLOCS
+int	cmd_cd(char **cmd, t_list **env)   //NOTE Hacer un tester para esto
 {
-	char	*old;
-	char	*curr;
 	char	*old_pwd;
 	char	*curr_pwd;
+	char	*home;
 	char	*dst;
-
+	
 	if (cmd[1] != 0 && cmd[2] != 0)
 	{
 		printf("cd: too many arguments\n");
 		return (1);
 	}
-	if (!get_variable(*env, "OLDPWD", &dst))
-	{
-		printf("cd: OLDPWD not set\n");
-		return (1);
-	}
-	old = ft_strdup("OLDPWD");
-	curr = ft_strdup("PWD");
-	old_pwd = getcwd(NULL, 0);
-	if (!old || !curr || !old_pwd) //NOTE no se que pasa si falla getcwd a lo mejor no devuelve NULL
-	{
-		printf("cd: Cannot allocate memory\n");
-		if (old)
-			free(old);
-		if (curr)
-			free(curr);
-		if (old_pwd)
-			free(old_pwd);
-		return (1);
-	}
+	if (!get_variable(*env, "PWD", &old_pwd))
+		old_pwd = NULL;
 	if (!cmd[1] || !ft_strcmp(cmd[1], "~"))
 	{
-		chdir(getenv("HOME"));
-		curr_pwd = getcwd(NULL, 0);
-		if (!curr_pwd)
+		if (get_variable(*env, "HOME", home))
+			chdir(home);
+		else
 		{
-			printf("cd: Cannot allocate memory\n");
-			free(old);
-			free(curr);
-			free(old_pwd);
+			printf("cd: HOME not set\n");
 			return (1);
 		}
 	}
 	else if (!ft_strcmp(cmd[1], "-"))    //COMPROBAR QUE HAY OLDPWD
 	{
-		chdir(dst);
-		curr_pwd = getcwd(NULL, 0);
-		if (!curr_pwd)
+		if (!get_variable(*env, "OLDPWD", &dst))
 		{
-			printf("cd: Cannot allocate memory\n");
-			free(old);
-			free(curr);
-			free(old_pwd);
+			printf("cd: OLDPWD not set\n");
 			return (1);
 		}
+		chdir(dst);
 	}
 	else
 	{
 		if (chdir(cmd[1]) != 0)
 		{
 			perror(cmd[1]);
-			free(old);
-			free(curr);
-			free(old_pwd);
 			return (1);
 		}
-		else
-		{
-			curr_pwd = getcwd(NULL, 0);
-			if (!curr_pwd)
-			{
-				printf("cd: Cannot allocate memory\n");
-				free(old);
-				free(curr);
-				free(old_pwd);
-				return (1);
-			}
-		}
 	}
-	if (!set_variable(env, old, old_pwd))
+	curr_pwd = getcwd(NULL, 0);
+	if (!curr_pwd)
+	{
+		printf("cd: Cannot allocate memory\n");
+		return (1);
+	}
+	if (!set_variable(env, "OLDPWD", old_pwd))
 	{
 		free(old);
 		free(old_pwd);
 		return (1);
 	}
-	if (!set_variable(env, curr, curr_pwd))
+	if (!set_variable(env, "PWD", curr_pwd))
 	{
 		free(curr);
 		free(curr_pwd);
@@ -295,7 +261,7 @@ int	cmd_export(char **cmd, t_list **local, t_list **env)
 	return (exit_status);
 }
 
-int	is_builtin(char *cmd)
+int	is_builtin(char *cmd) //NOTE no se si me gusta está funcion.
 {
 	if (!cmd || !*cmd)
 		return (0);

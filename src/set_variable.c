@@ -6,7 +6,7 @@
 /*   By: orudek <orudek@student.42madrid.com>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/10 15:29:51 by orudek            #+#    #+#             */
-/*   Updated: 2023/09/17 15:45:52 by orudek           ###   ########.fr       */
+/*   Updated: 2023/09/25 21:13:19 by orudek           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -53,19 +53,34 @@ static char	replace_variable(t_list **lst, t_var *var, int index)
 	}
 	return (1);
 }
+static	t_var	*new_var(const char *name, const char *content)
+{
+	t_var	*var;
+
+	if (!name || !*name)
+		return (NULL);
+	var = malloc(sizeof(t_var));
+	if (!var)
+		return (NULL);
+	var->name = ft_strdup(name);
+	if (content)
+		var->content = ft_strdup(content);
+	if (!var->name || (content && !var->content))
+	{
+		free_var(var);
+		return (NULL);
+	}
+	return (var);
+}
 
 char	set_variable(t_list **lst, char *name, char *content)
 {
 	int		index;
 	t_var	*var;
 
-	if (!name)
-		return (0);
-	var = malloc(sizeof(t_var));
+	var = new_var(name, content);
 	if (!var)
 		return (0);
-	var->name = name;
-	var->content = content;
 	index = is_in_list(*lst, var->name);
 	if (index == -1)
 		return (ft_lstadd_back_content(lst, var));

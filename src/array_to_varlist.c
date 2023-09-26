@@ -6,7 +6,7 @@
 /*   By: orudek <orudek@student.42madrid.com>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/20 22:44:56 by oscar             #+#    #+#             */
-/*   Updated: 2023/09/21 20:02:00 by orudek           ###   ########.fr       */
+/*   Updated: 2023/09/25 21:53:47 by orudek           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,7 +32,7 @@ static int	str_find_char(char *str, char c)
 	while (str[++i])
 		if (str[i] == c)
 			return (i);
-	return (-1);
+	return (i);
 }
 
 /*	split_var:
@@ -58,32 +58,30 @@ static int	str_find_char(char *str, char c)
 		case of the content string, the string is offset to the position after
 		the '=' character.
 */
-static char	**split_var(char *str)
+static char	split_var(t_var *var, char *str)
 {
 	int		pos;
 	size_t	len;
-	char	**var;
 
-	var = malloc(sizeof(char *) * 2);
-	if (!var)
-		return (NULL);
 	pos = str_find_char(str, '=');
-	if (pos == -1)
-		return (NULL);
 	len = ft_strlen(str);
-	var[0] = malloc (pos + 1);
-	var[1] = malloc (len - pos);
-	if (!var[0] || !var[1])
+	var->name = malloc (pos + 1);
+	if (pos < len)
+		var->content = malloc (len - pos);
+	else
+		var->content = NULL;
+	if (!var->name || (len != pos && !var->content))
 	{
-		if (var[0])
-			free(var[0]);
-		if (var[1])
-			free(var[1]);
-		return (NULL);
+		if (var->name)
+			free(var->name);
+		if (var->content)
+			free(var->content);
+		return (0);
 	}
-	ft_strlcpy(var[0], str, pos + 1);
-	ft_strlcpy(var[1], ft_strrchr(str, '=') + 1, len - pos);
-	return (var);
+	ft_strlcpy(var->name, str, pos + 1);
+	if (var->content)
+		ft_strlcpy(var->content, ft_strrchr(str, '=') + 1, len - pos);
+	return (1);
 }
 
 /*	array_to_varlist:
@@ -113,25 +111,27 @@ static char	**split_var(char *str)
 */
 t_list	*array_to_varlist(char **array)
 {
-	char	**var;
+	t_var	var;
 	t_list	*out;
+	int		i;
 
 	if (!array)
 		return (NULL);
 	out = NULL;
-	while (*array)
+	i = -1;
+	while (array[++i])
 	{
-		var = split_var(*array);
-		array++;
-		if (!var)
+		if (!split_var(&var, array[i]))
 			continue ;
-		if (!set_variable(&out, var[0], var[1]))
+		if (!set_variable(&out, var.name, var.content))
 		{
 			ft_lstfree(out, free_var);
-			free(var);
+			free(var.name);
+			free(var.content);
 			return (NULL);
 		}
-		free(var);
+		free(var.name);
+		free(var.content);
 	}
 	return (out);
 }
@@ -141,6 +141,10 @@ t_list	*array_to_varlist(char **array)
 	if (v[c - 1])
 		c += 1;
 	t_list *env = array_to_varlist(e);
+	set_variable(&env, "NULLVAR", NULL);
+	set_variable(&env, "NOT NULL", "\0");
 	print_varlist(env);
+	ft_lstfree(env, free_var);
 	return (0);
 }*/
+// gcc -Iinclude -Ilibft/include src/array_to_varlist.c src/set_variable.c src/free_var.c src/print_varlist.c libft/libft.a -fsanitize=leak
