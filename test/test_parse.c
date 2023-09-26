@@ -55,9 +55,9 @@ int	flags = 0;
 		if (flags & PRINT_ALL_FLAG)\
 		{\
 			printf(BLUE BOLD"\tExpected:\n"CYAN DIM);\
-			print_list(expected);\
+			print_var(expected);\
 			printf(NORMAL GREEN BOLD"\tResult:\n"LIME DIM);\
-			print_list(result);\
+			print_var(result);\
 			printf(RESET NORMAL); \
 		}\
 	}\
@@ -67,12 +67,13 @@ int	flags = 0;
 		if (flags & PRINT_ALL_FLAG || flags & PRINT_ERR_FLAG)\
 		{\
 			printf(BLUE BOLD"\tExpected:\n"CYAN DIM);\
-			print_list(expected);\
+			print_var(expected);\
 			printf(NORMAL GREEN BOLD"\tResult:\n"LIME DIM);\
-			print_list(result);\
+			print_var(result);\
 			printf(RESET NORMAL); \
 		}\
 	}
+
 int	array_cmp(char **array1, char **array2)
 {
 	int i = 0;
@@ -103,7 +104,7 @@ int	same_result(t_list *result, t_list *expected)
 	return (1);
 }
 
-void print_list(t_list *list)
+void print_var(t_list *list)
 {
 	int j = 0;
 	if (!list)
@@ -117,11 +118,6 @@ void print_list(t_list *list)
 		printf("\t\t\t%d.[%s]\n",i ,((char **)aux->content)[i]);
 		j++;
 	}
-}
-
-void print_error(t_list *expected, t_list *result)
-{
-
 }
 
 void	exec_test(char *input, t_list *expected, t_list *local, t_list *env)
@@ -145,9 +141,9 @@ void	exec_test(char *input, t_list *expected, t_list *local, t_list *env)
 			perror("dup2");
 			exit (1);
 		}
-		t_list *result = parse(input, local, env);
+		void *result = parse(input, local, env);
 		compare_result(result, expected)
-		ft_lstfree(result, ft_array_free);
+		//ft_lstfree((t_list *)result, ft_array_free);
 		exit (0);
 	}
 	int status;
@@ -159,6 +155,26 @@ void	exec_test(char *input, t_list *expected, t_list *local, t_list *env)
 
 //TESTS
 ////////////////////////////////////////////////////////////////////
+void	test_norminette(char *norminette_cmd)
+{
+	int old_stdout = dup(1);
+	int old_stderr = dup(2);
+	int fd_NULL = open("/dev/null",O_WRONLY);
+	dup2(fd_NULL,2);
+	dup2(fd_NULL,1);
+	int status = WEXITSTATUS(system(norminette_cmd));
+	dup2(old_stdout,1);
+	dup2(old_stderr,2);
+	if (status == 127)
+		printf("norminette not available\n");
+	else if (status == 1)
+		printf(CYAN BOLD"norminette:"RED" KO\n"RESET);
+	else if (status == 0)
+		printf(CYAN BOLD"norminette:"GREEN" OK\n"RESET);
+	else
+		printf("norminette exit status = %d\n",status);
+	//fflush(stdout);
+}
 
 void	test_NULL_input()
 {
@@ -234,6 +250,7 @@ int main(int argc, char **argv, char **envp)
 {
 	set_flags(argc, argv);
 	printf(BOLD UNDERLINE MAGENTA"TESTER: PARSE"RESET PINK" (use -all and -err for results)"RESET"\n");
+	test_norminette("norminette src/parse.c src/expand_variables.c src/split*");
 	test_NULL_input();
 	test_empty_cmd();
 	test_1arg_1cmd();
