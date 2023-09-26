@@ -6,60 +6,11 @@
 /*   By: iortega- <iortega-@student.42madrid.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/20 13:56:41 by oscar             #+#    #+#             */
-/*   Updated: 2023/09/26 20:42:38 by iortega-         ###   ########.fr       */
+/*   Updated: 2023/09/26 21:57:50 by iortega-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
-
-
-int	exec_one_builtin(char **cmd, t_list **local, t_list **env, int *status)
-{
-	int	std_in;
-	int	std_out;
-	int	out;
-	char **cmd_parsed;
-
-	cmd_parsed = parse_cmd(cmd); //XXX cambiale el nombre machito
-	if (!is_builtin(cmd_parsed[0]))
-	{
-		ft_array_free(cmd_parsed);
-		return (0);
-	}
-	std_in = dup(0);
-	std_out = dup(1);
-    redirect_streams(0, 1, cmd);
-	out = exec_builtin(cmd_parsed, local, env);
-	ft_array_free(cmd_parsed);
-	dup2(std_in, 0);
-	dup2(std_out, 1);
-	close(std_in);
-	close(std_out);
-	return (out);
-}
-
-/*  If the command given is a builtin, then no fork must be made and executes
-    the function for builtins. If it is a normal command, creates a fork and
-    calls the child process setting infile=stdin, outfile=stdout
-    If the command contains redirections, they will be handled inside the child
-*/
-int	exec_one_cmd(char **cmd, char **env, t_command *global)
-{
-	int	status;
-
-    if (exec_one_builtin(cmd, &global->local, &global->env, &status))
-        return (status);
-    int pid = fork();
-    if (pid == -1)
-	{
-        printf("EXEC_ONE_CMD: fork fail\n");
-		return 1;
-	}
-	if (pid == 0)
-        child(0, 1, cmd, global);
-	wait(&status);
-	return (WEXITSTATUS(status));
-}
 
 int	count_heredoc(t_list *cmds)
 {
@@ -210,6 +161,58 @@ int	open_heredocs(t_list *cmds, int **n_cmd, int **fds)
 		cmds = cmds->next;
 	}
 	return (0);
+}
+
+int	exec_one_builtin(char **cmd, t_list **local, t_list **env, int *status)
+{
+	int	std_in;
+	int	std_out;
+	int	out;
+	char **cmd_parsed;
+
+	cmd_parsed = parse_cmd(cmd); //XXX cambiale el nombre machito
+	if (!is_builtin(cmd_parsed[0]))
+	{
+		ft_array_free(cmd_parsed);
+		return (0);
+	}
+	std_in = dup(0);
+	std_out = dup(1);
+    redirect_streams(0, 1, cmd);
+	out = exec_builtin(cmd_parsed, local, env);
+	ft_array_free(cmd_parsed);
+	dup2(std_in, 0);
+	dup2(std_out, 1);
+	close(std_in);
+	close(std_out);
+	return (out);
+}
+
+/*  If the command given is a builtin, then no fork must be made and executes
+    the function for builtins. If it is a normal command, creates a fork and
+    calls the child process setting infile=stdin, outfile=stdout
+    If the command contains redirections, they will be handled inside the child
+*/
+int	exec_one_cmd(char **cmd, char **env, t_command *global)
+{
+	int	status;
+	int	fd;
+
+	fd = check_restdin(cmd);
+    if (exec_one_builtin(cmd, &global->local, &global->env, &status))
+        return (status);
+    int pid = fork();
+    if (pid == -1)
+	{
+        printf("EXEC_ONE_CMD: fork fail\n");
+		return 1;
+	}
+	if (pid == 0)
+        child(fd, 1, cmd, global);
+	if (fd > 0)
+		close(fd);
+	wait(&status);
+	return (WEXITSTATUS(status));
 }
 
 int exec_multi_cmd(t_list *cmds, char **env, t_command *global)
