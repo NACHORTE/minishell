@@ -166,14 +166,13 @@ void	test_norminette(char *norminette_cmd)
 	dup2(old_stdout,1);
 	dup2(old_stderr,2);
 	if (status == 127)
-		printf("norminette not available\n");
+		printf(CYAN BOLD"norminette not available\n"RESET);
 	else if (status == 1)
 		printf(CYAN BOLD"norminette:"RED" KO\n"RESET);
 	else if (status == 0)
 		printf(CYAN BOLD"norminette:"GREEN" OK\n"RESET);
 	else
-		printf("norminette exit status = %d\n",status);
-	//fflush(stdout);
+		printf(CYAN BOLD"norminette exit status = %d\n"RESET,status);
 }
 
 void	test_NULL_input()
@@ -195,7 +194,7 @@ void	test_empty_cmd()
 	//set input string
 	char *input = "";
 	//set expected result with no mallocs so its easier to check
-	char *aux[]= {"",NULL};
+	char *aux[]= {NULL};
 	t_list expected[1] = {{aux, NULL}};
 	//set local and env variables
 	t_list *local = NULL;
@@ -220,6 +219,22 @@ void	test_1arg_1cmd()
 }
 
 void	test_1pipe()
+{
+// INPUT VARIABLES
+	//set input string
+	char *input = "cat Makefile | ls -la";
+	//set expected result with no mallocs so its easier to check
+	char *aux[]= {"cat", "Makefile", NULL};
+	char *aux2[]= {"ls", "-la", NULL};
+	t_list expected[2] = {{aux, &expected[1]}, {aux2, NULL}};
+	//set local and env variables
+	t_list *local = NULL;
+	t_list *env = NULL;
+// EXECUTE TEST (DON'T TOUCH)
+	exec_test(input, expected, local, env);
+}
+
+void test_multiple_pipes_with_redir()
 {
 // INPUT VARIABLES
 	//set input string
