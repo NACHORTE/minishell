@@ -6,7 +6,7 @@
 /*   By: orudek <orudek@student.42madrid.com>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/23 12:22:38 by orudek            #+#    #+#             */
-/*   Updated: 2023/09/25 22:46:27 by orudek           ###   ########.fr       */
+/*   Updated: 2023/09/27 20:35:21 by orudek           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,12 +29,82 @@ int	cmd_pwd()
 	free (dir);
 	return (0);
 }
+/////////////////////////////////
 
+
+static	char	update_pwd(char *old_pwd, t_lsit **env)
+{
+	
+}
+
+static char	cd_home(char **cmd, t_list **env)
+{
+	int		exit_status;
+	char	*home;
+
+	if (!cmd[1] || !ft_strcmp(cmd[1], "~"))
+	{
+		home = NULL;
+		exit_status = get_variable(*env, "HOME", &home);
+		if (exit_status == 1 && home)
+		{
+			if (chdir(home) == -1)
+			{
+				perror(home);
+				exit_status = -1;
+			}
+			free(home);
+			return (exit_status);
+		}		
+		if (exit_status == 0 || !home) 
+			printf("cd: HOME not set\n");
+		return (-1);
+	}
+	return (0);
+}
+
+static char	cd_back(char **cmd, t_list **env)
+{
+	int		exit_status;
+	char	*old_pwd;
+
+	if (!cmd[1] || !ft_strcmp(cmd[1], "~"))
+	{
+		old_pwd = NULL;
+		exit_status = get_variable(*env, "OLDPWD", &old_pwd);
+		if (exit_status == 1 && old_pwd)
+		{
+			if (chdir(old_pwd) == -1)
+			{
+				perror(old_pwd);
+				exit_status = -1;
+			}
+			printf("%s\n", old_pwd);
+			free(old_pwd);
+			return (exit_status);
+		}		
+		if (exit_status == 0 || !old_pwd) 
+			printf("cd: OLDPWD not set\n");
+		return (-1);
+	}
+	return (0);
+}
+
+static char	cd_dir(char **cmd, t_list **env)
+{
+	if (chdir(cmd[1]) == -1)
+	{
+		perror(cmd[1]);
+		return (-1);
+	}
+	return (1);
+}
+
+//[ ] cd busca tambien en en
 int	cmd_cd(char **cmd, t_list **env)   //NOTE Hacer un tester para esto
 {
 	char	*old_pwd;
 	char	*curr_pwd;
-	char	*home;
 	char	*dst;
 	
 	if (cmd[1] != 0 && cmd[2] != 0)
@@ -42,36 +112,10 @@ int	cmd_cd(char **cmd, t_list **env)   //NOTE Hacer un tester para esto
 		printf("cd: too many arguments\n");
 		return (1);
 	}
-	if (!get_variable(*env, "PWD", &old_pwd))
-		old_pwd = NULL;
-	if (!cmd[1] || !ft_strcmp(cmd[1], "~"))
-	{
-		if (get_variable(*env, "HOME", home))
-			chdir(home);
-		else
-		{
-			printf("cd: HOME not set\n");
-			return (1);
-		}
-	}
-	else if (!ft_strcmp(cmd[1], "-"))    //COMPROBAR QUE HAY OLDPWD
-	{
-		if (!get_variable(*env, "OLDPWD", &dst))
-		{
-			printf("cd: OLDPWD not set\n");
-			return (1);
-		}
-		chdir(dst);
-	}
-	else
-	{
-		if (chdir(cmd[1]) != 0)
-		{
-			perror(cmd[1]);
-			return (1);
-		}
-	}
-	curr_pwd = getcwd(NULL, 0);
+	if (cd_home(cmd, env) != 0)
+	else if (cd_back(cmd, env) != 0)
+	else if (cd_dir(cmd, env) != 1)
+		return (1);
 	if (!curr_pwd)
 	{
 		printf("cd: Cannot allocate memory\n");
@@ -79,19 +123,17 @@ int	cmd_cd(char **cmd, t_list **env)   //NOTE Hacer un tester para esto
 	}
 	if (!set_variable(env, "OLDPWD", old_pwd))
 	{
-		free(old);
 		free(old_pwd);
 		return (1);
 	}
 	if (!set_variable(env, "PWD", curr_pwd))
 	{
-		free(curr);
 		free(curr_pwd);
 		return (1);
 	}
 	return (0);
 }
-
+////////////////////////////////////////
 int	cmd_env(t_list *env)
 {
 	//NOTE leaks after using env
@@ -133,9 +175,9 @@ int	cmd_unset(char **cmd, t_list **local, t_list **env)
 {
 	while (*cmd)
 	{
-		if (get_variable(*local, cmd[0], NULL))
+		if (get_variable(*local, cmd[0], NULL) == 1)
 			unset_variable(local, cmd[0]);
-		if (get_variable(*env, cmd[0], NULL))
+		if (get_variable(*env, cmd[0], NULL) == 1)
 			unset_variable(env, cmd[0]);
 		cmd++;
 	}
@@ -167,6 +209,11 @@ static int	get_name(char *str, char **name)
 		return (0);
 	*name = new_str;
 	ft_strlcpy(*name, str, len + 1);
+	if (!is_varname_ok(*name))
+	{
+		free(name);
+		return (0);
+	}
 	return (1);
 }
 /*	get_content:
@@ -188,75 +235,70 @@ static int	get_content(char *str, char **content)
 		return (1);
 	}
 	len = 0;
+	str++;
 	while (str[len] != 0)
 		len++;
 	new_str = malloc(len + 1);
 	if (!new_str)
 		return (0);
 	*content = new_str;
-	ft_strlcpy(*content, str + 1, len + 1);
+	ft_strlcpy(*content, str, len + 1);
 	return (1);
+}
+
+char	str_to_var(char *cmd, char **name, char **content)
+{
+	if (!get_name(str, name))
+		return (0);
+	if (!get_content(str, content))
+	{
+		free(*name);
+		return (0);
+	}
+	return (1);
+}
+
+int update_from_local(t_list **local, t_var *var)
+{
+	char	*last_content;
+	char	get_var_status;
+
+	get_var_status = get_variable(*local, var->name, &last_content);
+	if (get_var_status == -1)
+		return (-1);
+	if (get_var_status == 1)
+	{
+		unset_variable(local, var->name);
+		if (!var->content)
+			var->content = last_content;
+		else
+			free(last_content);
+	}
+	return (get_var_status);
 }
 
 int	cmd_export(char **cmd, t_list **local, t_list **env)
 {
-	char	*name;
-	char	*content;
 	int		i;
 	int		exit_status;
+	t_var	var;
+	char	*last_content;
 
 	i = 0;
 	exit_status = 0;
 	while (cmd[++i])
 	{
-		if (!get_name(cmd[i], &name)) //[x] get_name, returns the first half of the assignation
+		if (str_to_var(cmd[i], &var.name, &var.content))
 		{
 			exit_status = 1;
 			continue ;
 		}
-		if (!is_varname_ok(name))
-		{
-			free(name);
+		if (update_from_local(local, &var) == -1)
+			|| !set_variable(env, var.name, var.content))
 			exit_status = 1;
-			continue ;
-		}
-		if (get_variable(*local, name, &content))
-		{
-			if (content != NULL)
-			{
-				content = ft_strdup(content);
-				if (!content)
-				{
-					exit_status = 1;
-					free(name);
-					continue ;
-				}
-			}
-			unset_variable(local, name);
-			if (!set_variable(env, name, content))
-			{
-				exit_status = 1;
-				free(name);
-				if (content)
-					free(content);
-			}
-		}
-		else
-		{
-			if (!get_content(cmd[i], &content))// [x] get_content, returns the second half of the assignation (NULL if there is nothing)
-			{
-				exit_status = 1;
-				free(name);
-				continue ;
-			}
-			if (!set_variable(env, name, content))
-			{
-				exit_status = 1;
-				free(name);
-				if (content) //content can be NULL
-					free(content);
-			}
-		}
+		free(var.name);
+		if (var.content)
+			free(var.content);
 	}
 	return (exit_status);
 }
