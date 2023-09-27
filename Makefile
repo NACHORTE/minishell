@@ -6,7 +6,7 @@
 #    By: orudek <orudek@student.42madrid.com>       +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/09/03 15:02:39 by iortega-          #+#    #+#              #
-#    Updated: 2023/09/24 19:15:54 by orudek           ###   ########.fr        #
+#    Updated: 2023/09/27 21:51:53 by orudek           ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -26,34 +26,41 @@ LIBFT_NAME := libft.a
 LIB := readline
 
 SRC_FILES := main.c\
-	split_args.c\
-	split_args2.c\
-	set_variable.c\
-	expand_variables.c\
-	parse.c\
-	split_pipe.c\
-	free_var.c\
-	get_variable.c\
-	varlist_to_array.c\
-	array_to_varlist.c\
 	child.c\
-	exec_cmd.c\
-	exec_builtin.c\
-	unset_variable.c\
-	is_varname_ok.c
+	parse/split_args.c\
+	parse/split_args2.c\
+	parse/expand_variables.c\
+	parse/parse.c\
+	parse/split_pipe.c\
+	variables/array_to_varlist.c\
+	variables/free_var.c\
+	variables/get_variable.c\
+	variables/is_varname_ok.c\
+	variables/set_variable.c\
+	variables/unset_variable.c\
+	variables/varlist_to_array.c\
+	exec_cmd/cmd_cd.c\
+	exec_cmd/cmd_echo.c\
+	exec_cmd/cmd_env.c\
+	exec_cmd/cmd_exit.c\
+	exec_cmd/cmd_export.c\
+	exec_cmd/cmd_pwd.c\
+	exec_cmd/cmd_unset.c\
+	exec_cmd/exec_cmd.c\
+	exec_cmd/exec_builtin.c
 
 SRC := $(addprefix $(SRC_DIR)/,$(SRC_FILES))
 LIB_FLAG := $(addprefix -l,$(LIB))
 INCLUDE_PATH := -I$(INCLUDE_DIR) -I$(LIBFT_DIR)/include
 OBJ := $(SRC:$(SRC_DIR)/%.c=$(OBJ_DIR)/%.o)
-
+OBJ_FOLDER := $(dir $(OBJ))
 all: $(NAME)
 
 $(NAME): $(OBJ) $(LIBFT_DIR)/$(LIBFT_NAME)
 	$(CC) $(STANDARD_FLAGS)  $(INCLUDE_PATH) $(OBJ) $(LIBFT_DIR)/$(LIBFT_NAME) -lreadline -o $@
 
 $(OBJ_DIR)/%.o: $(SRC_DIR)/%.c
-	@mkdir -p $(OBJ_DIR)
+	@mkdir -p $(OBJ_FOLDER)
 	$(CC) $(STANDARD_FLAGS) $(INCLUDE_PATH) -c -o $@ $<
 
 $(LIBFT_DIR)/$(LIBFT_NAME):
