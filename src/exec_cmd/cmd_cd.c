@@ -6,10 +6,12 @@
 /*   By: orudek <orudek@student.42madrid.com>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/27 21:26:02 by orudek            #+#    #+#             */
-/*   Updated: 2023/09/27 21:26:09 by orudek           ###   ########.fr       */
+/*   Updated: 2023/09/27 22:47:36 by orudek           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
+#include "exec_cmd.h"
+/*
 static	char	update_pwd(char *old_pwd, t_lsit **env)
 {
 	
@@ -78,10 +80,13 @@ static char	cd_dir(char **cmd, t_list **env)
 	return (1);
 }
 
-//[ ] cd busca tambien en en
+//[ ] cd busca tambien en en*/
 int	cmd_cd(char **cmd, t_list **env)   //NOTE Hacer un tester para esto
 {
-	char	*old_pwd;
+	(void)cmd;
+	(void)env;
+	return (0);
+/*	char	*old_pwd;
 	char	*curr_pwd;
 	char	*dst;
 	
@@ -109,5 +114,5 @@ int	cmd_cd(char **cmd, t_list **env)   //NOTE Hacer un tester para esto
 		free(curr_pwd);
 		return (1);
 	}
-	return (0);
+	return (0);*/
 }

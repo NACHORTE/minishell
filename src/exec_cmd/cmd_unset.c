@@ -6,12 +6,11 @@
 /*   By: orudek <orudek@student.42madrid.com>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/27 21:23:14 by orudek            #+#    #+#             */
-/*   Updated: 2023/09/27 21:23:54 by orudek           ###   ########.fr       */
+/*   Updated: 2023/09/27 22:39:59 by orudek           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "libft.h"
-#include "t_var.h"
+#include "exec_cmd.h"
 
 int	cmd_unset(char **cmd, t_list **local, t_list **env)
 {

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: iortega- <iortega-@student.42madrid.com    +#+  +:+       +#+        */
+/*   By: orudek <orudek@student.42madrid.com>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/03 15:58:32 by iortega-          #+#    #+#             */
-/*   Updated: 2023/09/27 15:19:21 by iortega-         ###   ########.fr       */
+/*   Updated: 2023/09/27 22:49:51 by orudek           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,6 +44,5 @@ int	is_builtin(char *cmd);
 int	exec_builtin(char **cmd, t_list **local, t_list **env);
 void	redirect_streams(int infile, int outfile, char **cmd);
 char	**parse_cmd(char **input);
-int		is_varname_ok(char *name);
 
 #endif

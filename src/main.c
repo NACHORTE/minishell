@@ -2,6 +2,7 @@
 
 void	new_line(int sig)
 {
+	(void)sig;
 	//printf("\n\033[36mminishell >> \033[0m");
 	write(1, "\n", 1);
     rl_on_new_line();
@@ -272,6 +273,9 @@ int	main(int argc, char **argv, char **envp)
 	char	*input;
 	t_command	global;
 
+	if (argc != 1)
+		return (1);
+	(void)argv;
 	global.env = NULL;
 	global.local = NULL;
 	save_env(&global, envp);

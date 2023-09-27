@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   exec_cmd.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: iortega- <iortega-@student.42madrid.com    +#+  +:+       +#+        */
+/*   By: orudek <orudek@student.42madrid.com>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/20 13:56:41 by oscar             #+#    #+#             */
-/*   Updated: 2023/09/27 15:48:29 by iortega-         ###   ########.fr       */
+/*   Updated: 2023/09/27 22:54:00 by orudek           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,12 +34,14 @@ int	count_heredoc(t_list *cmds)
 
 static void	sig_here(int sig)
 {
+	(void)sig;
 	write(1, "\n", 1);
 	exit (1);
 }
 
 static void	new_line(int sig)
 {
+	(void)sig;
 	//printf("\n\033[36mminishell >> \033[0m");
 	write(1, "\n", 1);
     rl_on_new_line();
@@ -168,6 +170,7 @@ int	exec_one_builtin(char **cmd, t_list **local, t_list **env, int *status)
 	dup2(std_out, 1);
 	close(std_in);
 	close(std_out);
+	*status = out;
 	return (out);
 }
 
@@ -181,6 +184,7 @@ int	exec_one_cmd(char **cmd, char **env, t_command *global)
 	int	status;
 	int	fd;
 
+	(void)env;
 	fd = check_restdin(cmd);
     if (exec_one_builtin(cmd, &global->local, &global->env, &status))
         return (status);
@@ -211,6 +215,7 @@ int exec_multi_cmd(t_list *cmds, char **env, t_command *global)
 	int n_heredocs;
 	int	j;
 
+	(void)env;
     cmds_len = ft_lstsize(cmds);
 	n_heredocs = count_heredoc(cmds);
 	//printf("%d\n", n_heredocs);
@@ -360,7 +365,7 @@ int    exec_cmd(t_list *cmds, t_list *env, t_command *global)
     if (ft_lstsize(cmds) == 1)
         status = exec_one_cmd((char **)cmds->content, env_array, global);
     else
-        status = exec_multi_cmd(cmds, env_array, global);
+		status = exec_multi_cmd(cmds, env_array, global);
 	ft_array_free(env_array);
 	return (status);
 }

@@ -6,12 +6,13 @@
 /*   By: orudek <orudek@student.42madrid.com>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/27 21:26:28 by orudek            #+#    #+#             */
-/*   Updated: 2023/09/27 21:27:50 by orudek           ###   ########.fr       */
+/*   Updated: 2023/09/27 22:39:48 by orudek           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <unistd.h>
 
 int	cmd_pwd()
 {

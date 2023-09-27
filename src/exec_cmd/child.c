@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   child.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: iortega- <iortega-@student.42madrid.com    +#+  +:+       +#+        */
+/*   By: orudek <orudek@student.42madrid.com>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/20 21:29:18 by oscar             #+#    #+#             */
-/*   Updated: 2023/09/27 21:24:53 by iortega-         ###   ########.fr       */
+/*   Updated: 2023/09/27 22:47:02 by orudek           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -170,7 +170,6 @@ static void	check_doublestdout(char *str, int *fd)
 static int	check_restdout(char **input)
 {
 	int	i;
-	int	j;
 	int	fd;
 
 	i = 0;

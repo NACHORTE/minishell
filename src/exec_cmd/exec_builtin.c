@@ -6,11 +6,11 @@
 /*   By: orudek <orudek@student.42madrid.com>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/23 12:22:38 by orudek            #+#    #+#             */
-/*   Updated: 2023/09/27 21:26:21 by orudek           ###   ########.fr       */
+/*   Updated: 2023/09/27 22:54:18 by orudek           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "minishell.h"
+#include "exec_cmd.h"
 
 int	is_builtin(char *cmd) //NOTE no se si me gusta está funcion.
 {

@@ -6,7 +6,7 @@
 /*   By: orudek <orudek@student.42madrid.com>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/20 22:44:56 by oscar             #+#    #+#             */
-/*   Updated: 2023/09/27 20:56:23 by orudek           ###   ########.fr       */
+/*   Updated: 2023/09/27 22:46:55 by orudek           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -60,11 +60,11 @@ static int	str_find_char(char *str, char c)
 */
 static char	split_var(t_var *var, char *str)
 {
-	int		pos;
-	size_t	len;
+	int	pos;
+	int	len;
 
 	pos = str_find_char(str, '=');
-	len = ft_strlen(str);
+	len = (int) ft_strlen(str);
 	var->name = malloc (pos + 1);
 	if (pos < len)
 		var->content = malloc (len - pos);

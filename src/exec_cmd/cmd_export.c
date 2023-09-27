@@ -6,11 +6,12 @@
 /*   By: orudek <orudek@student.42madrid.com>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/27 21:04:33 by orudek            #+#    #+#             */
-/*   Updated: 2023/09/27 21:21:43 by orudek           ###   ########.fr       */
+/*   Updated: 2023/09/27 22:49:41 by orudek           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "t_var.h"
+#include "exec_cmd.h"
+
 /**
  * Retrieves the name from a given string.
  * 
@@ -75,9 +76,9 @@ static int	get_content(char *str, char **content)
 
 static char	str_to_var(char *cmd, char **name, char **content)
 {
-	if (!get_name(str, name))
+	if (!get_name(cmd, name))
 		return (0);
-	if (!get_content(str, content))
+	if (!get_content(cmd, content))
 	{
 		free(*name);
 		return (0);
@@ -117,7 +118,6 @@ int	cmd_export(char **cmd, t_list **local, t_list **env)
 	int		i;
 	int		exit_status;
 	t_var	var;
-	char	*last_content;
 
 	i = 0;
 	exit_status = 0;
@@ -128,7 +128,7 @@ int	cmd_export(char **cmd, t_list **local, t_list **env)
 			exit_status = 1;
 			continue ;
 		}
-		if (update_from_local(local, &var) == -1)
+		if (update_from_local(local, &var) == -1
 			|| !set_variable(env, var.name, var.content))
 			exit_status = 1;
 		free(var.name);

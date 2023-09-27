@@ -6,7 +6,7 @@
 /*   By: orudek <orudek@student.42madrid.com>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/17 17:24:03 by orudek            #+#    #+#             */
-/*   Updated: 2023/09/26 23:46:06 by orudek           ###   ########.fr       */
+/*   Updated: 2023/09/27 22:45:30 by orudek           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,7 +20,7 @@ char	**expand_vars_array(char **str, t_list *local, t_list *env)
 {
 	int		i;
 	char	**output;
-	char	len;
+	int		len;
 
 	len = 0;
 	while (str[len])

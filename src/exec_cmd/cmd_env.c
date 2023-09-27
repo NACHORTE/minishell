@@ -6,11 +6,11 @@
 /*   By: orudek <orudek@student.42madrid.com>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/27 21:25:10 by orudek            #+#    #+#             */
-/*   Updated: 2023/09/27 21:25:22 by orudek           ###   ########.fr       */
+/*   Updated: 2023/09/27 22:48:23 by orudek           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "libft.h"
+#include "exec_cmd.h"
 
 int	cmd_env(t_list *env)
 {
@@ -18,7 +18,7 @@ int	cmd_env(t_list *env)
 	//[x] Don't print variables with content=NULL
 	while (env)
 	{
-		if (((t_var *)env->content)->content);
+		if (((t_var *)env->content)->content)
 			printf("%s=%s\n", ((t_var *)env->content)->name,
 				((t_var *)env->content)->content);
 		env = env->next;
