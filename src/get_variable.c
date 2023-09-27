@@ -6,7 +6,7 @@
 /*   By: orudek <orudek@student.42madrid.com>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/10 15:22:39 by orudek            #+#    #+#             */
-/*   Updated: 2023/09/23 20:24:47 by orudek           ###   ########.fr       */
+/*   Updated: 2023/09/27 15:47:51 by orudek           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,7 +38,11 @@ int	get_variable(t_list *lst, char *name, char **content)
 		if (!ft_strcmp(aux->name, name))
 		{
 			if (content) //if content is NULL then don't return the content (only to check if var exists)
-				*content = aux->content;
+			{
+				*content = ft_strdup(aux->content);
+				if (!*content)
+					return (-1);
+			}
 			return (1);
 		}
 		lst = lst->next;
