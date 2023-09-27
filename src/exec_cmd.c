@@ -6,7 +6,7 @@
 /*   By: iortega- <iortega-@student.42madrid.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/20 13:56:41 by oscar             #+#    #+#             */
-/*   Updated: 2023/09/27 13:40:59 by iortega-         ###   ########.fr       */
+/*   Updated: 2023/09/27 15:48:29 by iortega-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -88,27 +88,16 @@ static int	here_doc(char *str)
 	if (stat == 1)
 		return (-1);
 	return (redi[0]);
-	/*dup2(redi[0], 0);
-	close(redi[0]);
-	return (1);*/
 }
 
 static int	check_restdin(char **input)
 {
 	int	i;
 	int	j;
-	int	flag;
 	int	fd;
 
 	i = 0;
-	flag = 0;
 	fd = 0;
-	/*while (input[i])
-	{
-		printf("%s\n", input[i]);
-		i++;
-	}
-	i = 0;*/
 	while (input[i])   //if we have < " " file we get flag 1 and check file, else if we have <file we check file without "<"
 	{
 		j = 0;
@@ -117,7 +106,6 @@ static int	check_restdin(char **input)
 			if (fd != 0)
 				close (fd);
 			j++;
-			flag = 1;
 			if (input[i][j] == '<')
 			{
 				fd = here_doc(&input[i][j + 1]);
@@ -131,11 +119,6 @@ static int	check_restdin(char **input)
 		}
 		i++;
 	}
-	/*if (flag)
-	{
-		dup2(fd, 0);
-		close(fd);
-	}*/
 	return (fd);
 }
 

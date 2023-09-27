@@ -6,7 +6,7 @@
 /*   By: iortega- <iortega-@student.42madrid.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/20 21:29:18 by oscar             #+#    #+#             */
-/*   Updated: 2023/09/27 15:31:13 by iortega-         ###   ########.fr       */
+/*   Updated: 2023/09/27 21:24:53 by iortega-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,14 +43,6 @@
 
 #include "minishell.h"
 
-static void	new_line(int sig)
-{
-	write(1, "\n", 1);
-    rl_on_new_line();
-    rl_replace_line("", 0);
-    rl_redisplay();
-}
-
 static char	**get_path(char **envp)
 {
 	char	**path;
@@ -83,6 +75,7 @@ static char	*absolute_route(char *cmd, int *abs)
 static void	no_command(char **cmd_parsed)
 {
 	int	len;
+
 	write(2, &"Command not found: ", 19);
 	len = ft_strlen(cmd_parsed[0]);
 	write(2, cmd_parsed[0], len);
@@ -116,52 +109,22 @@ static char	*get_cmd_path(char **paths, char *cmd)
 	return (NULL);
 }
 
-static void	sig_here(int sig)
+static void	check_doublestdin(char *character, int *fd)
 {
-	write(1, "\n", 1);
-	exit (1);
-}
-
-static int	here_doc(char *str)
-{
-	int	redi[2];
-	char	*input;
-	pid_t	sin;
-	int	old;
-	int	stat;
-
-	pipe(redi);
-	old = dup(1);
-	signal(SIGINT, SIG_IGN);
-	sin = fork();
-	if (sin == 0)
+	if (*fd != 0)
+		close (*fd);
+	if (*character == '<')
 	{
-		signal(SIGINT, &sig_here);
-		close(redi[0]);
-		while (1)
-		{
-			dup2(old, 1);
-			input = readline("> ");
-			if (!input)
-				exit (1);
-			if (!ft_strcmp(input, str))
-			{
-				free(input);
-				exit (0);
-			}
-			dup2(redi[1], 1);
-			printf("%s\n", input);
-			free(input);
-		}
+		if (*fd != 0)
+			close (*fd);
+		*fd = 0;
 	}
 	else
-		waitpid(sin, &stat, 0);
-	signal(SIGINT, &new_line);
-	stat = WEXITSTATUS(stat);
-	close(redi[1]);
-	if (stat == 1)
-		return (-1);
-	return (redi[0]);
+	{
+		*fd = open(character, O_RDONLY);
+		if (*fd < 0)
+			perror(character);
+	}
 }
 
 static int	check_restdin(char **input)
@@ -172,75 +135,52 @@ static int	check_restdin(char **input)
 
 	i = 0;
 	fd = 0;
-	while (input[i])   //if we have < " " file we get flag 1 and check file, else if we have <file we check file without "<"
+	while (fd >= 0 && input[i])
 	{
 		j = 0;
 		if (input[i][j] == '<')
-		{
-			if (fd != 0)
-				close (fd);
-			j++;
-			if (input[i][j] == '<')
-			{
-				if (fd != 0)
-					close (fd);
-				fd = 0;
-			}
-			else
-			{
-				fd = open(&input[i][j], O_RDONLY);
-				if (fd < 0)
-				{
-					perror(&input[i][j]);
-					return (-1);
-				}
-			}
-		}
+			check_doublestdin(&input[i][j + 1], &fd);
 		i++;
 	}
 	return (fd);
+}
+
+static void	check_doublestdout(char *str, int *fd)
+{
+	int	j;
+
+	j = 0;
+	if (str[j] == '>')
+	{
+		if (*fd != 0)
+			close (*fd);
+		j++;
+		if (str[j] == '>')
+		{
+			j++;
+			*fd = open(&str[j], O_WRONLY | O_APPEND | O_CREAT, 0644);
+		}
+		else
+			*fd = open(&str[j], O_WRONLY | O_TRUNC | O_CREAT, 0644);
+		if (*fd < 0)
+			perror(&str[j]);
+	}
 }
 
 static int	check_restdout(char **input)
 {
 	int	i;
 	int	j;
-	int	flag;
 	int	fd;
 
 	i = 0;
-	flag = 0;
 	fd = 0;
-	while (input[i])   //if we have > " " file we get flag 1 and check file, else if we have >file we check file without ">"
+	while (fd >= 0 && input[i])
 	{
-		j = 0;
-		if (ft_strlen(input[i]) == 1 && input[i][j] == '>')
-		{
-			break;
-		}
-		else if (input[i][j] == '>')
-		{
-			if (fd != 0)
-				close (fd);
-			j++;
-			flag = 1;
-			if (input[i][j] == '>')
-			{
-				j++;
-				fd = open(&input[i][j], O_WRONLY | O_APPEND | O_CREAT, 0666);
-			}
-			else
-				fd = open(&input[i][j], O_WRONLY | O_TRUNC | O_CREAT, 0666);
-		if (fd < 0)
-		{
-			perror(&input[i][j]);
-			return (-1);
-		}
-			//break;
-		}
+		check_doublestdout(input[i], &fd);
 		i++;
 	}
-	if (flag)
+	if (fd > 0)
 	{
 		dup2(fd, 1);
 		close(fd);
@@ -248,15 +188,41 @@ static int	check_restdout(char **input)
 	return (fd);
 }
 
-char	**parse_cmd(char **input)
+static int	save_cmds(char **input, char **parsed)
 {
 	int	i;
-	char	**parsed;
 	int	args;
 
 	i = 0;
 	args = 0;
-	while(input[i])
+	while (input[i])
+	{
+		if (input[i][0] != '<' && input[i][0] != '>')
+		{
+			parsed[args] = ft_strdup(input[i]);
+			if (!parsed[args])
+			{
+				printf("problema dup\n");
+				ft_array_free(parsed);
+				return (1);
+			}
+			args++;
+		}
+		i++;
+	}
+	parsed[args] = 0;
+	return (0);
+}
+
+char	**parse_cmd(char **input)
+{
+	int		i;
+	char	**parsed;
+	int		args;
+
+	i = 0;
+	args = 0;
+	while (input[i])
 	{
 		if (input[i][0] != '<' && input[i][0] != '>')
 			args++;
@@ -265,24 +231,8 @@ char	**parse_cmd(char **input)
 	parsed = malloc(sizeof(char *) * (args + 1));
 	if (!parsed)
 		return (NULL);
-	i = 0;
-	args = 0;
-	while (input[i])
-	{
-		if (input[i][0] != '<' && input[i][0] != '>')
-		{
-			parsed[args] = ft_strdup(input[i]);   //parchear malloc dup
-			if (!parsed[args])
-			{
-				printf("problema dup\n");
-				ft_array_free(parsed);
-				return (NULL);
-			}
-			args++;
-		}
-		i++;
-	}
-	parsed[args] = 0;
+	if (save_cmds(input, parsed))
+		return (NULL);
 	return (parsed);
 }
 
@@ -306,29 +256,26 @@ void	redirect_streams(int infile, int outfile, char **cmd)
 		dup2(outfile, 1);
 }
 
-void    child(int infile, int outfile, char **cmd, t_command *global)
+void	child(int infile, int outfile, char **cmd, t_command *global)
 {
 	char	**cmd_parsed;
 	char	*cmd_path;
 	char	**env;
 	char	**path;
-	//makes the needed dup2, creates the files if there are multiple output redirections
-	// and opens the correct file.
+
 	env = varlist_to_array(global->env, 1);
 	path = get_path(env);
-    redirect_streams(infile, outfile, cmd);
-    //removes the redirections from the command returning a new char **array
-    cmd_parsed = parse_cmd(cmd);
-    //gets the full path of the command
+	redirect_streams(infile, outfile, cmd);
+	cmd_parsed = parse_cmd(cmd);
 	if (is_builtin(cmd_parsed[0]))
 		exit(exec_builtin(cmd_parsed, &global->local, &global->env));
-    cmd_path = get_cmd_path(path, cmd_parsed[0]);
+	cmd_path = get_cmd_path(path, cmd_parsed[0]);
 	if (!cmd_path)
 	{
 		no_command(cmd_parsed);
 		exit(127);
 	}
-    execve(cmd_path, cmd_parsed, env);
+	execve(cmd_path, cmd_parsed, env);
 	perror(cmd_parsed[0]);
-	exit(errno); //NOTE maybe just exit 1 is OK
+	exit(errno);
 }
