@@ -6,14 +6,14 @@
 #    By: orudek <orudek@student.42madrid.com>       +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/09/03 15:02:39 by iortega-          #+#    #+#              #
-#    Updated: 2023/09/27 21:51:53 by orudek           ###   ########.fr        #
+#    Updated: 2023/09/27 21:55:08 by orudek           ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
 NAME := minishell
 
 CC := gcc
-STANDARD_FLAGS := -I/Users/$(USER)/.brew/opt/readline/include -lreadline -L /Users/$(USER)/.brew/opt/readline/lib -fsanitize=leak #-Wall -Wextra -Werror
+STANDARD_FLAGS := -I/Users/$(USER)/.brew/opt/readline/include -lreadline -L /Users/$(USER)/.brew/opt/readline/lib -fsanitize=leak -Wall -Wextra -Werror
 RM := rm -f
 
 SRC_DIR := src
@@ -54,6 +54,7 @@ LIB_FLAG := $(addprefix -l,$(LIB))
 INCLUDE_PATH := -I$(INCLUDE_DIR) -I$(LIBFT_DIR)/include
 OBJ := $(SRC:$(SRC_DIR)/%.c=$(OBJ_DIR)/%.o)
 OBJ_FOLDER := $(dir $(OBJ))
+
 all: $(NAME)
 
 $(NAME): $(OBJ) $(LIBFT_DIR)/$(LIBFT_NAME)
