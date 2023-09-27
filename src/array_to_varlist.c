@@ -6,7 +6,7 @@
 /*   By: orudek <orudek@student.42madrid.com>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/20 22:44:56 by oscar             #+#    #+#             */
-/*   Updated: 2023/09/25 21:53:47 by orudek           ###   ########.fr       */
+/*   Updated: 2023/09/27 20:56:23 by orudek           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,13 +36,12 @@ static int	str_find_char(char *str, char c)
 }
 
 /*	split_var:
-		Takes the incoming string, that is expected to have name=content
-		format, and splits it into two strings containing the name and format
-		separately.
-		To check if the format is correct, only the existence of '=' in the
-		string is checked, so name and content may be empty strings.
+		Takes the incoming string, that is expected to have "name=content" or
+		"name" format, and splits it into two strings containing the name and
+		format separately.
+		If the string has the format "name", the content will be NULL.
 	Input:
-		str: string with expected format name=content
+		str: string with expected format name=content or name.
 	Return:
 		An array containing two strings (the array is not NULL-terminated), the
 		index 0 contains the name, and the index 1 the content of the input
@@ -50,8 +49,9 @@ static int	str_find_char(char *str, char c)
 	Code:
 		First, allocates two string pointers, returning NULL if fails.
 		Then, searches for a '=' character in the string. If non is found,
-		returns NULL. Otherwise, the index of the character is retrieved from
-		the function, and used to allocate the memory for each string.
+		the content is set to NULL. Otherwise, the index of the character is
+		retrieved from the function, and used to allocate the memory for each
+		string.
 		Both allocations are checked to save lines of code. If one fails, the
 		function is exited returning NULL.
 		Finally, copies each string from the input to the new strings. In the
@@ -85,9 +85,9 @@ static char	split_var(t_var *var, char *str)
 }
 
 /*	array_to_varlist:
-		Converts an array of strings formated as name=content to a list where
-		each element contains a t_var struct with the name and content
-		separated.
+		Converts an array of strings formated as "name=content" or "name" to a
+		list where each element contains a t_var struct with the name and
+		content separated.
 		If the format is incorrect, the string will be skipped and not added to
 		the list.
 		The list created can be freed with ft_lstfree(list, array_free);
@@ -101,8 +101,7 @@ static char	split_var(t_var *var, char *str)
 	Code:
 		First, if array is NULL then returns NULL.
 		Then iterates through all the array, splitting each string into name
-		and content. Before checking if the split was successful, the array
-		pointer gets advanced to the next string to shorten the code.
+		and content.
 		If there is an error splitting the string. It skips to the next
 		string.
 		The split string is saved into the list with set_variable, and if
