@@ -6,7 +6,7 @@
 #    By: orudek <orudek@student.42madrid.com>       +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/09/03 15:02:39 by iortega-          #+#    #+#              #
-#    Updated: 2023/09/27 22:00:27 by orudek           ###   ########.fr        #
+#    Updated: 2023/09/27 22:02:51 by orudek           ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -50,10 +50,11 @@ SRC_FILES := main.c\
 	exec_cmd/exec_builtin.c
 
 SRC := $(addprefix $(SRC_DIR)/,$(SRC_FILES))
+SRC_FOLDER := $(dir $(SRC))
 OBJ := $(SRC:$(SRC_DIR)/%.c=$(OBJ_DIR)/%.o)
 OBJ_FOLDER := $(dir $(OBJ))
 LIB_FLAG := $(addprefix -l,$(LIB))
-INCLUDE_PATH := $(addprefix -I,$(OBJ_FOLDER)) -I$(INCLUDE_DIR) -I$(LIBFT_DIR)/include
+INCLUDE_PATH := $(addprefix -I,$(SRC_FOLDER)) -I$(INCLUDE_DIR) -I$(LIBFT_DIR)/include
 
 all: $(NAME)
 
