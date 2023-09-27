@@ -3,10 +3,10 @@
 #                                                         :::      ::::::::    #
 #    Makefile                                           :+:      :+:    :+:    #
 #                                                     +:+ +:+         +:+      #
-#    By: orudek <orudek@student.42madrid.com>       +#+  +:+       +#+         #
+#    By: iortega- <iortega-@student.42madrid.com    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/09/03 15:02:39 by iortega-          #+#    #+#              #
-#    Updated: 2023/09/27 22:02:51 by orudek           ###   ########.fr        #
+#    Updated: 2023/09/27 22:29:39 by iortega-         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -26,7 +26,6 @@ LIBFT_NAME := libft.a
 LIB := readline
 
 SRC_FILES := main.c\
-	child.c\
 	parse/split_args.c\
 	parse/split_args2.c\
 	parse/expand_variables.c\
@@ -39,6 +38,7 @@ SRC_FILES := main.c\
 	variables/set_variable.c\
 	variables/unset_variable.c\
 	variables/varlist_to_array.c\
+	exec_cmd/child.c\
 	exec_cmd/cmd_cd.c\
 	exec_cmd/cmd_echo.c\
 	exec_cmd/cmd_env.c\

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: orudek <orudek@student.42madrid.com>       +#+  +:+       +#+        */
+/*   By: iortega- <iortega-@student.42madrid.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/03 15:58:32 by iortega-          #+#    #+#             */
-/*   Updated: 2023/09/24 22:30:11 by orudek           ###   ########.fr       */
+/*   Updated: 2023/09/27 15:19:21 by iortega-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,17 +30,9 @@
 
 typedef struct s_command
 {
-	char	**path;
-	char	**cmd;
-	char	**cmd_parsed;
-	char	*cmd_path;
-	pid_t	child;
-	pid_t	terminal;
 	t_list	*env;
 	t_list	*local;
 	t_list	*cmds;
-	int		sout;
-	int		sin;
 	int		last_status;
 }t_command;
 
