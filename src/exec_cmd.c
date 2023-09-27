@@ -6,7 +6,7 @@
 /*   By: iortega- <iortega-@student.42madrid.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/20 13:56:41 by oscar             #+#    #+#             */
-/*   Updated: 2023/09/26 21:57:50 by iortega-         ###   ########.fr       */
+/*   Updated: 2023/09/27 13:40:59 by iortega-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -251,7 +251,7 @@ int exec_multi_cmd(t_list *cmds, char **env, t_command *global)
 		printf("EXEC_MULTI_CMD: fork 0: fail\n");
 		return 1;
 	}
-	if (pid == 0) //NOTECERRAR HERE DOC FD
+	if (pid == 0)
 	{
 		close(last_pipe[0]);
 		if (j < n_heredocs && i == n_cmd[j])

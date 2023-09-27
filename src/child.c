@@ -6,7 +6,7 @@
 /*   By: iortega- <iortega-@student.42madrid.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/20 21:29:18 by oscar             #+#    #+#             */
-/*   Updated: 2023/09/26 20:43:04 by iortega-         ###   ########.fr       */
+/*   Updated: 2023/09/27 15:31:13 by iortega-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,12 +45,26 @@
 
 static void	new_line(int sig)
 {
-	//printf("\n\033[36mminishell >> \033[0m");
 	write(1, "\n", 1);
     rl_on_new_line();
     rl_replace_line("", 0);
     rl_redisplay();
-	//exit(1);
+}
+
+static char	**get_path(char **envp)
+{
+	char	**path;
+
+	while (*envp)
+	{
+		if (!ft_strncmp("PATH=", *envp, 5))
+			break ;
+		envp++;
+	}
+	if (!*envp)
+		return (NULL);
+	path = ft_split(*envp + 5, ':');
+	return (path);
 }
 
 static char	*absolute_route(char *cmd, int *abs)
@@ -148,27 +162,16 @@ static int	here_doc(char *str)
 	if (stat == 1)
 		return (-1);
 	return (redi[0]);
-	/*dup2(redi[0], 0);
-	close(redi[0]);
-	return (1);*/
 }
 
 static int	check_restdin(char **input)
 {
 	int	i;
 	int	j;
-	int	flag;
 	int	fd;
 
 	i = 0;
-	flag = 0;
 	fd = 0;
-	/*while (input[i])
-	{
-		printf("%s\n", input[i]);
-		i++;
-	}
-	i = 0;*/
 	while (input[i])   //if we have < " " file we get flag 1 and check file, else if we have <file we check file without "<"
 	{
 		j = 0;
@@ -177,10 +180,8 @@ static int	check_restdin(char **input)
 			if (fd != 0)
 				close (fd);
 			j++;
-			flag = 1;
 			if (input[i][j] == '<')
 			{
-				//fd = here_doc(&input[i][j + 1]);
 				if (fd != 0)
 					close (fd);
 				fd = 0;
@@ -197,11 +198,6 @@ static int	check_restdin(char **input)
 		}
 		i++;
 	}
-	/*if (flag)
-	{
-		dup2(fd, 0);
-		close(fd);
-	}*/
 	return (fd);
 }
 
@@ -215,12 +211,6 @@ static int	check_restdout(char **input)
 	i = 0;
 	flag = 0;
 	fd = 0;
-	/*while (input[i])
-	{
-		printf("%s\n", input[i]);
-		i++;
-	}
-	i=0;*/
 	while (input[i])   //if we have > " " file we get flag 1 and check file, else if we have >file we check file without ">"
 	{
 		j = 0;
@@ -302,7 +292,11 @@ void	redirect_streams(int infile, int outfile, char **cmd)
 
 	fd_in = check_restdin(cmd);
 	if (fd_in <= 0)
+	{
 		dup2(infile, 0);
+		if (infile > 1)
+			close(infile);
+	}
 	else
 	{
 		dup2(fd_in, 0);
@@ -317,16 +311,18 @@ void    child(int infile, int outfile, char **cmd, t_command *global)
 	char	**cmd_parsed;
 	char	*cmd_path;
 	char	**env;
+	char	**path;
 	//makes the needed dup2, creates the files if there are multiple output redirections
 	// and opens the correct file.
 	env = varlist_to_array(global->env, 1);
+	path = get_path(env);
     redirect_streams(infile, outfile, cmd);
     //removes the redirections from the command returning a new char **array
     cmd_parsed = parse_cmd(cmd);
     //gets the full path of the command
 	if (is_builtin(cmd_parsed[0]))
 		exit(exec_builtin(cmd_parsed, &global->local, &global->env));
-    cmd_path = get_cmd_path(global->path, cmd_parsed[0]);
+    cmd_path = get_cmd_path(path, cmd_parsed[0]);
 	if (!cmd_path)
 	{
 		no_command(cmd_parsed);
