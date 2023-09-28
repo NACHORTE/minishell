@@ -6,7 +6,7 @@
 /*   By: orudek <orudek@student.42madrid.com>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/10 15:22:39 by orudek            #+#    #+#             */
-/*   Updated: 2023/09/28 17:30:04 by orudek           ###   ########.fr       */
+/*   Updated: 2023/09/28 20:49:01 by orudek           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,16 +30,20 @@ int	get_variable(t_list *lst, char *name, t_var **var)
 {
 	t_var *aux;
 
-	if (!name)
+	if (!name || !*name)
 		return (0);
 	while(lst)
 	{
 		aux = (t_var *)(lst->content);
 		if (!ft_strcmp(aux->name, name))
 		{
-			aux = dup_var(aux);
-			if (!aux)
-				return (-1);
+			if (var)
+			{
+				aux = dup_var(aux);
+				if (!aux)
+					return (-1);
+				*var = aux;
+			}
 			return (1);
 		}
 		lst = lst->next;
