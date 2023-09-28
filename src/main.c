@@ -38,43 +38,6 @@ int check_closed_quotes(char *input)
 	}
 }
 
-int save_env(t_command *global, char **envp)
-{
-	int	len;
-	int	i;
-	int j;
-	int aux;
-	char	*name;
-	char	*content;
-
-	i = 0;
-	while (envp[i])
-	{
-		j = 0;
-		len = 0;
-		while (envp[i][j] != '=')
-		{
-			len++;
-			j++;
-		}
-		name = malloc(sizeof(char) * (len + 1));
-		ft_strlcpy(name, envp[i], len + 1);
-		j++;
-		aux = j;
-		len = 0;
-		while (envp[i][j] != '\0')
-		{
-			len++;
-			j++;
-		}
-		content = malloc(sizeof(char) * (len + 1));
-		ft_strlcpy(content, &envp[i][aux], len + 1);
-		set_variable(&(global->env), name, content);
-		i++;
-	}
-	return (0);
-}
-
 int	just_redi(char *str)
 {
 	int	i;
@@ -202,12 +165,12 @@ int	set_assignation(t_command *global, int pos)
 	name = malloc(sizeof(char) * (size + 1));
 	if (!name)
 		return (0);
+	ft_strlcpy(name, ((char **)global->cmds->content)[pos], size + 1);
 	if (!is_varname_ok(name))
 	{
 		free(name);
 		return (0);
 	}
-	ft_strlcpy(name, ((char **)global->cmds->content)[pos], size + 1);
 	size = 0;
 	while (((char **)global->cmds->content)[pos][i])
 	{
@@ -260,12 +223,11 @@ int	is_command(t_command *global)
 
 void	refresh_status(t_command *global)
 {
-	char	*name;
 	char	*content;
 
-	name = ft_strdup("?");
 	content = ft_itoa(global->last_status);
-	set_variable(&(global->local), name, content);
+	set_variable(&(global->local), "?", content);
+	free(content);
 }
 
 int	main(int argc, char **argv, char **envp)
@@ -278,7 +240,7 @@ int	main(int argc, char **argv, char **envp)
 	(void)argv;
 	global.env = NULL;
 	global.local = NULL;
-	save_env(&global, envp);
+	global.env = array_to_varlist(envp);
 	global.last_status = 0;
 	refresh_status(&global);
 	signal(SIGINT, &new_line);

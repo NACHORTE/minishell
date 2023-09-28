@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   exec_cmd.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: orudek <orudek@student.42madrid.com>       +#+  +:+       +#+        */
+/*   By: iortega- <iortega-@student.42madrid.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/20 13:56:41 by oscar             #+#    #+#             */
-/*   Updated: 2023/09/27 22:54:00 by orudek           ###   ########.fr       */
+/*   Updated: 2023/09/28 15:21:24 by iortega-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,45 +42,50 @@ static void	sig_here(int sig)
 static void	new_line(int sig)
 {
 	(void)sig;
-	//printf("\n\033[36mminishell >> \033[0m");
 	write(1, "\n", 1);
     rl_on_new_line();
     rl_replace_line("", 0);
     rl_redisplay();
-	//exit(1);
+}
+
+static void	read_heredoc(int *redi, char *str)
+{
+	char	*input;
+	int		old;
+
+	old = dup(1);
+	signal(SIGINT, &sig_here);
+	
+	while (1)
+	{
+		dup2(old, 1);
+		input = readline("> ");
+		if (!input)
+			exit (1);
+		if (!ft_strcmp(input, str))
+		{
+			free(input);
+			exit (0);
+		}
+		dup2(redi[1], 1);
+		printf("%s\n", input);
+		free(input);
+	}
 }
 
 static int	here_doc(char *str)
 {
 	int	redi[2];
-	char	*input;
 	pid_t	sin;
-	int	old;
 	int	stat;
 
 	pipe(redi);
-	old = dup(1);
 	signal(SIGINT, SIG_IGN);
 	sin = fork();
 	if (sin == 0)
 	{
-		signal(SIGINT, &sig_here);
 		close(redi[0]);
-		while (1)
-		{
-			dup2(old, 1);
-			input = readline("> ");
-			if (!input)
-				exit (1);
-			if (!ft_strcmp(input, str))
-			{
-				free(input);
-				exit (0);
-			}
-			dup2(redi[1], 1);
-			printf("%s\n", input);
-			free(input);
-		}
+		read_heredoc(redi, str);
 	}
 	else
 		waitpid(sin, &stat, 0);
@@ -90,6 +95,22 @@ static int	here_doc(char *str)
 	if (stat == 1)
 		return (-1);
 	return (redi[0]);
+}
+
+static void	check_doublestdin(char *character, int *fd)
+{
+	if (*fd != 0)
+		close (*fd);
+	if (*character == '<')
+	{
+		*fd = here_doc(character + 1);
+	}
+	else
+	{
+		if (*fd != 0)
+			close (*fd);
+		*fd = 0;
+	}
 }
 
 static int	check_restdin(char **input)
@@ -105,23 +126,23 @@ static int	check_restdin(char **input)
 		j = 0;
 		if (input[i][j] == '<')
 		{
-			if (fd != 0)
-				close (fd);
-			j++;
-			if (input[i][j] == '<')
-			{
-				fd = here_doc(&input[i][j + 1]);
-			}
-			else
-			{
-				if (fd != 0)
-					close (fd);
-				fd = 0;
-			}
+			check_doublestdin(&input[i][j + 1], &fd);
 		}
 		i++;
 	}
 	return (fd);
+}
+
+static void	error_heredoc(int **fds)
+{
+	int	i;
+
+	i = 0;
+	while ((*fds)[i] != -1)
+	{
+		close((*fds)[i]);
+		i++;
+	}
 }
 
 int	open_heredocs(t_list *cmds, int **n_cmd, int **fds)
@@ -141,6 +162,11 @@ int	open_heredocs(t_list *cmds, int **n_cmd, int **fds)
 			(*n_cmd)[j] = i;
 			(*fds)[j] = fd;
 			j++;
+		}
+		if (fd == -1)
+		{
+			error_heredoc(fds);
+			return (1);
 		}
 		i++;
 		cmds = cmds->next;
@@ -186,6 +212,8 @@ int	exec_one_cmd(char **cmd, char **env, t_command *global)
 
 	(void)env;
 	fd = check_restdin(cmd);
+	if (fd < 0)
+		return (1);
     if (exec_one_builtin(cmd, &global->local, &global->env, &status))
         return (status);
     int pid = fork();
@@ -223,7 +251,12 @@ int exec_multi_cmd(t_list *cmds, char **env, t_command *global)
 	{
 		n_cmd = malloc(sizeof(int) * n_heredocs);
 		fds = malloc(sizeof(int) * n_heredocs);
-		open_heredocs(cmds, &n_cmd, &fds);
+		if (open_heredocs(cmds, &n_cmd, &fds))
+		{
+			free(n_cmd);
+			free(fds);
+			return (1);
+		}
 	}
 	if (pipe(last_pipe) == -1)
 	{

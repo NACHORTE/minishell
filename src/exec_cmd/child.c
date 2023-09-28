@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   child.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: orudek <orudek@student.42madrid.com>       +#+  +:+       +#+        */
+/*   By: iortega- <iortega-@student.42madrid.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/20 21:29:18 by oscar             #+#    #+#             */
-/*   Updated: 2023/09/27 22:47:02 by orudek           ###   ########.fr       */
+/*   Updated: 2023/09/28 14:58:40 by iortega-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -238,9 +238,15 @@ char	**parse_cmd(char **input)
 void	redirect_streams(int infile, int outfile, char **cmd)
 {
 	int	fd_in;
+	int	fd_out;
 
 	fd_in = check_restdin(cmd);
-	if (fd_in <= 0)
+	fd_out = check_restdout(cmd);
+	if (fd_in <= -1)
+	{
+		exit(errno);
+	}
+	else if (fd_in == 0)
 	{
 		dup2(infile, 0);
 		if (infile > 1)
@@ -251,7 +257,9 @@ void	redirect_streams(int infile, int outfile, char **cmd)
 		dup2(fd_in, 0);
 		close(fd_in);
 	}
-	if (check_restdout(cmd) <= 0)
+	if (fd_out <= -1)
+		exit(errno);
+	else if (fd_out == 0)
 		dup2(outfile, 1);
 }
 
