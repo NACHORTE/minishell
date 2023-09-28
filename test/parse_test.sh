@@ -1,0 +1,1 @@
+gcc -fsanitize=leak -Iinclude -Ilibft/include src/parse.c src/expand_variables.c src/split* test/test_parse.c src/print_varlist.c src/array_to_varlist.c src/set_variable.c src/free_var.c libft/libft.a -o parse_test && ./parse_test -err; rm -rf parse_test
