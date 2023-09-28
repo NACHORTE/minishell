@@ -202,12 +202,12 @@ int	set_assignation(t_command *global, int pos)
 	name = malloc(sizeof(char) * (size + 1));
 	if (!name)
 		return (0);
+	ft_strlcpy(name, ((char **)global->cmds->content)[pos], size + 1);
 	if (!is_varname_ok(name))
 	{
 		free(name);
 		return (0);
 	}
-	ft_strlcpy(name, ((char **)global->cmds->content)[pos], size + 1);
 	size = 0;
 	while (((char **)global->cmds->content)[pos][i])
 	{
