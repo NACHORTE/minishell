@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   exec_cmd.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: iortega- <iortega-@student.42madrid.com    +#+  +:+       +#+        */
+/*   By: orudek <orudek@student.42madrid.com>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/20 13:56:41 by oscar             #+#    #+#             */
-/*   Updated: 2023/09/28 15:21:24 by iortega-         ###   ########.fr       */
+/*   Updated: 2023/09/28 19:39:59 by orudek           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -384,7 +384,7 @@ int exec_multi_cmd(t_list *cmds, char **env, t_command *global)
 		[ ] close files (child)
 		[ ] norminette
 */
-int    exec_cmd(t_list *cmds, t_list *env, t_command *global)
+int    exec_cmd(t_list *cmds, t_list **varlist, t_command *global)
 {
     char    **env_array;
 	int		status;

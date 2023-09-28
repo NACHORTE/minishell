@@ -6,23 +6,12 @@
 /*   By: orudek <orudek@student.42madrid.com>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/27 21:04:33 by orudek            #+#    #+#             */
-/*   Updated: 2023/09/27 22:49:41 by orudek           ###   ########.fr       */
+/*   Updated: 2023/09/28 22:15:24 by orudek           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "exec_cmd.h"
 
-/**
- * Retrieves the name from a given string.
- * 
- * This function extracts the name from a given string with format
- * "name=content" or "name" and stores it in a string.
- * 
- * @param str The string to extract the name from.
- * @param name A pointer to a string that will hold the extracted name.
- * @return An integer representing the success (1) or failure (0) of the
- * 		operation.
- */
 static int	get_name(char *str, char **name)
 {
 	int	len;
@@ -86,33 +75,6 @@ static char	str_to_var(char *cmd, char **name, char **content)
 	return (1);
 }
 
-
-/**
- * Updates the local list with the given variable.
- * 
- * @param local A pointer to the local list.
- * @param var The variable to update the local list with.
- * @return An integer representing the success status of the update operation.
- */
-static int	update_from_local(t_list **local, t_var *var)
-{
-	char	*last_content;
-	char	get_var_status;
-
-	get_var_status = get_variable(*local, var->name, &last_content);
-	if (get_var_status == -1)
-		return (-1);
-	if (get_var_status == 1)
-	{
-		unset_variable(local, var->name);
-		if (!var->content)
-			var->content = last_content;
-		else
-			free(last_content);
-	}
-	return (get_var_status);
-}
-
 int	cmd_export(char **cmd, t_list **local, t_list **env)
 {
 	int		i;
@@ -128,8 +90,7 @@ int	cmd_export(char **cmd, t_list **local, t_list **env)
 			exit_status = 1;
 			continue ;
 		}
-		if (update_from_local(local, &var) == -1
-			|| !set_variable(env, var.name, var.content))
+		if (!set_variable(env, var.name, var.content, ENV_VAR_TYPE))
 			exit_status = 1;
 		free(var.name);
 		if (var.content)

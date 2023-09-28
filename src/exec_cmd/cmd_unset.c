@@ -6,21 +6,18 @@
 /*   By: orudek <orudek@student.42madrid.com>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/27 21:23:14 by orudek            #+#    #+#             */
-/*   Updated: 2023/09/27 22:39:59 by orudek           ###   ########.fr       */
+/*   Updated: 2023/09/28 22:19:23 by orudek           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "exec_cmd.h"
 
-int	cmd_unset(char **cmd, t_list **local, t_list **env)
+int	cmd_unset(char **cmd, t_list **varlist)
 {
-	while (*cmd)
+	while (*(++cmd))
 	{
-		if (get_variable(*local, cmd[0], NULL) == 1)
-			unset_variable(local, cmd[0]);
-		if (get_variable(*env, cmd[0], NULL) == 1)
-			unset_variable(env, cmd[0]);
-		cmd++;
+		if (is_in_varlist(*varlist, *cmd) != -1)
+			unset_variable(varlist, *cmd);
 	}
 	return (0);
 }
