@@ -1,22 +1,32 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   unset_variable.c                                   :+:      :+:    :+:   */
+/*   is_in_varlist.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: orudek <orudek@student.42madrid.com>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2023/09/11 17:09:38 by orudek            #+#    #+#             */
-/*   Updated: 2023/09/28 15:53:45 by orudek           ###   ########.fr       */
+/*   Created: 2023/09/28 14:19:47 by orudek            #+#    #+#             */
+/*   Updated: 2023/09/28 15:01:20 by orudek           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "t_var.h"
 
-void	unset_variable(t_list **list, char *name)
+//[ ]: comentarios
+// devuelve el indice y si no lo encuentra devuelve -1
+int	is_in_varlist(t_list *lst, char *name)
 {
-	int index;
+	t_var	var;
+	int		index;
 
-	index = is_in_varlist(*list, name);
-	if (index != -1)
-		ft_lstpop(list, index, free_var);
+	index = 0;
+	while (lst)
+	{
+		var = *(t_var *)lst->content;
+		if (!ft_strcmp(var.name, name))
+			return (index);
+		lst = lst->next;
+		index++;
+	}
+	return (-1);
 }

@@ -6,7 +6,7 @@
 /*   By: orudek <orudek@student.42madrid.com>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/20 22:44:56 by oscar             #+#    #+#             */
-/*   Updated: 2023/09/27 22:46:55 by orudek           ###   ########.fr       */
+/*   Updated: 2023/09/28 14:30:35 by orudek           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -90,6 +90,7 @@ static char	split_var(t_var *var, char *str)
 		content separated.
 		If the format is incorrect, the string will be skipped and not added to
 		the list.
+		All variables created are of type ENV_VAR.
 		The list created can be freed with ft_lstfree(list, array_free);
 	Parameters:
 		array: array of strings formated as name=content that will be converted
@@ -122,7 +123,7 @@ t_list	*array_to_varlist(char **array)
 	{
 		if (!split_var(&var, array[i]))
 			continue ;
-		if (!set_variable(&out, var.name, var.content))
+		if (!set_variable(&out, var.name, var.content, ENV_VAR))
 		{
 			ft_lstfree(out, free_var);
 			free(var.name);
