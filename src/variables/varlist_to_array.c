@@ -6,7 +6,7 @@
 /*   By: orudek <orudek@student.42madrid.com>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/20 22:46:57 by oscar             #+#    #+#             */
-/*   Updated: 2023/09/24 15:09:01 by orudek           ###   ########.fr       */
+/*   Updated: 2023/09/28 22:40:23 by orudek           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,29 +14,26 @@
 
 //no lo hago con strjoin porque no quiero hacer 3 malloc
 //[ ] write this description
-static int	var_to_str(t_var *var, char **str, int ignore_null)
+static int	var_to_str(t_var *var, char **str, int type)
 {
 	char	*out;
 	int		len[2];
 
-	if (!var || (ignore_null && !var->content))
+	if (!var || (type != DEFAULT_VAR && type != var->type) || !var->content)
 		return (0);
 	len[0] = ft_strlen(var->name);
-	len[1] = ft_strlen(var->content); //if content is null len is 0
-	out = malloc(sizeof(char) * (len[0] + (var->content != 0) + len[1] + 1)); //name + "=" + content + "\0"
+	len[1] = ft_strlen(var->content);
+	out = malloc(sizeof(char) * (len[0] + len[1] + 2)); //name + "=" + content + "\0"
 	if (!out)
-		return (0);
+		return (-1);
 	ft_strlcpy(out, var->name, len[0] + 1);
-	if (var->content != 0)
-	{
-		ft_strlcpy(out + len[0], "=", 2);
-		ft_strlcpy(out + len[0] + 1, var->content, len[1] + 1);
-	}
+	ft_strlcpy(out + len[0], "=", 2);
+	ft_strlcpy(out + len[0] + 1, var->content, len[1] + 1);
 	*str = out;
 	return (1);
 }
 
-int	varlist_len(t_list *lst, int ignore_null)
+int	varlist_len(t_list *lst, int type)
 {
 	t_var	*var;
 	int		count;
@@ -45,7 +42,7 @@ int	varlist_len(t_list *lst, int ignore_null)
 	while (lst)
 	{
 		var = (t_var *)lst->content;
-		if (var && (ignore_null == 0 || var->content != 0))
+		if (var && (type == DEFAULT_VAR || type == var->type) && var->content)
 			count++;
 		lst = lst->next;
 	}
@@ -56,7 +53,7 @@ int	varlist_len(t_list *lst, int ignore_null)
 		converts a list of variables to string array where each string has the
 		format name=content.
 		It is posible to choose between saving the variables which content is
-		NULL or not in the output string with the ignore_null variable. Setting
+		NULL or not in the output string with the type variable. Setting
 		it to 1, doesn't save variables with null content, and setting it to 0
 		saves them only storing the name without adding '=' character.
 		If NULLs are ignored, reverting back to a t_list from the returned array
@@ -64,7 +61,7 @@ int	varlist_len(t_list *lst, int ignore_null)
 	Parameters:
 		lst: list containing each variable in a t_var struct that has a name
 			and a content.
-		ignore_null: Option for choosing whether to store NULLs (0) or not (1).
+		type: Option for choosing whether to store NULLs (0) or not (1).
 	Return:
 		An array of strings containing all the variables in the "lst" variable.
 		Each string in the array has the format "name=content" unless the
@@ -74,21 +71,22 @@ int	varlist_len(t_list *lst, int ignore_null)
 		[ ] Write this description
 */
 
-static char	**save_vars(char **out, t_list *lst, int len, int ignore_null)
+static char	**save_vars(char **out, t_list *lst, int len, int type)
 {
 	int	i;
+	int ret;
 
 	i = 0;
 	while (i < len)
 	{
-		if (var_to_str((t_var *)lst->content, &out[i], ignore_null))
-		{
-			if (!out[i])
-			{
-				ft_array_free(out);
-				return (NULL);
-			}
+		ret = var_to_str((t_var *)lst->content, &out[i], type);
+		if (ret == 1)
 			i++;
+		else if (ret == -1)
+		{
+			out[i] = NULL;
+			ft_array_free(out);
+			return (NULL);
 		}
 		lst = lst->next;
 	}
@@ -96,18 +94,18 @@ static char	**save_vars(char **out, t_list *lst, int len, int ignore_null)
 	return (out);
 }
 
-char	**varlist_to_array(t_list *lst, int ignore_null)
+char	**varlist_to_array(t_list *lst, int type)
 {
 	char	**out;
 	int		len;
 
 	if (!lst)
 		return (NULL);
-	len = varlist_len(lst, ignore_null);
+	len = varlist_len(lst, type);
 	out = malloc(sizeof(char *) * (len + 1));
 	if (!out)
 		return (NULL);
-	return (save_vars(out, lst, len, ignore_null));
+	return (save_vars(out, lst, len, type));
 }
 
 /*
