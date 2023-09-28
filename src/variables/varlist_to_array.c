@@ -6,7 +6,7 @@
 /*   By: orudek <orudek@student.42madrid.com>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/20 22:46:57 by oscar             #+#    #+#             */
-/*   Updated: 2023/09/28 22:40:23 by orudek           ###   ########.fr       */
+/*   Updated: 2023/09/28 22:45:17 by orudek           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -94,7 +94,7 @@ static char	**save_vars(char **out, t_list *lst, int len, int type)
 	return (out);
 }
 
-char	**varlist_to_array(t_list *lst, int type)
+char	**varlist_to_array(t_list *varlist, int type)
 {
 	char	**out;
 	int		len;
