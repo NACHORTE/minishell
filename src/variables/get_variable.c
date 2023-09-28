@@ -6,7 +6,7 @@
 /*   By: orudek <orudek@student.42madrid.com>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/10 15:22:39 by orudek            #+#    #+#             */
-/*   Updated: 2023/09/23 20:24:47 by orudek           ###   ########.fr       */
+/*   Updated: 2023/09/28 17:30:04 by orudek           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,7 +26,7 @@
 		could be the return for content
 		char	get_variable(t_list *lst, char *name, char **content)
 */
-int	get_variable(t_list *lst, char *name, char **content)
+int	get_variable(t_list *lst, char *name, t_var **var)
 {
 	t_var *aux;
 
@@ -37,8 +37,9 @@ int	get_variable(t_list *lst, char *name, char **content)
 		aux = (t_var *)(lst->content);
 		if (!ft_strcmp(aux->name, name))
 		{
-			if (content) //if content is NULL then don't return the content (only to check if var exists)
-				*content = aux->content;
+			aux = dup_var(aux);
+			if (!aux)
+				return (-1);
 			return (1);
 		}
 		lst = lst->next;

@@ -6,85 +6,58 @@
 /*   By: orudek <orudek@student.42madrid.com>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/10 15:29:51 by orudek            #+#    #+#             */
-/*   Updated: 2023/09/25 21:13:19 by orudek           ###   ########.fr       */
+/*   Updated: 2023/09/28 17:31:05 by orudek           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "t_var.h"
 
-static int	is_in_list(t_list *lst, char *name)
+static int	replace_variable(t_list *lst, t_var *var, int index)
 {
-	t_var	var;
-	int		index;
+	t_var	*aux;
+	char	*new_content;
 
-	index = 0;
-	while (lst)
+	if (var->content)
 	{
-		var = *(t_var *)lst->content;
-		if (!ft_strcmp(var.name, name))
-			return (index);
-		lst = lst->next;
-		index++;
-	}
-	return (-1);
-}
-
-static char	replace_variable(t_list **lst, t_var *var, int index)
-{
-	t_list	*aux;
-	t_list	*aux2;
-	t_list	*new_lst;
-
-	new_lst = ft_lstnew(var);
-	if (!new_lst)
-		return (0);
-	if (index == 0)
-	{
-		ft_lstpop(lst, 0, free_var);
-		ft_lstadd_front(lst, new_lst);
+		new_content = ft_strdup(var->content);
+		if (!new_content)
+			return (0);
 	}
 	else
-	{
-		aux = ft_lstget_index(*lst, index - 1);
-		aux2 = aux->next;
-		aux->next = new_lst;
-		new_lst->next = aux2->next;
-		ft_lstdelone(aux2, free_var);
-	}
+		new_content = NULL;
+	aux = (t_var *)ft_lstget_index(lst, index)->content;
+	if (aux->content)
+		free(aux->content);
+	aux->content = new_content;
+	if (var->type != DEFAULT_VAR)
+		aux->type = var->type;
 	return (1);
 }
-static	t_var	*new_var(const char *name, const char *content)
-{
-	t_var	*var;
 
-	if (!name || !*name)
-		return (NULL);
-	var = malloc(sizeof(t_var));
-	if (!var)
-		return (NULL);
-	var->name = ft_strdup(name);
-	if (content)
-		var->content = ft_strdup(content);
-	if (!var->name || (content && !var->content))
-	{
-		free_var(var);
-		return (NULL);
-	}
-	return (var);
-}
-
-char	set_variable(t_list **lst, char *name, char *content)
+int	set_variable(t_list **lst, char *name, char *content, int type)
 {
 	int		index;
 	t_var	*var;
+	int		exit_status;
 
-	var = new_var(name, content);
+	var = new_var(name, content, type);
 	if (!var)
 		return (0);
-	index = is_in_list(*lst, var->name);
+	index = is_in_varlist(*lst, var->name);
 	if (index == -1)
-		return (ft_lstadd_back_content(lst, var));
-	return (replace_variable(lst, var, index));
+	{
+		if (type == DEFAULT_VAR)
+			var->type = LOCAL_VAR;
+		if (!ft_lstadd_back_content(lst, var))
+		{
+			free_var(var);
+			return (0);
+		}
+		return (1);
+	}
+	exit_status = replace_variable(*lst, var, index);
+	free_var(var);
+	return (exit_status);
 }
 
 /*COMENTAR A PARTIR DE AQUI*/

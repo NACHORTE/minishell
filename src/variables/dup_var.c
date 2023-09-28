@@ -1,22 +1,18 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   unset_variable.c                                   :+:      :+:    :+:   */
+/*   dup_var.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: orudek <orudek@student.42madrid.com>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2023/09/11 17:09:38 by orudek            #+#    #+#             */
-/*   Updated: 2023/09/28 15:53:45 by orudek           ###   ########.fr       */
+/*   Created: 2023/09/28 15:43:45 by orudek            #+#    #+#             */
+/*   Updated: 2023/09/28 15:45:16 by orudek           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "t_var.h"
 
-void	unset_variable(t_list **list, char *name)
+t_var	*dup_var(t_var *var)
 {
-	int index;
-
-	index = is_in_varlist(*list, name);
-	if (index != -1)
-		ft_lstpop(list, index, free_var);
+	return (new_var(var->name, var->content, var->type));
 }
