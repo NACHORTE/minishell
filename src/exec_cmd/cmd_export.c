@@ -6,7 +6,7 @@
 /*   By: orudek <orudek@student.42madrid.com>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/27 21:04:33 by orudek            #+#    #+#             */
-/*   Updated: 2023/09/28 22:15:24 by orudek           ###   ########.fr       */
+/*   Updated: 2023/09/28 22:32:41 by orudek           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -90,7 +90,7 @@ int	cmd_export(char **cmd, t_list **local, t_list **env)
 			exit_status = 1;
 			continue ;
 		}
-		if (!set_variable(env, var.name, var.content, ENV_VAR_TYPE))
+		if (!set_variable(env, var.name, var.content, ENV_VAR))
 			exit_status = 1;
 		free(var.name);
 		if (var.content)
