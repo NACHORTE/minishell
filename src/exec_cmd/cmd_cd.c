@@ -6,7 +6,7 @@
 /*   By: orudek <orudek@student.42madrid.com>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/27 21:26:02 by orudek            #+#    #+#             */
-/*   Updated: 2023/09/29 17:02:27 by orudek           ###   ########.fr       */
+/*   Updated: 2023/09/29 19:50:18 by orudek           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,9 +31,9 @@ int	cd(char *str, t_list **varlist)
 	return (1);
 }
 
-static int cd_home(t_list **varlist)
+static int	cd_home(t_list **varlist)
 {
-	t_var *var;
+	t_var	*var;
 
 	if (is_in_varlist(*varlist, "HOME") != -1)
 	{
@@ -53,7 +53,7 @@ static int cd_home(t_list **varlist)
 
 static int	cd_back(t_list **varlist)
 {
-	t_var *var;
+	t_var	*var;
 
 	if (is_in_varlist(*varlist, "OLDPWD") != -1)
 	{
@@ -71,10 +71,9 @@ static int	cd_back(t_list **varlist)
 	return (1);
 }
 
-
-
 //[ ] COMENTAR
-int	cmd_cd(char **cmd, t_list **varlist)   //NOTE Hacer un tester para esto
+//[ ] Hacer un tester para esto
+int	cmd_cd(char **cmd, t_list **varlist)
 {
 	if (cmd[1] != 0 && cmd[2] != 0)
 	{
