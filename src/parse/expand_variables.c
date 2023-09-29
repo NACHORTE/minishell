@@ -6,7 +6,7 @@
 /*   By: orudek <orudek@student.42madrid.com>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/11 22:37:17 by orudek            #+#    #+#             */
-/*   Updated: 2023/09/29 14:03:16 by orudek           ###   ########.fr       */
+/*   Updated: 2023/09/29 14:40:45 by orudek           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -96,7 +96,7 @@ static int	dup_arg(char *out, char **s, t_list *varlist)
 	char	*var;
 
 	len = 0;
-	i = arg_len(*s, &len, local, env);
+	i = arg_len(*s, &len, varlist);
 	if (len == 0)
 	{
 		(*s) += i;
