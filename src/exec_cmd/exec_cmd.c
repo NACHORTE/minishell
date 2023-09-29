@@ -6,11 +6,21 @@
 /*   By: orudek <orudek@student.42madrid.com>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/20 13:56:41 by oscar             #+#    #+#             */
-/*   Updated: 2023/09/29 13:46:43 by orudek           ###   ########.fr       */
+/*   Updated: 2023/09/29 14:29:54 by orudek           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "exec_cmd.h"
+#include <stdio.h>
+#include <sys/types.h>
+#include <sys/file.h>
+#include <sys/stat.h>
+#include <sys/errno.h>
+#include <sys/wait.h>
+
+#include <readline/readline.h>
+#include <readline/history.h>
+#include <signal.h>
 
 int	count_heredoc(t_list *cmds)
 {

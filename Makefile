@@ -6,7 +6,7 @@
 #    By: orudek <orudek@student.42madrid.com>       +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/09/03 15:02:39 by iortega-          #+#    #+#              #
-#    Updated: 2023/09/29 13:50:48 by orudek           ###   ########.fr        #
+#    Updated: 2023/09/29 14:39:44 by orudek           ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -36,6 +36,9 @@ SRC_FILES := main.c\
 	exec_cmd/cmd_unset.c\
 	exec_cmd/exec_builtin.c\
 	exec_cmd/exec_cmd.c\
+	exec_cmd/is_builtin.c\
+	exec_cmd/parse_cmd.c\
+	exec_cmd/redirect_streams.c\
 	parse/expand_variables.c\
 	parse/parse.c\
 	parse/split_args.c\

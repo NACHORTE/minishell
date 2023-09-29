@@ -6,26 +6,11 @@
 /*   By: orudek <orudek@student.42madrid.com>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/23 12:22:38 by orudek            #+#    #+#             */
-/*   Updated: 2023/09/29 13:47:25 by orudek           ###   ########.fr       */
+/*   Updated: 2023/09/29 14:21:37 by orudek           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "exec_cmd.h"
-
-int	is_builtin(char *cmd) //NOTE no se si me gusta está funcion.
-{
-	if (!cmd || !*cmd)
-		return (0);
-	if (!ft_strcmp(cmd, "pwd")
-		|| !ft_strcmp(cmd, "cd")
-		|| !ft_strcmp(cmd, "env")
-		|| !ft_strcmp(cmd, "echo")
-		|| !ft_strcmp(cmd, "unset")
-		|| !ft_strcmp(cmd, "exit")
-		|| !ft_strcmp(cmd, "export"))
-		return (1);
-	return (0);
-}
 
 int	exec_builtin(char **cmd, t_list **varlist)
 {

@@ -6,7 +6,7 @@
 /*   By: orudek <orudek@student.42madrid.com>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/27 22:31:08 by orudek            #+#    #+#             */
-/*   Updated: 2023/09/29 13:51:44 by orudek           ###   ########.fr       */
+/*   Updated: 2023/09/29 14:38:02 by orudek           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,7 +25,10 @@ int	cmd_pwd();
 int	cmd_unset(char **cmd, t_list **varlist);
 
 int		exec_cmd(t_list *cmds, t_list **varlist);
+int		is_builtin(char *cmd);
 int		exec_builtin(char **cmd, t_list **varlist);
 void    child(int infile, int outfile, char ** cmd, t_list **varlist);
+void	redirect_streams(int infile, int outfile, char **cmd);
+char	**parse_cmd(char **input);
 
 #endif
