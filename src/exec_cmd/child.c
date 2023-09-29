@@ -6,7 +6,7 @@
 /*   By: orudek <orudek@student.42madrid.com>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/20 21:29:18 by oscar             #+#    #+#             */
-/*   Updated: 2023/09/29 14:36:40 by orudek           ###   ########.fr       */
+/*   Updated: 2023/09/29 19:44:19 by orudek           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,6 +19,7 @@
 
 #include <readline/readline.h>
 #include <readline/history.h>
+
 
 /*  child:
         Executes a command that can have redirections.
