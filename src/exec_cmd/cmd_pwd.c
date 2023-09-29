@@ -6,7 +6,7 @@
 /*   By: orudek <orudek@student.42madrid.com>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/27 21:26:28 by orudek            #+#    #+#             */
-/*   Updated: 2023/09/28 22:16:19 by orudek           ###   ########.fr       */
+/*   Updated: 2023/09/29 19:49:07 by orudek           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,14 +14,15 @@
 #include <stdlib.h>
 #include <unistd.h>
 
-int	cmd_pwd()
+//[ ]: use define for error messages
+int	cmd_pwd(void)
 {
 	char	*dir;
 
 	dir = getcwd(NULL, 0);
 	if (dir == NULL)
 	{
-		printf("ERROR: PWD\n"); //[ ]: define.h
+		printf("ERROR: PWD\n");
 		return (1);
 	}
 	printf("%s\n", dir);

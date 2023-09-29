@@ -6,13 +6,11 @@
 /*   By: orudek <orudek@student.42madrid.com>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/17 17:24:03 by orudek            #+#    #+#             */
-/*   Updated: 2023/09/29 14:01:13 by orudek           ###   ########.fr       */
+/*   Updated: 2023/09/29 19:26:14 by orudek           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
-
-
 
 char	**expand_vars_array(char **str, t_list *varlist)
 {

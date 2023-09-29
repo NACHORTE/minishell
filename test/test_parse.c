@@ -457,7 +457,7 @@ int main(int argc, char **argv, char **envp)
 {
 	set_flags(argc, argv);
 	printf(BOLD UNDERLINE MAGENTA"TESTER: PARSE"RESET PINK" (use -all and -err for results)"RESET"\n");
-	test_norminette("norminette src/parse.c src/expand_variables.c src/split*");
+	test_norminette("norminette src/parse/*");
 	test_NULL_input();
 	test_empty_cmd(); //maybe this test should return a NULL list.
 	test_1arg_1cmd();

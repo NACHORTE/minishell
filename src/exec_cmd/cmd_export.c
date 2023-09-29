@@ -6,7 +6,7 @@
 /*   By: orudek <orudek@student.42madrid.com>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/27 21:04:33 by orudek            #+#    #+#             */
-/*   Updated: 2023/09/29 16:57:04 by orudek           ###   ########.fr       */
+/*   Updated: 2023/09/29 19:48:05 by orudek           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,13 +14,13 @@
 
 static int	get_name(char *str, char **name)
 {
-	int	len;
-	char *new_str;
-	
+	int		len;
+	char	*new_str;
+
 	len = 0;
 	while (str[len] != '=' && str[len] != 0)
 		len++;
-	new_str= malloc(len + 1);
+	new_str = malloc(len + 1);
 	if (!new_str)
 		return (0);
 	*name = new_str;
@@ -41,7 +41,7 @@ static int	get_name(char *str, char **name)
 */
 static int	get_content(char *str, char **content)
 {
-	int	len;
+	int		len;
 	char	*new_str;
 
 	while (*str != '=' && *str != 0)
@@ -67,7 +67,6 @@ static char	str_to_var(char *cmd, char **name, char **content)
 {
 	if (!get_name(cmd, name))
 		return (0);
-
 	if (!get_content(cmd, content))
 	{
 		free(*name);

@@ -6,7 +6,7 @@
 /*   By: orudek <orudek@student.42madrid.com>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/27 22:31:08 by orudek            #+#    #+#             */
-/*   Updated: 2023/09/29 14:38:02 by orudek           ###   ########.fr       */
+/*   Updated: 2023/09/29 19:46:47 by orudek           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,9 +19,9 @@
 int	cmd_cd(char **cmd, t_list **varlist);
 int	cmd_echo(char **cmd);
 int	cmd_env(t_list *varlist);
-int	cmd_exit();
+int	cmd_exit(void);
 int	cmd_export(char **cmd, t_list **varlist);
-int	cmd_pwd();
+int	cmd_pwd(void);
 int	cmd_unset(char **cmd, t_list **varlist);
 
 int		exec_cmd(t_list *cmds, t_list **varlist);
