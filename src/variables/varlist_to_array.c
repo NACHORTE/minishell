@@ -6,7 +6,7 @@
 /*   By: orudek <orudek@student.42madrid.com>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/20 22:46:57 by oscar             #+#    #+#             */
-/*   Updated: 2023/09/29 12:17:12 by orudek           ###   ########.fr       */
+/*   Updated: 2023/09/29 12:25:24 by orudek           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,18 +33,18 @@ static int	var_to_str(t_var *var, char **str, int type)
 	return (1);
 }
 
-int	varlist_len(t_list *lst, int type)
+int	varlist_len(t_list *varlist, int type)
 {
 	t_var	*var;
 	int		count;
 
 	count = 0;
-	while (lst)
+	while (varlist)
 	{
-		var = (t_var *)lst->content;
+		var = (t_var *)varlist->content;
 		if (var && (type == DEFAULT_VAR || type == var->type) && var->content)
 			count++;
-		lst = lst->next;
+		varlist = varlist->next;
 	}
 	return (count);
 }
@@ -59,11 +59,11 @@ int	varlist_len(t_list *lst, int type)
 		If NULLs are ignored, reverting back to a t_list from the returned array
 		will lose all those variables.
 	Parameters:
-		lst: list containing each variable in a t_var struct that has a name
+		varlist: list containing each variable in a t_var struct that has a name
 			and a content.
 		type: Option for choosing whether to store NULLs (0) or not (1).
 	Return:
-		An array of strings containing all the variables in the "lst" variable.
+		An array of strings containing all the variables in the "varlist" variable.
 		Each string in the array has the format "name=content" unless the
 		content of a variable is NULL in which case, if NULLs are not ignored,
 		the format for that string is "name".
@@ -71,7 +71,7 @@ int	varlist_len(t_list *lst, int type)
 		[ ] Write this description
 */
 
-static char	**save_vars(char **out, t_list *lst, int len, int type)
+static char	**save_vars(char **out, t_list *varlist, int len, int type)
 {
 	int	i;
 	int ret;
@@ -79,7 +79,7 @@ static char	**save_vars(char **out, t_list *lst, int len, int type)
 	i = 0;
 	while (i < len)
 	{
-		ret = var_to_str((t_var *)lst->content, &out[i], type);
+		ret = var_to_str((t_var *)varlist->content, &out[i], type);
 		if (ret == 1)
 			i++;
 		else if (ret == -1)
@@ -88,7 +88,7 @@ static char	**save_vars(char **out, t_list *lst, int len, int type)
 			ft_array_free(out);
 			return (NULL);
 		}
-		lst = lst->next;
+		varlist = varlist->next;
 	}
 	out[i] = 0;
 	return (out);
@@ -101,11 +101,11 @@ char	**varlist_to_array(t_list *varlist, int type)
 
 	if (!varlist)
 		return (NULL);
-	len = varlist_len(lst, type);
+	len = varlist_len(varlist, type);
 	out = malloc(sizeof(char *) * (len + 1));
 	if (!out)
 		return (NULL);
-	return (save_vars(out, lst, len, type));
+	return (save_vars(out, varlist, len, type));
 }
 
 /*
