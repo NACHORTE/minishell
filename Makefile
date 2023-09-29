@@ -6,7 +6,7 @@
 #    By: orudek <orudek@student.42madrid.com>       +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/09/03 15:02:39 by iortega-          #+#    #+#              #
-#    Updated: 2023/09/29 13:50:48 by orudek           ###   ########.fr        #
+#    Updated: 2023/09/29 16:42:28 by orudek           ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -36,6 +36,9 @@ SRC_FILES := main.c\
 	exec_cmd/cmd_unset.c\
 	exec_cmd/exec_builtin.c\
 	exec_cmd/exec_cmd.c\
+	exec_cmd/is_builtin.c\
+	exec_cmd/parse_cmd.c\
+	exec_cmd/redirect_streams.c\
 	parse/expand_variables.c\
 	parse/parse.c\
 	parse/split_args.c\
@@ -48,10 +51,11 @@ SRC_FILES := main.c\
 	variables/is_in_varlist.c\
 	variables/is_varname_ok.c\
 	variables/new_var.c\
+	variables/print_varlist.c\
 	variables/set_variable.c\
 	variables/set_variable2.c\
 	variables/unset_variable.c\
-	variables/varlist_to_array.c\
+	variables/varlist_to_array.c
 
 SRC := $(addprefix $(SRC_DIR)/,$(SRC_FILES))
 OBJ := $(SRC:$(SRC_DIR)/%.c=$(OBJ_DIR)/%.o)

@@ -6,11 +6,21 @@
 /*   By: orudek <orudek@student.42madrid.com>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/20 13:56:41 by oscar             #+#    #+#             */
-/*   Updated: 2023/09/28 19:39:59 by orudek           ###   ########.fr       */
+/*   Updated: 2023/09/29 14:29:54 by orudek           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "minishell.h"
+#include "exec_cmd.h"
+#include <stdio.h>
+#include <sys/types.h>
+#include <sys/file.h>
+#include <sys/stat.h>
+#include <sys/errno.h>
+#include <sys/wait.h>
+
+#include <readline/readline.h>
+#include <readline/history.h>
+#include <signal.h>
 
 int	count_heredoc(t_list *cmds)
 {
@@ -174,7 +184,7 @@ int	open_heredocs(t_list *cmds, int **n_cmd, int **fds)
 	return (0);
 }
 
-int	exec_one_builtin(char **cmd, t_list **local, t_list **env, int *status)
+int	exec_one_builtin(char **cmd, t_list **varlist, int *status)
 {
 	int	std_in;
 	int	std_out;
@@ -190,7 +200,7 @@ int	exec_one_builtin(char **cmd, t_list **local, t_list **env, int *status)
 	std_in = dup(0);
 	std_out = dup(1);
     redirect_streams(0, 1, cmd);
-	out = exec_builtin(cmd_parsed, local, env);
+	out = exec_builtin(cmd_parsed, varlist);
 	ft_array_free(cmd_parsed);
 	dup2(std_in, 0);
 	dup2(std_out, 1);
@@ -205,16 +215,15 @@ int	exec_one_builtin(char **cmd, t_list **local, t_list **env, int *status)
     calls the child process setting infile=stdin, outfile=stdout
     If the command contains redirections, they will be handled inside the child
 */
-int	exec_one_cmd(char **cmd, char **env, t_command *global)
+int	exec_one_cmd(char **cmd, t_list **varlist)
 {
 	int	status;
 	int	fd;
 
-	(void)env;
 	fd = check_restdin(cmd);
 	if (fd < 0)
 		return (1);
-    if (exec_one_builtin(cmd, &global->local, &global->env, &status))
+    if (exec_one_builtin(cmd, varlist, &status))
         return (status);
     int pid = fork();
     if (pid == -1)
@@ -223,14 +232,17 @@ int	exec_one_cmd(char **cmd, char **env, t_command *global)
 		return 1;
 	}
 	if (pid == 0)
-        child(fd, 1, cmd, global);
+	{
+		
+        child(fd, 1, cmd, varlist);
+	}
 	if (fd > 0)
 		close(fd);
 	wait(&status);
 	return (WEXITSTATUS(status));
 }
 
-int exec_multi_cmd(t_list *cmds, char **env, t_command *global)
+int exec_multi_cmd(t_list *cmds, t_list **varlist)
 {
 	int i;
 	int last_pipe[2];
@@ -243,7 +255,6 @@ int exec_multi_cmd(t_list *cmds, char **env, t_command *global)
 	int n_heredocs;
 	int	j;
 
-	(void)env;
     cmds_len = ft_lstsize(cmds);
 	n_heredocs = count_heredoc(cmds);
 	//printf("%d\n", n_heredocs);
@@ -276,9 +287,9 @@ int exec_multi_cmd(t_list *cmds, char **env, t_command *global)
 	{
 		close(last_pipe[0]);
 		if (j < n_heredocs && i == n_cmd[j])
-			child(fds[j], last_pipe[1], (char **)cmds->content, global);
+			child(fds[j], last_pipe[1], (char **)cmds->content, varlist);
 		else
-			child(0, last_pipe[1], (char **)cmds->content, global);
+			child(0, last_pipe[1], (char **)cmds->content, varlist);
 	}
 	else if (j < n_heredocs && i == n_cmd[j])
 	{
@@ -308,9 +319,9 @@ int exec_multi_cmd(t_list *cmds, char **env, t_command *global)
 		{
 			close(new_pipe[0]);
 			if (j < n_heredocs && i == n_cmd[j])
-				child(fds[j], new_pipe[1], (char **)cmds->content, global);
+				child(fds[j], new_pipe[1], (char **)cmds->content, varlist);
 			else
-				child(last_pipe[0], new_pipe[1], (char **)cmds->content, global);
+				child(last_pipe[0], new_pipe[1], (char **)cmds->content, varlist);
 		}
 		else
 		{
@@ -332,11 +343,11 @@ int exec_multi_cmd(t_list *cmds, char **env, t_command *global)
 	{
 		if (j < n_heredocs && i == n_cmd[j])
 		{
-			child(fds[j], 1, (char **)cmds->content, global);
+			child(fds[j], 1, (char **)cmds->content, varlist);
 		}
 		else
 		{
-			child(last_pipe[0], 1, (char **)cmds->content, global);
+			child(last_pipe[0], 1, (char **)cmds->content, varlist);
 		}
 	}
 	else if (j < n_heredocs && i == n_cmd[j])
@@ -384,9 +395,8 @@ int exec_multi_cmd(t_list *cmds, char **env, t_command *global)
 		[ ] close files (child)
 		[ ] norminette
 */
-int    exec_cmd(t_list *cmds, t_list **varlist, t_command *global)
+int    exec_cmd(t_list *cmds, t_list **varlist)
 {
-    char    **env_array;
 	int		status;
 
 	if (!cmds)
@@ -394,12 +404,10 @@ int    exec_cmd(t_list *cmds, t_list **varlist, t_command *global)
 		printf("EXEC_CMD: no cmds\n");
 		return (1);
 	}
-    env_array = varlist_to_array(env, 1);
     if (ft_lstsize(cmds) == 1)
-        status = exec_one_cmd((char **)cmds->content, env_array, global);
+        status = exec_one_cmd((char **)cmds->content, varlist);
     else
-		status = exec_multi_cmd(cmds, env_array, global);
-	ft_array_free(env_array);
+		status = exec_multi_cmd(cmds, varlist);
 	return (status);
 }
 

@@ -1,26 +1,23 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   cmd_env.c                                          :+:      :+:    :+:   */
+/*   parse.h                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: orudek <orudek@student.42madrid.com>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2023/09/27 21:25:10 by orudek            #+#    #+#             */
-/*   Updated: 2023/09/29 13:48:40 by orudek           ###   ########.fr       */
+/*   Created: 2023/09/29 13:58:18 by orudek            #+#    #+#             */
+/*   Updated: 2023/09/29 14:00:11 by orudek           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "exec_cmd.h"
+#ifndef PARSE_H
+# define PARSE_H
 
-int	cmd_env(t_list *varlist)
-{
-	while (varlist)
-	{
-		if (((t_var *)varlist->content)->content
-			&& ((t_var *)varlist->content)->type == ENV_VAR)
-			printf("%s=%s\n", ((t_var *)varlist->content)->name,
-				((t_var *)varlist->content)->content);
-		varlist = varlist->next;
-	}
-	return (0);
-}
+# include "libft.h"
+
+char	**split_pipe(char *s);
+char	*expand_variables(char *str, t_list *varlist);
+char	**split_args(char const *s, char c);
+t_list	*parse(char	*input, t_list *varlist);
+
+#endif

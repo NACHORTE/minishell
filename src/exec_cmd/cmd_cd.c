@@ -6,7 +6,7 @@
 /*   By: orudek <orudek@student.42madrid.com>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/27 21:26:02 by orudek            #+#    #+#             */
-/*   Updated: 2023/09/28 22:12:48 by orudek           ###   ########.fr       */
+/*   Updated: 2023/09/29 13:13:41 by orudek           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,9 +35,9 @@ static int cd_home(t_list **varlist)
 {
 	t_var *var;
 
-	if (is_in_varlist(varlist,"HOME") != -1)
+	if (is_in_varlist(*varlist, "HOME") != -1)
 	{
-		if (get_variable(varlist, "HOME", &var) != -1)
+		if (get_variable(*varlist, "HOME", &var) != -1)
 			return (1);
 		if (!cd(var->content, varlist))
 		{
@@ -55,9 +55,9 @@ static int	cd_back(t_list **varlist)
 {
 	t_var *var;
 
-	if (is_in_varlist(varlist,"OLDPWD") != -1)
+	if (is_in_varlist(*varlist, "OLDPWD") != -1)
 	{
-		if (get_variable(varlist, "OLDPWD", &var) != -1)
+		if (get_variable(*varlist, "OLDPWD", &var) != -1)
 			return (1);
 		if (!cd(var->content, varlist))
 		{
@@ -76,9 +76,6 @@ static int	cd_back(t_list **varlist)
 //[ ] COMENTAR
 int	cmd_cd(char **cmd, t_list **varlist)   //NOTE Hacer un tester para esto
 {
-	char	*curr_pwd;
-	char	*dst;
-	
 	if (cmd[1] != 0 && cmd[2] != 0)
 	{
 		printf("cd: too many arguments\n");

@@ -179,9 +179,14 @@ int	set_assignation(t_command *global, int pos)
 	}
 	content = malloc(sizeof(char) * (size + 1));
 	if (!content)
+	{
+		free(name);
 		return (0);
+	}
 	ft_strlcpy(content, &((char **)global->cmds->content)[pos][j], size + 1);
-	set_variable(&(global->local), name, content, DEFAULT_VAR);
+	set_variable(&(global->varlist), name, content, DEFAULT_VAR);
+	free(name);
+	free(content);
 	return (1);
 }
 
@@ -226,7 +231,7 @@ void	refresh_status(t_command *global)
 	char	*content;
 
 	content = ft_itoa(global->last_status);
-	set_variable(&(global->local), "?", content, DEFAULT_VAR);
+	set_variable(&(global->varlist), "?", content, DEFAULT_VAR);
 	free(content);
 }
 
@@ -238,9 +243,7 @@ int	main(int argc, char **argv, char **envp)
 	if (argc != 1)
 		return (1);
 	(void)argv;
-	global.env = NULL;
-	global.local = NULL;
-	global.env = array_to_varlist(envp);
+	global.varlist = array_to_varlist(envp);
 	global.last_status = 0;
 	refresh_status(&global);
 	signal(SIGINT, &new_line);
@@ -255,10 +258,10 @@ int	main(int argc, char **argv, char **envp)
 		add_history(input);
 		if (check_closed_quotes(input))
 		{
-			global.cmds = parse(input, global.local, global.env);
+			global.cmds = parse(input, global.varlist);
 			if (is_command(&global))
 			{
-				global.last_status = exec_cmd(global.cmds, global.env, &global);
+				global.last_status = exec_cmd(global.cmds, &global.varlist);
 				refresh_status(&global);
 			}
 			if( global.cmds)
