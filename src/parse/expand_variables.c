@@ -6,7 +6,7 @@
 /*   By: orudek <orudek@student.42madrid.com>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/11 22:37:17 by orudek            #+#    #+#             */
-/*   Updated: 2023/09/18 23:16:27 by orudek           ###   ########.fr       */
+/*   Updated: 2023/09/29 14:03:16 by orudek           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,7 +38,7 @@ static char	find_var(char **var, char *str, int len, t_list *list)
 	return (0);
 }
 
-static int	arg_len(char *s, int *len, t_list *local, t_list *env)
+static int	arg_len(char *s, int *len, t_list *varlist)
 {
 	int		i;
 	char	*var;
@@ -58,13 +58,13 @@ static int	arg_len(char *s, int *len, t_list *local, t_list *env)
 		(*len) += 1;
 		return (i);
 	}
-	if (!find_var(&var, s, i - 1, local) && !find_var(&var, s, i - 1, env))
+	if (!find_var(&var, s, i - 1, varlist))
 		return (i);
 	*len += ft_strlen(var);
 	return (i);
 }
 
-static int	expanded_len(char *str, t_list *local, t_list *env)
+static int	expanded_len(char *str, t_list *varlist)
 {
 	int	len;
 	int	state;
@@ -78,7 +78,7 @@ static int	expanded_len(char *str, t_list *local, t_list *env)
 		else if ((state == 1 && *str == '"') || (state == 2 && *str == '\''))
 			state = 0;
 		if (state != 2 && *str == '$')
-			str += arg_len(str, &len, local, env);
+			str += arg_len(str, &len, varlist);
 		else
 		{
 			len++;
@@ -88,7 +88,7 @@ static int	expanded_len(char *str, t_list *local, t_list *env)
 	return (len);
 }
 
-static int	dup_arg(char *out, char **s, t_list *local, t_list *env)
+static int	dup_arg(char *out, char **s, t_list *varlist)
 {
 	int		len;
 	int		j;
@@ -108,7 +108,7 @@ static int	dup_arg(char *out, char **s, t_list *local, t_list *env)
 		*out = '$';
 		return (1);
 	}
-	if (!find_var(&var, *s, i - 1, local) && !find_var(&var, *s, i - 1, env))
+	if (!find_var(&var, *s, i - 1, varlist))
 		return (i);
 	j = -1;
 	while (++j < len)
@@ -117,14 +117,14 @@ static int	dup_arg(char *out, char **s, t_list *local, t_list *env)
 	return (len);
 }
 
-char	*expand_variables(char *str, t_list *local, t_list *env)
+char	*expand_variables(char *str, t_list *varlist)
 {
 	char	*out;
 	int		len;
 	int		i;
 	int		state;
 
-	len = expanded_len(str, local, env);
+	len = expanded_len(str, varlist);
 	out = malloc(len + 1);
 	if (!out)
 		return (NULL);
@@ -137,7 +137,7 @@ char	*expand_variables(char *str, t_list *local, t_list *env)
 		else if ((state == 1 && *str == '"') || (state == 2 && *str == '\''))
 			state = 0;
 		if (state != 2 && *str == '$')
-			i += dup_arg(&out[i], &str, local, env);
+			i += dup_arg(&out[i], &str,varlist);
 		else
 			out[i++] = *str++;
 	}

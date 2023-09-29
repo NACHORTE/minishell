@@ -6,17 +6,15 @@
 /*   By: orudek <orudek@student.42madrid.com>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/17 17:24:03 by orudek            #+#    #+#             */
-/*   Updated: 2023/09/27 22:45:30 by orudek           ###   ########.fr       */
+/*   Updated: 2023/09/29 14:01:13 by orudek           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-char	**split_pipe(char *s);
-char	*expand_variables(char *str, t_list *local, t_list *env);
-char	**split_args(char const *s, char c);
 
-char	**expand_vars_array(char **str, t_list *local, t_list *env)
+
+char	**expand_vars_array(char **str, t_list *varlist)
 {
 	int		i;
 	char	**output;
@@ -31,7 +29,7 @@ char	**expand_vars_array(char **str, t_list *local, t_list *env)
 	i = -1;
 	while (str[++i])
 	{
-		output[i] = expand_variables(str[i], local, env);
+		output[i] = expand_variables(str[i], varlist);
 		if (!output[i])
 		{
 			ft_array_free(output);
@@ -61,7 +59,7 @@ t_list	*save_commands(char **array)
 	return (output);
 }
 
-t_list	*parse(char	*input, t_list *local, t_list *env)
+t_list	*parse(char	*input, t_list *varlist)
 {
 	char	**split_pipes;
 	char	**expanded;
@@ -72,7 +70,7 @@ t_list	*parse(char	*input, t_list *local, t_list *env)
 	split_pipes = split_pipe(input);
 	if (!split_pipes)
 		return (NULL);
-	expanded = expand_vars_array(split_pipes, local, env);
+	expanded = expand_vars_array(split_pipes, varlist);
 	ft_array_free(split_pipes);
 	if (!expanded)
 		return (NULL);
