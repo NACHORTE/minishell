@@ -179,9 +179,14 @@ int	set_assignation(t_command *global, int pos)
 	}
 	content = malloc(sizeof(char) * (size + 1));
 	if (!content)
+	{
+		free(name);
 		return (0);
+	}
 	ft_strlcpy(content, &((char **)global->cmds->content)[pos][j], size + 1);
 	set_variable(&(global->varlist), name, content, DEFAULT_VAR);
+	free(name);
+	free(content);
 	return (1);
 }
 
