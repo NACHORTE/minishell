@@ -6,7 +6,7 @@
 /*   By: orudek <orudek@student.42madrid.com>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/20 13:56:41 by oscar             #+#    #+#             */
-/*   Updated: 2023/09/29 17:02:07 by orudek           ###   ########.fr       */
+/*   Updated: 2023/09/29 19:59:56 by orudek           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,9 +31,9 @@ int	count_heredoc(t_list *cmds)
 	while (cmds)
 	{
 		i = 0;
-		while (((char**)cmds->content)[i])
+		while (((char **)cmds->content)[i])
 		{
-			if (!ft_strncmp(((char**)cmds->content)[i], "<<", 2))
+			if (!ft_strncmp(((char **)cmds->content)[i], "<<", 2))
 				count++;
 			i++;
 		}
@@ -53,9 +53,9 @@ static void	new_line(int sig)
 {
 	(void)sig;
 	write(1, "\n", 1);
-    rl_on_new_line();
-    rl_replace_line("", 0);
-    rl_redisplay();
+	rl_on_new_line();
+	rl_replace_line("", 0);
+	rl_redisplay();
 }
 
 static void	read_heredoc(int *redi, char *str)
@@ -65,7 +65,6 @@ static void	read_heredoc(int *redi, char *str)
 
 	old = dup(1);
 	signal(SIGINT, &sig_here);
-	
 	while (1)
 	{
 		dup2(old, 1);
@@ -85,9 +84,9 @@ static void	read_heredoc(int *redi, char *str)
 
 static int	here_doc(char *str)
 {
-	int	redi[2];
+	int		redi[2];
 	pid_t	sin;
-	int	stat;
+	int		stat;
 
 	pipe(redi);
 	signal(SIGINT, SIG_IGN);
@@ -131,7 +130,7 @@ static int	check_restdin(char **input)
 
 	i = 0;
 	fd = 0;
-	while (input[i])   //if we have < " " file we get flag 1 and check file, else if we have <file we check file without "<"
+	while (input[i])
 	{
 		j = 0;
 		if (input[i][j] == '<')
@@ -160,13 +159,13 @@ int	open_heredocs(t_list *cmds, int **n_cmd, int **fds)
 	int	fd;
 	int	i;
 	int	j;
-	
+
 	i = 0;
 	j = 0;
 	while (cmds)
 	{
 		fd = 0;
-		fd = check_restdin((char**)cmds->content);
+		fd = check_restdin((char **)cmds->content);
 		if (fd != 0)
 		{
 			(*n_cmd)[j] = i;
@@ -187,11 +186,11 @@ int	open_heredocs(t_list *cmds, int **n_cmd, int **fds)
 //[ ] check open files and leaks
 int	exec_one_builtin(char **cmd, t_list **varlist, int *status)
 {
-	int	std_in;
-	int	std_out;
-	char **cmd_parsed;
+	int		std_in;
+	int		std_out;
+	char	**cmd_parsed;
 
-	cmd_parsed = parse_cmd(cmd); 
+	cmd_parsed = parse_cmd(cmd);
 	if (!is_builtin(cmd_parsed[0]))
 	{
 		ft_array_free(cmd_parsed);
@@ -199,7 +198,7 @@ int	exec_one_builtin(char **cmd, t_list **varlist, int *status)
 	}
 	std_in = dup(0);
 	std_out = dup(1);
-    redirect_streams(0, 1, cmd);
+	redirect_streams(0, 1, cmd);
 	*status = exec_builtin(cmd_parsed, varlist);
 	ft_array_free(cmd_parsed);
 	dup2(std_in, 0);
@@ -218,45 +217,42 @@ int	exec_one_cmd(char **cmd, t_list **varlist)
 {
 	int	status;
 	int	fd;
+	int	pid;
 
 	fd = check_restdin(cmd);
 	if (fd < 0)
 		return (1);
-    if (exec_one_builtin(cmd, varlist, &status))
-        return (status);
-    int pid = fork();
-    if (pid == -1)
+	if (exec_one_builtin(cmd, varlist, &status))
+		return (status);
+	pid = fork();
+	if (pid == -1)
 	{
-        printf("EXEC_ONE_CMD: fork fail\n");
-		return 1;
+		printf("EXEC_ONE_CMD: fork fail\n");
+		return (1);
 	}
 	if (pid == 0)
-	{
-		
-        child(fd, 1, cmd, varlist);
-	}
+		child(fd, 1, cmd, varlist);
 	if (fd > 0)
 		close(fd);
 	wait(&status);
 	return (WEXITSTATUS(status));
 }
 
-int exec_multi_cmd(t_list *cmds, t_list **varlist)
+int	exec_multi_cmd(t_list *cmds, t_list **varlist)
 {
-	int i;
-	int last_pipe[2];
-	int new_pipe[2];
-	int pid;
-    int cmds_len;
+	int	i;
+	int	last_pipe[2];
+	int	new_pipe[2];
+	int	pid;
+	int	cmds_len;
 	int	status;
 	int	*n_cmd;
 	int	*fds;
-	int n_heredocs;
+	int	n_heredocs;
 	int	j;
 
-    cmds_len = ft_lstsize(cmds);
+	cmds_len = ft_lstsize(cmds);
 	n_heredocs = count_heredoc(cmds);
-	//printf("%d\n", n_heredocs);
 	if (n_heredocs > 0)
 	{
 		n_cmd = malloc(sizeof(int) * n_heredocs);
@@ -271,16 +267,15 @@ int exec_multi_cmd(t_list *cmds, t_list **varlist)
 	if (pipe(last_pipe) == -1)
 	{
 		printf("EXEC_MULTI_CMD: pipe 0: fail\n");
-		return  1;
+		return (1);
 	}
-	//printf("EXEC_MULTI_CMD: pipe 0: read %d, write %d\n",last_pipe[0], last_pipe[1]);
 	i = 0;
 	j = 0;
 	pid = fork();
 	if (pid == -1)
 	{
 		printf("EXEC_MULTI_CMD: fork 0: fail\n");
-		return 1;
+		return (1);
 	}
 	if (pid == 0)
 	{
@@ -296,23 +291,21 @@ int exec_multi_cmd(t_list *cmds, t_list **varlist)
 			close(fds[j]);
 		j++;
 	}
-    cmds = cmds->next;
+	cmds = cmds->next;
 	i = 0;
 	while (++i < cmds_len - 1)
 	{
-		//printf("%d\n", i);
 		if (pipe(new_pipe) == -1)
 		{
-			printf("EXEC_MULTI_CMD: pipe %d fail\n",i);
-			return 1;
+			printf("EXEC_MULTI_CMD: pipe %d fail\n", i);
+			return (1);
 		}
 		close(last_pipe[1]);
-		//printf("EXEC_MULTI_CMD: pipe %d: read %d, write %d\n", i, new_pipe[0], new_pipe[1]);
 		pid = fork();
 		if (pid == -1)
 		{
 			printf("EXEC_MULTI_CMD: fork %d: fail\n", i);
-			return 1;
+			return (1);
 		}
 		else if (pid == 0)
 		{
@@ -334,7 +327,7 @@ int exec_multi_cmd(t_list *cmds, t_list **varlist)
 				j++;
 			}
 		}
-        cmds = cmds->next;
+		cmds = cmds->next;
 	}
 	close(last_pipe[1]);
 	pid = fork();
@@ -357,7 +350,7 @@ int exec_multi_cmd(t_list *cmds, t_list **varlist)
 	}
 	close (last_pipe[0]);
 	while (wait(&status) != -1)
-	    ;
+		;
 	if (n_heredocs > 0)
 	{
 		free (n_cmd);
@@ -394,7 +387,7 @@ int exec_multi_cmd(t_list *cmds, t_list **varlist)
 		[ ] close files (child)
 		[ ] norminette
 */
-int    exec_cmd(t_list *cmds, t_list **varlist)
+int	exec_cmd(t_list *cmds, t_list **varlist)
 {
 	int		status;
 
@@ -403,9 +396,9 @@ int    exec_cmd(t_list *cmds, t_list **varlist)
 		printf("EXEC_CMD: no cmds\n");
 		return (1);
 	}
-    if (ft_lstsize(cmds) == 1)
-        status = exec_one_cmd((char **)cmds->content, varlist);
-    else
+	if (ft_lstsize(cmds) == 1)
+		status = exec_one_cmd((char **)cmds->content, varlist);
+	else
 		status = exec_multi_cmd(cmds, varlist);
 	return (status);
 }

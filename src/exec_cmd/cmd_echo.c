@@ -6,7 +6,7 @@
 /*   By: orudek <orudek@student.42madrid.com>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/27 21:24:11 by orudek            #+#    #+#             */
-/*   Updated: 2023/09/27 22:38:56 by orudek           ###   ########.fr       */
+/*   Updated: 2023/09/29 19:48:22 by orudek           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,7 +24,7 @@ int	cmd_echo(char **cmd)
 		flag = 1;
 		i++;
 	}
-	while(cmd[++i])
+	while (cmd[++i])
 	{
 		printf("%s", cmd[i]);
 		if (cmd[i + 1])

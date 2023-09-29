@@ -6,14 +6,14 @@
 /*   By: orudek <orudek@student.42madrid.com>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/27 21:22:08 by orudek            #+#    #+#             */
-/*   Updated: 2023/09/27 21:23:49 by orudek           ###   ########.fr       */
+/*   Updated: 2023/09/29 19:46:39 by orudek           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include <stdio.h>
 #include <stdlib.h>
 
-void	cmd_exit()
+void	cmd_exit(void)
 {
 	printf("exit\n");
 	exit(0);

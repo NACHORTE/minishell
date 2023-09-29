@@ -6,7 +6,7 @@
 /*   By: orudek <orudek@student.42madrid.com>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/20 21:29:18 by oscar             #+#    #+#             */
-/*   Updated: 2023/09/29 19:44:19 by orudek           ###   ########.fr       */
+/*   Updated: 2023/09/29 19:47:06 by orudek           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,10 +16,8 @@
 #include <sys/file.h>
 #include <sys/stat.h>
 #include <sys/errno.h>
-
 #include <readline/readline.h>
 #include <readline/history.h>
-
 
 /*  child:
         Executes a command that can have redirections.
@@ -119,9 +117,6 @@ static char	*get_cmd_path(char **paths, char *cmd)
 		return (ft_strdup(cmd));
 	return (NULL);
 }
-
-
-
 
 void	child(int infile, int outfile, char **cmd, t_list **varlist)
 {
