@@ -6,7 +6,7 @@
 /*   By: orudek <orudek@student.42madrid.com>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/27 21:04:33 by orudek            #+#    #+#             */
-/*   Updated: 2023/09/29 12:54:50 by orudek           ###   ########.fr       */
+/*   Updated: 2023/09/29 16:57:04 by orudek           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -67,6 +67,7 @@ static char	str_to_var(char *cmd, char **name, char **content)
 {
 	if (!get_name(cmd, name))
 		return (0);
+
 	if (!get_content(cmd, content))
 	{
 		free(*name);
@@ -80,17 +81,21 @@ int	cmd_export(char **cmd, t_list **varlist)
 	int		i;
 	int		exit_status;
 	t_var	var;
+	int		index;
 
 	i = 0;
 	exit_status = 0;
 	while (cmd[++i])
 	{
-		if (str_to_var(cmd[i], &var.name, &var.content))
+		if (!str_to_var(cmd[i], &var.name, &var.content))
 		{
 			exit_status = 1;
 			continue ;
 		}
-		if (!set_variable(varlist, var.name, var.content, ENV_VAR))
+		index = is_in_varlist(*varlist, var.name);
+		if (index != -1 && var.content == NULL)
+			((t_var *)ft_lstget_val(*varlist, index))->type = ENV_VAR;
+		else if (!set_variable(varlist, var.name, var.content, ENV_VAR))
 			exit_status = 1;
 		free(var.name);
 		if (var.content)

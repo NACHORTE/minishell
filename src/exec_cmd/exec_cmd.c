@@ -6,7 +6,7 @@
 /*   By: orudek <orudek@student.42madrid.com>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/20 13:56:41 by oscar             #+#    #+#             */
-/*   Updated: 2023/09/29 14:29:54 by orudek           ###   ########.fr       */
+/*   Updated: 2023/09/29 17:02:07 by orudek           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -184,14 +184,14 @@ int	open_heredocs(t_list *cmds, int **n_cmd, int **fds)
 	return (0);
 }
 
+//[ ] check open files and leaks
 int	exec_one_builtin(char **cmd, t_list **varlist, int *status)
 {
 	int	std_in;
 	int	std_out;
-	int	out;
 	char **cmd_parsed;
 
-	cmd_parsed = parse_cmd(cmd); //XXX cambiale el nombre machito
+	cmd_parsed = parse_cmd(cmd); 
 	if (!is_builtin(cmd_parsed[0]))
 	{
 		ft_array_free(cmd_parsed);
@@ -200,14 +200,13 @@ int	exec_one_builtin(char **cmd, t_list **varlist, int *status)
 	std_in = dup(0);
 	std_out = dup(1);
     redirect_streams(0, 1, cmd);
-	out = exec_builtin(cmd_parsed, varlist);
+	*status = exec_builtin(cmd_parsed, varlist);
 	ft_array_free(cmd_parsed);
 	dup2(std_in, 0);
 	dup2(std_out, 1);
 	close(std_in);
 	close(std_out);
-	*status = out;
-	return (out);
+	return (1);
 }
 
 /*  If the command given is a builtin, then no fork must be made and executes
