@@ -6,7 +6,7 @@
 /*   By: orudek <orudek@student.42madrid.com>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/20 22:46:57 by oscar             #+#    #+#             */
-/*   Updated: 2023/09/28 22:45:17 by orudek           ###   ########.fr       */
+/*   Updated: 2023/09/29 12:17:12 by orudek           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -99,7 +99,7 @@ char	**varlist_to_array(t_list *varlist, int type)
 	char	**out;
 	int		len;
 
-	if (!lst)
+	if (!varlist)
 		return (NULL);
 	len = varlist_len(lst, type);
 	out = malloc(sizeof(char *) * (len + 1));
