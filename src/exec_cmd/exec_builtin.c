@@ -6,7 +6,7 @@
 /*   By: orudek <orudek@student.42madrid.com>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/23 12:22:38 by orudek            #+#    #+#             */
-/*   Updated: 2023/09/28 18:37:55 by orudek           ###   ########.fr       */
+/*   Updated: 2023/09/29 13:47:25 by orudek           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,7 +36,7 @@ int	exec_builtin(char **cmd, t_list **varlist)
 	else if (!ft_strcmp(cmd[0], "cd"))
 		return (cmd_cd(cmd, varlist));
 	else if (!ft_strcmp(cmd[0], "env"))
-		return (cmd_env(*env));
+		return (cmd_env(*varlist));
 	else if (!ft_strcmp(cmd[0], "echo"))
 		return (cmd_echo(cmd));
 	else if (!ft_strcmp(cmd[0], "unset"))

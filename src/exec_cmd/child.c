@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   child.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: iortega- <iortega-@student.42madrid.com    +#+  +:+       +#+        */
+/*   By: orudek <orudek@student.42madrid.com>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/20 21:29:18 by oscar             #+#    #+#             */
-/*   Updated: 2023/09/28 14:58:40 by iortega-         ###   ########.fr       */
+/*   Updated: 2023/09/29 13:42:02 by orudek           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,7 +41,7 @@
 		[ ] norminette
 */
 
-#include "minishell.h"
+#include "exec_cmd.h"
 
 static char	**get_path(char **envp)
 {
@@ -263,19 +263,19 @@ void	redirect_streams(int infile, int outfile, char **cmd)
 		dup2(outfile, 1);
 }
 
-void	child(int infile, int outfile, char **cmd, t_command *global)
+void	child(int infile, int outfile, char **cmd, t_list **varlist)
 {
 	char	**cmd_parsed;
 	char	*cmd_path;
 	char	**env;
 	char	**path;
 
-	env = varlist_to_array(global->env, 1);
+	env = varlist_to_array(*varlist, ENV_VAR);
 	path = get_path(env);
 	redirect_streams(infile, outfile, cmd);
 	cmd_parsed = parse_cmd(cmd);
 	if (is_builtin(cmd_parsed[0]))
-		exit(exec_builtin(cmd_parsed, &global->local, &global->env));
+		exit(exec_builtin(cmd_parsed, varlist));
 	cmd_path = get_cmd_path(path, cmd_parsed[0]);
 	if (!cmd_path)
 	{
