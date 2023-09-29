@@ -6,7 +6,7 @@
 /*   By: orudek <orudek@student.42madrid.com>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/27 21:04:33 by orudek            #+#    #+#             */
-/*   Updated: 2023/09/29 15:43:27 by orudek           ###   ########.fr       */
+/*   Updated: 2023/09/29 16:57:04 by orudek           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -81,6 +81,7 @@ int	cmd_export(char **cmd, t_list **varlist)
 	int		i;
 	int		exit_status;
 	t_var	var;
+	int		index;
 
 	i = 0;
 	exit_status = 0;
@@ -91,7 +92,10 @@ int	cmd_export(char **cmd, t_list **varlist)
 			exit_status = 1;
 			continue ;
 		}
-		if (!set_variable(varlist, var.name, var.content, ENV_VAR))
+		index = is_in_varlist(*varlist, var.name);
+		if (index != -1 && var.content == NULL)
+			((t_var *)ft_lstget_val(*varlist, index))->type = ENV_VAR;
+		else if (!set_variable(varlist, var.name, var.content, ENV_VAR))
 			exit_status = 1;
 		free(var.name);
 		if (var.content)
