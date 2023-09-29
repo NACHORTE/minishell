@@ -6,7 +6,7 @@
 #    By: orudek <orudek@student.42madrid.com>       +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/09/03 15:02:39 by iortega-          #+#    #+#              #
-#    Updated: 2023/09/29 14:39:44 by orudek           ###   ########.fr        #
+#    Updated: 2023/09/29 16:42:28 by orudek           ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -51,10 +51,11 @@ SRC_FILES := main.c\
 	variables/is_in_varlist.c\
 	variables/is_varname_ok.c\
 	variables/new_var.c\
+	variables/print_varlist.c\
 	variables/set_variable.c\
 	variables/set_variable2.c\
 	variables/unset_variable.c\
-	variables/varlist_to_array.c\
+	variables/varlist_to_array.c
 
 SRC := $(addprefix $(SRC_DIR)/,$(SRC_FILES))
 OBJ := $(SRC:$(SRC_DIR)/%.c=$(OBJ_DIR)/%.o)
