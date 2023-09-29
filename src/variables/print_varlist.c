@@ -6,7 +6,7 @@
 /*   By: orudek <orudek@student.42madrid.com>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/21 16:58:17 by orudek            #+#    #+#             */
-/*   Updated: 2023/09/28 14:25:46 by orudek           ###   ########.fr       */
+/*   Updated: 2023/09/29 16:43:14 by orudek           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -64,7 +64,7 @@ void 	print_varlist(t_list *varlist)
 		printf(GREEN"\tcontent = "RESET"%s\n", ((t_var *)varlist->content)->content);
 		if (((t_var *)varlist->content)->type == LOCAL_VAR)
 			printf(GREEN"\ttype = "RESET"LOCAL_VAR\n");
-		if (((t_var *)varlist->content)->type == ENV_VAR)
+		else if (((t_var *)varlist->content)->type == ENV_VAR)
 			printf(GREEN"\ttype = "RESET"ENV_VAR\n");
 		else
 			printf(GREEN"\ttype = "RED"UNDEFINED"RESET"\n");
