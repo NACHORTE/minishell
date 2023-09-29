@@ -6,7 +6,7 @@
 /*   By: orudek <orudek@student.42madrid.com>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/11 22:37:17 by orudek            #+#    #+#             */
-/*   Updated: 2023/09/29 14:40:45 by orudek           ###   ########.fr       */
+/*   Updated: 2023/09/29 19:26:33 by orudek           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -137,7 +137,7 @@ char	*expand_variables(char *str, t_list *varlist)
 		else if ((state == 1 && *str == '"') || (state == 2 && *str == '\''))
 			state = 0;
 		if (state != 2 && *str == '$')
-			i += dup_arg(&out[i], &str,varlist);
+			i += dup_arg(&out[i], &str, varlist);
 		else
 			out[i++] = *str++;
 	}
