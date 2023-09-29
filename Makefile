@@ -6,7 +6,7 @@
 #    By: orudek <orudek@student.42madrid.com>       +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/09/03 15:02:39 by iortega-          #+#    #+#              #
-#    Updated: 2023/09/28 13:29:49 by orudek           ###   ########.fr        #
+#    Updated: 2023/09/29 13:50:48 by orudek           ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -26,18 +26,6 @@ LIBFT_NAME := libft.a
 LIB := readline
 
 SRC_FILES := main.c\
-	parse/split_args.c\
-	parse/split_args2.c\
-	parse/expand_variables.c\
-	parse/parse.c\
-	parse/split_pipe.c\
-	variables/array_to_varlist.c\
-	variables/free_var.c\
-	variables/get_variable.c\
-	variables/is_varname_ok.c\
-	variables/set_variable.c\
-	variables/unset_variable.c\
-	variables/varlist_to_array.c\
 	exec_cmd/child.c\
 	exec_cmd/cmd_cd.c\
 	exec_cmd/cmd_echo.c\
@@ -46,8 +34,24 @@ SRC_FILES := main.c\
 	exec_cmd/cmd_export.c\
 	exec_cmd/cmd_pwd.c\
 	exec_cmd/cmd_unset.c\
+	exec_cmd/exec_builtin.c\
 	exec_cmd/exec_cmd.c\
-	exec_cmd/exec_builtin.c
+	parse/expand_variables.c\
+	parse/parse.c\
+	parse/split_args.c\
+	parse/split_args2.c\
+	parse/split_pipe.c\
+	variables/array_to_varlist.c\
+	variables/dup_var.c\
+	variables/free_var.c\
+	variables/get_variable.c\
+	variables/is_in_varlist.c\
+	variables/is_varname_ok.c\
+	variables/new_var.c\
+	variables/set_variable.c\
+	variables/set_variable2.c\
+	variables/unset_variable.c\
+	variables/varlist_to_array.c\
 
 SRC := $(addprefix $(SRC_DIR)/,$(SRC_FILES))
 OBJ := $(SRC:$(SRC_DIR)/%.c=$(OBJ_DIR)/%.o)
