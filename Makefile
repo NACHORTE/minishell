@@ -3,10 +3,10 @@
 #                                                         :::      ::::::::    #
 #    Makefile                                           :+:      :+:    :+:    #
 #                                                     +:+ +:+         +:+      #
-#    By: orudek <orudek@student.42madrid.com>       +#+  +:+       +#+         #
+#    By: iortega- <iortega-@student.42madrid.com    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/09/03 15:02:39 by iortega-          #+#    #+#              #
-#    Updated: 2023/09/29 23:45:53 by orudek           ###   ########.fr        #
+#    Updated: 2023/09/30 18:48:00 by iortega-         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -36,8 +36,11 @@ SRC_FILES := main.c\
 	exec_cmd/cmd_unset.c\
 	exec_cmd/exec_builtin.c\
 	exec_cmd/exec_cmd.c\
+	exec_cmd/exec_multicmd.c\
+	exec_cmd/heredoc.c\
 	exec_cmd/is_builtin.c\
 	exec_cmd/parse_cmd.c\
+	exec_cmd/pipe_heredocs.c\
 	exec_cmd/redirect_streams.c\
 	parse/expand_variables.c\
 	parse/parse.c\

@@ -6,7 +6,7 @@
 /*   By: iortega- <iortega-@student.42madrid.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/27 22:31:08 by orudek            #+#    #+#             */
-/*   Updated: 2023/09/30 14:02:28 by iortega-         ###   ########.fr       */
+/*   Updated: 2023/09/30 18:51:29 by iortega-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,21 +15,6 @@
 
 #include "t_var.h"
 #include "libft.h"
-
-int	cmd_cd(char **cmd, t_list **varlist);
-int	cmd_echo(char **cmd);
-int	cmd_env(t_list *varlist);
-int	cmd_exit(void);
-int	cmd_export(char **cmd, t_list **varlist);
-int	cmd_pwd(void);
-int	cmd_unset(char **cmd, t_list **varlist);
-
-int		exec_cmd(t_list *cmds, t_list **varlist);
-int		is_builtin(char *cmd);
-int		exec_builtin(char **cmd, t_list **varlist);
-void    child(int infile, int outfile, char ** cmd, t_list **varlist);
-void	redirect_streams(int infile, int outfile, char **cmd);
-char	**parse_cmd(char **input);
 
 typedef struct s_multicmd
 {
@@ -43,6 +28,26 @@ typedef struct s_multicmd
 	int	*fds;
 	int	n_heredocs;
 	int	j;
+	int status;
 }t_multicmd;
+
+int		cmd_cd(char **cmd, t_list **varlist);
+int		cmd_echo(char **cmd);
+int		cmd_env(t_list *varlist);
+int		cmd_exit(void);
+int		cmd_export(char **cmd, t_list **varlist);
+int		cmd_pwd(void);
+int		cmd_unset(char **cmd, t_list **varlist);
+
+int		exec_cmd(t_list *cmds, t_list **varlist);
+int		is_builtin(char *cmd);
+int		exec_builtin(char **cmd, t_list **varlist);
+void    child(int infile, int outfile, char ** cmd, t_list **varlist);
+void	redirect_streams(int infile, int outfile, char **cmd);
+char	**parse_cmd(char **input);
+int		exec_multi_cmd(t_list *cmds, t_list **varlist);
+int		pipe_heredocs(t_multicmd *data, t_list *cmds);
+int		here_doc(char *str);
+int		check_restdin_here(char **input);
 
 #endif
