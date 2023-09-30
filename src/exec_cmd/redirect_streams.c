@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   redirect_streams.c                                 :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: orudek <orudek@student.42madrid.com>       +#+  +:+       +#+        */
+/*   By: iortega- <iortega-@student.42madrid.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/29 14:31:06 by orudek            #+#    #+#             */
-/*   Updated: 2023/09/29 14:38:39 by orudek           ###   ########.fr       */
+/*   Updated: 2023/09/29 19:24:29 by iortega-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -66,6 +66,8 @@ static void	check_doublestdout(char *str, int *fd)
 		{
 			j++;
 			*fd = open(&str[j], O_WRONLY | O_APPEND | O_CREAT, 0644);
+			if (*fd < 0)
+				perror(&str[j]);
 		}
 		else
 			*fd = open(&str[j], O_WRONLY | O_TRUNC | O_CREAT, 0644);

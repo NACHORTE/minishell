@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   exec_cmd.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: orudek <orudek@student.42madrid.com>       +#+  +:+       +#+        */
+/*   By: iortega- <iortega-@student.42madrid.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/20 13:56:41 by oscar             #+#    #+#             */
-/*   Updated: 2023/09/29 19:59:56 by orudek           ###   ########.fr       */
+/*   Updated: 2023/09/30 14:39:15 by iortega-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -130,7 +130,7 @@ static int	check_restdin(char **input)
 
 	i = 0;
 	fd = 0;
-	while (input[i])
+	while (fd >= 0 && input[i])
 	{
 		j = 0;
 		if (input[i][j] == '<')
@@ -238,9 +238,143 @@ int	exec_one_cmd(char **cmd, t_list **varlist)
 	return (WEXITSTATUS(status));
 }
 
+int	manage_heredocs(t_multicmd *data, t_list *cmds)
+{
+	data->n_heredocs = count_heredoc(cmds);
+	if (data->n_heredocs > 0)
+	{
+		data->n_cmd = malloc(sizeof(int) * data->n_heredocs);
+		data->fds = malloc(sizeof(int) * data->n_heredocs);
+		if (open_heredocs(cmds, &(data->n_cmd), &(data->fds)))
+		{
+			free(data->n_cmd);
+			free(data->fds);
+			return (1);
+		}
+	}
+	return (0);
+}
+
+int	first_cmd(t_multicmd *data, t_list *cmds, t_list **varlist)
+{
+	data->i = 0;
+	data->j = 0;
+	data->pid = fork();
+	if (data->pid == -1)
+	{
+		printf("EXEC_MULTI_CMD: fork 0: fail\n");
+		return (1);
+	}
+	if (data->pid == 0)
+	{
+		close(data->last_pipe[0]);
+		if (data->j < data->n_heredocs && data->i == data->n_cmd[data->j])
+			child(data->fds[data->j], data->last_pipe[1], (char **)cmds->content, varlist);
+		else
+			child(0, data->last_pipe[1], (char **)cmds->content, varlist);
+	}
+	else if (data->j < data->n_heredocs && data->i == data->n_cmd[data->j])
+	{
+		if (data->fds[data->j] > 0)
+			close(data->fds[data->j]);
+		data->j++;
+	}
+	return (0);
+}
+
+static void	manage_child(t_multicmd *data, t_list *cmds, t_list **varlist)
+{
+	if (data->pid == 0)
+	{
+		close(data->new_pipe[0]);
+		if (data->j < data->n_heredocs && data->i == data->n_cmd[data->j])
+			child(data->fds[data->j], data->new_pipe[1], (char **)cmds->content, varlist);
+		else
+			child(data->last_pipe[0], data->new_pipe[1], (char **)cmds->content, varlist);
+	}
+	else
+	{
+		close(data->last_pipe[0]);
+		data->last_pipe[0] = data->new_pipe[0];
+		data->last_pipe[1] = data->new_pipe[1];
+		if (data->j < data->n_heredocs && data->i == data->n_cmd[data->j])
+		{
+			if (data->fds[data->j] > 0)
+				close(data->fds[data->j]);
+			data->j++;
+		}
+	}
+}
+
+int	middle_cmds(t_multicmd *data, t_list **cmds, t_list **varlist)
+{
+	data->i = 0;
+	while (++data->i < data->cmds_len - 1)
+	{
+		if (pipe(data->new_pipe) == -1)
+		{
+			printf("EXEC_MULTI_CMD: pipe %d fail\n", data->i);
+			return (1);
+		}
+		close(data->last_pipe[1]);
+		data->pid = fork();
+		if (data->pid == -1)
+		{
+			printf("EXEC_MULTI_CMD: fork %d: fail\n", data->i);
+			return (1);
+		}
+		/*else if (data->pid == 0)
+		{
+			close(data->new_pipe[0]);
+			if (data->j < data->n_heredocs && data->i == data->n_cmd[data->j])
+				child(data->fds[data->j], data->new_pipe[1], (char **)cmds->content, varlist);
+			else
+				child(data->last_pipe[0], data->new_pipe[1], (char **)cmds->content, varlist);
+		}
+		else
+		{
+			close(data->last_pipe[0]);
+			data->last_pipe[0] = data->new_pipe[0];
+			data->last_pipe[1] = data->new_pipe[1];
+			if (data->j < data->n_heredocs && data->i == data->n_cmd[data->j])
+			{
+				if (data->fds[data->j] > 0)
+					close(data->fds[data->j]);
+				data->j++;
+			}
+		}*/
+		manage_child(data, *cmds, varlist);
+		*cmds = (*cmds)->next;
+	}
+	return (0);
+}
+
+void	last_cmd(t_multicmd *data, t_list *cmds, t_list **varlist)
+{
+	data->pid = fork();
+	if (data->pid == 0)
+	{
+		if (data->j < data->n_heredocs && data->i == data->n_cmd[data->j])
+		{
+			child(data->fds[data->j], 1, (char **)cmds->content, varlist);
+		}
+		else
+		{
+			child(data->last_pipe[0], 1, (char **)cmds->content, varlist);
+		}
+	}
+	else if (data->j < data->n_heredocs && data->i == data->n_cmd[data->j])
+	{
+		if (data->fds[data->j] > 0)
+			close(data->fds[data->j]);
+		data->j++;
+	}
+	close (data->last_pipe[0]);
+}
+
 int	exec_multi_cmd(t_list *cmds, t_list **varlist)
 {
-	int	i;
+	/*int	i;
 	int	last_pipe[2];
 	int	new_pipe[2];
 	int	pid;
@@ -249,10 +383,13 @@ int	exec_multi_cmd(t_list *cmds, t_list **varlist)
 	int	*n_cmd;
 	int	*fds;
 	int	n_heredocs;
-	int	j;
+	int	j;*/
+	int status;
+	t_multicmd data;
 
-	cmds_len = ft_lstsize(cmds);
-	n_heredocs = count_heredoc(cmds);
+	//cmds_len = ft_lstsize(cmds);
+	data.cmds_len = ft_lstsize(cmds);
+	/*n_heredocs = count_heredoc(cmds);
 	if (n_heredocs > 0)
 	{
 		n_cmd = malloc(sizeof(int) * n_heredocs);
@@ -263,98 +400,105 @@ int	exec_multi_cmd(t_list *cmds, t_list **varlist)
 			free(fds);
 			return (1);
 		}
-	}
-	if (pipe(last_pipe) == -1)
+	}*/
+	if (manage_heredocs(&data, cmds))
+		return (1);
+	if (pipe(data.last_pipe) == -1)
 	{
 		printf("EXEC_MULTI_CMD: pipe 0: fail\n");
 		return (1);
 	}
-	i = 0;
-	j = 0;
-	pid = fork();
-	if (pid == -1)
+	/*data.i = 0;
+	data.j = 0;
+	data.pid = fork();
+	if (data.pid == -1)
 	{
 		printf("EXEC_MULTI_CMD: fork 0: fail\n");
 		return (1);
 	}
-	if (pid == 0)
+	if (data.pid == 0)
 	{
-		close(last_pipe[0]);
-		if (j < n_heredocs && i == n_cmd[j])
-			child(fds[j], last_pipe[1], (char **)cmds->content, varlist);
+		close(data.last_pipe[0]);
+		if (data.j < data.n_heredocs && data.i == data.n_cmd[data.j])
+			child(data.fds[data.j], data.last_pipe[1], (char **)cmds->content, varlist);
 		else
-			child(0, last_pipe[1], (char **)cmds->content, varlist);
+			child(0, data.last_pipe[1], (char **)cmds->content, varlist);
 	}
-	else if (j < n_heredocs && i == n_cmd[j])
+	else if (data.j < data.n_heredocs && data.i == data.n_cmd[data.j])
 	{
-		if (fds[j] > 0)
-			close(fds[j]);
-		j++;
-	}
+		if (data.fds[data.j] > 0)
+			close(data.fds[data.j]);
+		data.j++;
+	}*/
+	if (first_cmd(&data, cmds, varlist))
+		return (1);
 	cmds = cmds->next;
-	i = 0;
-	while (++i < cmds_len - 1)
+	/*data.i = 0;
+	while (++data.i < data.cmds_len - 1)
 	{
-		if (pipe(new_pipe) == -1)
+		if (pipe(data.new_pipe) == -1)
 		{
-			printf("EXEC_MULTI_CMD: pipe %d fail\n", i);
+			printf("EXEC_MULTI_CMD: pipe %d fail\n", data.i);
 			return (1);
 		}
-		close(last_pipe[1]);
-		pid = fork();
-		if (pid == -1)
+		close(data.last_pipe[1]);
+		data.pid = fork();
+		if (data.pid == -1)
 		{
-			printf("EXEC_MULTI_CMD: fork %d: fail\n", i);
+			printf("EXEC_MULTI_CMD: fork %d: fail\n", data.i);
 			return (1);
 		}
-		else if (pid == 0)
+		else if (data.pid == 0)
 		{
-			close(new_pipe[0]);
-			if (j < n_heredocs && i == n_cmd[j])
-				child(fds[j], new_pipe[1], (char **)cmds->content, varlist);
+			close(data.new_pipe[0]);
+			if (data.j < data.n_heredocs && data.i == data.n_cmd[data.j])
+				child(data.fds[data.j], data.new_pipe[1], (char **)cmds->content, varlist);
 			else
-				child(last_pipe[0], new_pipe[1], (char **)cmds->content, varlist);
+				child(data.last_pipe[0], data.new_pipe[1], (char **)cmds->content, varlist);
 		}
 		else
 		{
-			close(last_pipe[0]);
-			last_pipe[0] = new_pipe[0];
-			last_pipe[1] = new_pipe[1];
-			if (j < n_heredocs && i == n_cmd[j])
+			close(data.last_pipe[0]);
+			data.last_pipe[0] = data.new_pipe[0];
+			data.last_pipe[1] = data.new_pipe[1];
+			if (data.j < data.n_heredocs && data.i == data.n_cmd[data.j])
 			{
-				if (fds[j] > 0)
-					close(fds[j]);
-				j++;
+				if (data.fds[data.j] > 0)
+					close(data.fds[data.j]);
+				data.j++;
 			}
 		}
 		cmds = cmds->next;
-	}
-	close(last_pipe[1]);
-	pid = fork();
-	if (pid == 0)
+	}*/
+	if (middle_cmds(&data, &cmds, varlist))
+		return (1);
+	close(data.last_pipe[1]);
+	/*data.pid = fork();
+	if (data.pid == 0)
 	{
-		if (j < n_heredocs && i == n_cmd[j])
+		if (data.j < data.n_heredocs && data.i == data.n_cmd[data.j])
 		{
-			child(fds[j], 1, (char **)cmds->content, varlist);
+			child(data.fds[data.j], 1, (char **)cmds->content, varlist);
 		}
 		else
 		{
-			child(last_pipe[0], 1, (char **)cmds->content, varlist);
+			child(data.last_pipe[0], 1, (char **)cmds->content, varlist);
 		}
 	}
-	else if (j < n_heredocs && i == n_cmd[j])
+	else if (data.j < data.n_heredocs && data.i == data.n_cmd[data.j])
 	{
-		if (fds[j] > 0)
-			close(fds[j]);
-		j++;
+		if (data.fds[data.j] > 0)
+			close(data.fds[data.j]);
+		data.j++;
 	}
-	close (last_pipe[0]);
+	close (data.last_pipe[0]);*/
+	last_cmd(&data, cmds, varlist);
 	while (wait(&status) != -1)
 		;
-	if (n_heredocs > 0)
+	if (data.n_heredocs > 0)
 	{
-		free (n_cmd);
-		free(fds);
+		free (data.n_cmd);
+		free(data.fds);
 	}
 	return (WEXITSTATUS(status));
 }

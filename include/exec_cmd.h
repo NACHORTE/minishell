@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   exec_cmd.h                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: orudek <orudek@student.42madrid.com>       +#+  +:+       +#+        */
+/*   By: iortega- <iortega-@student.42madrid.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/27 22:31:08 by orudek            #+#    #+#             */
-/*   Updated: 2023/09/29 19:46:47 by orudek           ###   ########.fr       */
+/*   Updated: 2023/09/30 14:02:28 by iortega-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,5 +30,19 @@ int		exec_builtin(char **cmd, t_list **varlist);
 void    child(int infile, int outfile, char ** cmd, t_list **varlist);
 void	redirect_streams(int infile, int outfile, char **cmd);
 char	**parse_cmd(char **input);
+
+typedef struct s_multicmd
+{
+	int	i;
+	int	last_pipe[2];
+	int	new_pipe[2];
+	int	pid;
+	int	cmds_len;
+	int	status;
+	int	*n_cmd;
+	int	*fds;
+	int	n_heredocs;
+	int	j;
+}t_multicmd;
 
 #endif
