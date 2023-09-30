@@ -6,18 +6,13 @@
 /*   By: orudek <orudek@student.42madrid.com>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/20 21:29:18 by oscar             #+#    #+#             */
-/*   Updated: 2023/09/30 19:39:02 by orudek           ###   ########.fr       */
+/*   Updated: 2023/09/30 19:58:27 by orudek           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "exec_cmd.h"
 #include <stdio.h>
-#include <sys/types.h>
-#include <sys/file.h>
-#include <sys/stat.h>
 #include <sys/errno.h>
-#include <readline/readline.h>
-#include <readline/history.h>
 
 /*  child:
         Executes a command that can have redirections.
