@@ -6,7 +6,7 @@
 /*   By: orudek <orudek@student.42madrid.com>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/20 21:29:18 by oscar             #+#    #+#             */
-/*   Updated: 2023/09/29 19:47:06 by orudek           ###   ########.fr       */
+/*   Updated: 2023/09/30 19:39:02 by orudek           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -70,9 +70,9 @@ static char	**get_path(char **envp)
 
 static char	*absolute_route(char *cmd, int *abs)
 {
-	if (cmd[0] == '/' || cmd[0] == '.')
+	if (*cmd == '/' || !ft_strncmp(cmd, "./", 2) || !ft_strncmp(cmd, "../", 3))
 	{
-		if (access(cmd, X_OK) == 0)
+		if (access(cmd, F_OK) == 0)
 			return (ft_strdup(cmd));
 		else
 			return (NULL);
@@ -103,17 +103,17 @@ static char	*get_cmd_path(char **paths, char *cmd)
 	command = absolute_route(cmd, &abs);
 	if (!abs)
 		return (command);
-	while (*paths)
+	while (paths && *paths)
 	{
 		tmp = ft_strjoin(*paths, "/");
 		command = ft_strjoin(tmp, cmd);
 		free(tmp);
-		if (access(command, X_OK) == 0)
+		if (access(command, F_OK) == 0)
 			return (command);
 		free(command);
 		paths++;
 	}
-	if (access(cmd, X_OK) == 0)
+	if (access(cmd, F_OK) == 0)
 		return (ft_strdup(cmd));
 	return (NULL);
 }
