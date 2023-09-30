@@ -6,14 +6,14 @@
 #    By: orudek <orudek@student.42madrid.com>       +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/09/03 15:02:39 by iortega-          #+#    #+#              #
-#    Updated: 2023/09/29 16:42:28 by orudek           ###   ########.fr        #
+#    Updated: 2023/09/29 23:45:53 by orudek           ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
 NAME := minishell
 
 CC := gcc
-STANDARD_FLAGS := -I/Users/$(USER)/.brew/opt/readline/include -lreadline -L /Users/$(USER)/.brew/opt/readline/lib -fsanitize=leak -Wall -Wextra -Werror
+STANDARD_FLAGS := -I/Users/$(USER)/.brew/opt/readline/include -L /Users/$(USER)/.brew/opt/readline/lib -fsanitize=leak -Wall -Wextra -Werror
 RM := rm -f
 
 SRC_DIR := src
@@ -66,7 +66,7 @@ INCLUDE_PATH := -I$(INCLUDE_DIR) -I$(LIBFT_DIR)/include
 all: $(NAME)
 
 $(NAME): $(OBJ) $(LIBFT_DIR)/$(LIBFT_NAME)
-	$(CC) $(STANDARD_FLAGS)  $(INCLUDE_PATH) $(OBJ) $(LIBFT_DIR)/$(LIBFT_NAME) -lreadline -o $@
+	$(CC) $(STANDARD_FLAGS)  $(INCLUDE_PATH) $(OBJ) $(LIBFT_DIR)/$(LIBFT_NAME) $(LIB_FLAG) -o $@
 
 $(OBJ_DIR)/%.o: $(SRC_DIR)/%.c
 	@mkdir -p $(OBJ_FOLDER)
