@@ -6,7 +6,7 @@
 /*   By: orudek <orudek@student.42madrid.com>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/20 21:29:18 by oscar             #+#    #+#             */
-/*   Updated: 2023/09/30 19:58:27 by orudek           ###   ########.fr       */
+/*   Updated: 2023/09/30 20:00:20 by orudek           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,24 +29,7 @@
 			the local ones).
 	Return:
 		NOTHING! it must exit the program at the end of this function
-	Todo:
-		In a separate function
-		[x] REDIR: Create all files from the redirections in cmd
-		[x] REDIR: <<Here Doc
-		[x] REDIR: >>append mode
-		[x] REDIR: If no redirection in the cmd, redirect to infile/outfile
-		[x]	CHECK_BUILTINS
-		[ ] ACCESS: "./" "../" "/"
-		[ ] ACCESS: [OPTIONAL] if no path, add ./ to cmd if it doesn't have it
-		[ ] ACCESS: if cmd[i]="\0", don't crash and print "'': cmd not found"
-		[ ] perror with cmd name after excve
-		[ ] use nice names :)
-		[ ] algo de signals nose
-		[ ] norminette
 */
-
-#include "exec_cmd.h"
-
 static char	**get_path(char **envp)
 {
 	char	**path;

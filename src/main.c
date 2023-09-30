@@ -3,12 +3,10 @@
 void	new_line(int sig)
 {
 	(void)sig;
-	//printf("\n\033[36mminishell >> \033[0m");
 	write(1, "\n", 1);
     rl_on_new_line();
     rl_replace_line("", 0);
     rl_redisplay();
-	//exit(1);
 }
 
 int check_closed_quotes(char *input)
