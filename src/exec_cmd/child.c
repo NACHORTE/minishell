@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   child.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: iortega- <iortega-@student.42madrid.com    +#+  +:+       +#+        */
+/*   By: orudek <orudek@student.42madrid.com>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/20 21:29:18 by oscar             #+#    #+#             */
-/*   Updated: 2023/10/01 21:50:04 by iortega-         ###   ########.fr       */
+/*   Updated: 2023/10/01 21:57:44 by orudek           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -65,7 +65,10 @@ static void	no_command(char **cmd_parsed)
 
 	write(2, &"Command not found: ", 19);
 	len = ft_strlen(cmd_parsed[0]);
-	write(2, cmd_parsed[0], len);
+	if (**cmd_parsed)
+		write(2, cmd_parsed[0], len);
+	else
+		write(2, "\'\'", 2);
 	write(2, &"\n", 1);
 }
 
@@ -76,7 +79,7 @@ static char	*get_cmd_path(char **paths, char *cmd)
 	int		abs;
 
 	abs = 0;
-	if (!cmd)
+	if (!cmd || !*cmd)
 		return (NULL);
 	command = absolute_route(cmd, &abs);
 	if (!abs)
