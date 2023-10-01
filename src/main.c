@@ -6,7 +6,7 @@
 /*   By: iortega- <iortega-@student.42madrid.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/01 16:37:59 by iortega-          #+#    #+#             */
-/*   Updated: 2023/10/01 21:46:17 by iortega-         ###   ########.fr       */
+/*   Updated: 2023/10/01 22:27:08 by iortega-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,6 +49,46 @@ void	read_input(t_command global)
 	}
 }
 
+void	refresh_lvl(t_command *global)
+{
+	int	lvl;
+	int	status;
+	t_var	*shell_lvl;
+
+	status = get_variable(global->varlist, "SHLVL", &shell_lvl);
+	if (status == -1)
+	{
+		printf("Error reading env\n");
+		exit (1);
+	}
+	if (status == 0)
+	{
+		shell_lvl = new_var("SHLVL", "1", ENV_VAR);
+		if (!shell_lvl)
+		{
+			printf("Unable to set new SHLVL\n");
+			exit (1);
+		}
+	}
+	if (status == 1)
+	{
+		lvl = ft_atoi(shell_lvl->content) + 1;
+		free(shell_lvl->content);
+		shell_lvl->content = ft_itoa(lvl);
+		if (!shell_lvl->content)
+		{
+			printf("Unable to set new SHLVL\n");
+			exit (1);
+		}
+	}
+	if (!set_variable(&(global->varlist), shell_lvl->name, shell_lvl->content, ENV_VAR))
+	{
+		printf("Unable to set new SHLVL\n");
+		exit (1);
+	}
+	free_var(shell_lvl);
+}
+
 int	main(int argc, char **argv, char **envp)
 {
 	t_command	global;
@@ -58,6 +98,7 @@ int	main(int argc, char **argv, char **envp)
 	(void)argv;
 	global.varlist = array_to_varlist(envp);
 	global.last_status = 0;
+	refresh_lvl(&global);
 	refresh_status(&global);
 	signal(SIGINT, &new_line);
 	read_input(global);
