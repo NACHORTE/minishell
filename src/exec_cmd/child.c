@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   child.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: orudek <orudek@student.42madrid.com>       +#+  +:+       +#+        */
+/*   By: iortega- <iortega-@student.42madrid.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/20 21:29:18 by oscar             #+#    #+#             */
-/*   Updated: 2023/09/30 20:00:20 by orudek           ###   ########.fr       */
+/*   Updated: 2023/10/01 21:50:04 by iortega-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -103,6 +103,7 @@ void	child(int infile, int outfile, char **cmd, t_list **varlist)
 	char	**env;
 	char	**path;
 
+	signal(SIGINT, SIG_DFL);
 	env = varlist_to_array(*varlist, ENV_VAR);
 	path = get_path(env);
 	redirect_streams(infile, outfile, cmd);

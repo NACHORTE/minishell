@@ -6,20 +6,11 @@
 /*   By: iortega- <iortega-@student.42madrid.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/01 16:37:59 by iortega-          #+#    #+#             */
-/*   Updated: 2023/10/01 16:42:05 by iortega-         ###   ########.fr       */
+/*   Updated: 2023/10/01 21:46:17 by iortega-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
-
-void	new_line(int sig)
-{
-	(void)sig;
-	write(1, "\n", 1);
-	rl_on_new_line();
-	rl_replace_line("", 0);
-	rl_redisplay();
-}
 
 void	refresh_status(t_command *global)
 {

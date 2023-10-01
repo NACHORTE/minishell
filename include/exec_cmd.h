@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   exec_cmd.h                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: orudek <orudek@student.42madrid.com>       +#+  +:+       +#+        */
+/*   By: iortega- <iortega-@student.42madrid.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/27 22:31:08 by orudek            #+#    #+#             */
-/*   Updated: 2023/10/01 21:17:37 by orudek           ###   ########.fr       */
+/*   Updated: 2023/10/01 21:43:42 by iortega-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,6 +15,7 @@
 
 # include "t_var.h"
 # include "libft.h"
+# include "minishell.h"
 
 typedef struct s_multicmd
 {

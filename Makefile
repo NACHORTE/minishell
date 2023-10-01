@@ -6,7 +6,7 @@
 #    By: iortega- <iortega-@student.42madrid.com    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/09/03 15:02:39 by iortega-          #+#    #+#              #
-#    Updated: 2023/10/01 16:43:14 by iortega-         ###   ########.fr        #
+#    Updated: 2023/10/01 21:48:06 by iortega-         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -49,6 +49,7 @@ SRC_FILES := variables/is_varname_ok.c\
 	check_redi.c\
 	is_command.c\
 	local_declare.c\
+	signals.c\
 	exec_cmd/child.c\
 	exec_cmd/pipe_heredocs.c\
 	exec_cmd/exec_cmd.c\

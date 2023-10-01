@@ -6,7 +6,7 @@
 /*   By: iortega- <iortega-@student.42madrid.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/20 13:56:41 by oscar             #+#    #+#             */
-/*   Updated: 2023/10/01 16:44:50 by iortega-         ###   ########.fr       */
+/*   Updated: 2023/10/01 21:50:19 by iortega-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -137,6 +137,7 @@ int	exec_cmd(t_list *cmds, t_list **varlist)
 {
 	int		status;
 
+	signal(SIGINT, &sig_child);
 	if (!cmds)
 	{
 		printf("EXEC_CMD: no cmds\n");
@@ -146,6 +147,7 @@ int	exec_cmd(t_list *cmds, t_list **varlist)
 		status = exec_one_cmd((char **)cmds->content, varlist);
 	else
 		status = exec_multi_cmd(cmds, varlist);
+	signal(SIGINT, &new_line);
 	return (status);
 }
 

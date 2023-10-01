@@ -6,7 +6,7 @@
 /*   By: iortega- <iortega-@student.42madrid.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/30 18:35:55 by iortega-          #+#    #+#             */
-/*   Updated: 2023/09/30 18:48:39 by iortega-         ###   ########.fr       */
+/*   Updated: 2023/10/01 21:46:32 by iortega-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,22 +21,6 @@
 #include <readline/readline.h>
 #include <readline/history.h>
 #include <signal.h>
-
-static void	sig_here(int sig)
-{
-	(void)sig;
-	write(1, "\n", 1);
-	exit (1);
-}
-
-static void	new_line(int sig)
-{
-	(void)sig;
-	write(1, "\n", 1);
-	rl_on_new_line();
-	rl_replace_line("", 0);
-	rl_redisplay();
-}
 
 static void	read_heredoc(int *redi, char *str)
 {

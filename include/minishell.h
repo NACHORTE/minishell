@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: orudek <orudek@student.42madrid.com>       +#+  +:+       +#+        */
+/*   By: iortega- <iortega-@student.42madrid.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/03 15:58:32 by iortega-          #+#    #+#             */
-/*   Updated: 2023/10/01 21:16:34 by orudek           ###   ########.fr       */
+/*   Updated: 2023/10/01 21:47:27 by iortega-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,5 +41,8 @@ int	save_variables(t_command *global);
 int	is_allasignation(char **cmds);
 int	is_command(t_command *global);
 int	check_closed_quotes(char *input);
+void	new_line(int sig);
+void	sig_child(int sig);
+void	sig_here(int sig);
 
 #endif
