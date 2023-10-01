@@ -6,7 +6,7 @@
 /*   By: iortega- <iortega-@student.42madrid.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/27 22:31:08 by orudek            #+#    #+#             */
-/*   Updated: 2023/09/30 18:51:29 by iortega-         ###   ########.fr       */
+/*   Updated: 2023/10/01 15:49:29 by iortega-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,7 +28,6 @@ typedef struct s_multicmd
 	int	*fds;
 	int	n_heredocs;
 	int	j;
-	int status;
 }t_multicmd;
 
 int		cmd_cd(char **cmd, t_list **varlist);

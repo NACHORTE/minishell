@@ -6,7 +6,7 @@
 #    By: iortega- <iortega-@student.42madrid.com    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/09/03 15:02:39 by iortega-          #+#    #+#              #
-#    Updated: 2023/09/30 18:48:00 by iortega-         ###   ########.fr        #
+#    Updated: 2023/10/01 16:31:25 by iortega-         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -26,6 +26,9 @@ LIBFT_NAME := libft.a
 LIB := readline
 
 SRC_FILES := main.c\
+	check_redi.c\
+	is_command.c\
+	local_declare.c\
 	exec_cmd/child.c\
 	exec_cmd/cmd_cd.c\
 	exec_cmd/cmd_echo.c\

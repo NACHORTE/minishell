@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: orudek <orudek@student.42madrid.com>       +#+  +:+       +#+        */
+/*   By: iortega- <iortega-@student.42madrid.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/03 15:58:32 by iortega-          #+#    #+#             */
-/*   Updated: 2023/09/29 14:42:14 by orudek           ###   ########.fr       */
+/*   Updated: 2023/10/01 16:31:54 by iortega-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,5 +35,11 @@ typedef struct s_command
 	t_list	*cmds;
 	int		last_status;
 }t_command;
+
+int	redirect_ok(t_list *cmds);
+int	save_variables(t_command *global);
+int	is_allasignation(char **cmds);
+int	is_command(t_command *global);
+int check_closed_quotes(char *input);
 
 #endif
