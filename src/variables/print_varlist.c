@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   print_varlist.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: orudek <orudek@student.42madrid.com>       +#+  +:+       +#+        */
+/*   By: iortega- <iortega-@student.42madrid.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/21 16:58:17 by orudek            #+#    #+#             */
-/*   Updated: 2023/09/29 16:43:14 by orudek           ###   ########.fr       */
+/*   Updated: 2023/10/01 16:47:22 by iortega-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,9 +43,9 @@
 #define BG_CYAN "\x1b[46m"   // Cyan background
 #define BG_WHITE "\x1b[47m"  // White background
 
-void 	print_varlist(t_list *varlist)
+void	print_varlist(t_list *varlist)
 {
-	int j;
+	int	j;
 
 	j = 0;
 	if (!varlist)

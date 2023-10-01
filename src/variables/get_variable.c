@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   get_variable.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: orudek <orudek@student.42madrid.com>       +#+  +:+       +#+        */
+/*   By: iortega- <iortega-@student.42madrid.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/10 15:22:39 by orudek            #+#    #+#             */
-/*   Updated: 2023/09/28 20:49:01 by orudek           ###   ########.fr       */
+/*   Updated: 2023/10/01 16:45:37 by iortega-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,11 +28,11 @@
 */
 int	get_variable(t_list *lst, char *name, t_var **var)
 {
-	t_var *aux;
+	t_var	*aux;
 
 	if (!name || !*name)
 		return (0);
-	while(lst)
+	while (lst)
 	{
 		aux = (t_var *)(lst->content);
 		if (!ft_strcmp(aux->name, name))

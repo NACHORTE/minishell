@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   varlist_to_array.c                                 :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: orudek <orudek@student.42madrid.com>       +#+  +:+       +#+        */
+/*   By: iortega- <iortega-@student.42madrid.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/20 22:46:57 by oscar             #+#    #+#             */
-/*   Updated: 2023/09/29 12:25:24 by orudek           ###   ########.fr       */
+/*   Updated: 2023/10/01 16:48:36 by iortega-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,7 +23,7 @@ static int	var_to_str(t_var *var, char **str, int type)
 		return (0);
 	len[0] = ft_strlen(var->name);
 	len[1] = ft_strlen(var->content);
-	out = malloc(sizeof(char) * (len[0] + len[1] + 2)); //name + "=" + content + "\0"
+	out = malloc(sizeof(char) * (len[0] + len[1] + 2));
 	if (!out)
 		return (-1);
 	ft_strlcpy(out, var->name, len[0] + 1);
@@ -74,7 +74,7 @@ int	varlist_len(t_list *varlist, int type)
 static char	**save_vars(char **out, t_list *varlist, int len, int type)
 {
 	int	i;
-	int ret;
+	int	ret;
 
 	i = 0;
 	while (i < len)
@@ -142,5 +142,5 @@ int main(int c, char **v, char **e)
 		printf(BLUE"array["CYAN"%d"BLUE"]:\t"RESET"%s\n", i, array[i]);
 	exit (0);
 }
-//gcc -Iinclude -Ilibft/include -fsanitize=leak -Wall -Wextra -Werror src/array_to_varlist.c src/free_var.c src/set_variable.c src/varlist_to_array.c src/print_varlist.c libft/libft.a
+gcc -Iinclude -Ilibft/include -fsanitize=leak -Wall -Wextra -Werror src/array_to_varlist.c src/free_var.c src/set_variable.c src/varlist_to_array.c src/print_varlist.c libft/libft.a
 */

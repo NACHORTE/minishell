@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   array_to_varlist.c                                 :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: orudek <orudek@student.42madrid.com>       +#+  +:+       +#+        */
+/*   By: iortega- <iortega-@student.42madrid.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/20 22:44:56 by oscar             #+#    #+#             */
-/*   Updated: 2023/09/28 14:30:35 by orudek           ###   ########.fr       */
+/*   Updated: 2023/10/01 16:46:49 by iortega-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -147,4 +147,6 @@ t_list	*array_to_varlist(char **array)
 	ft_lstfree(env, free_var);
 	return (0);
 }*/
-// gcc -Iinclude -Ilibft/include src/array_to_varlist.c src/set_variable.c src/free_var.c src/print_varlist.c libft/libft.a -fsanitize=leak
+// gcc -Iinclude -Ilibft/include src/array_to_varlist.c 
+// src/set_variable.c src/free_var.c 
+// src/print_varlist.c libft/libft.a -fsanitize=leak

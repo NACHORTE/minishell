@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   unset_variable.c                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: orudek <orudek@student.42madrid.com>       +#+  +:+       +#+        */
+/*   By: iortega- <iortega-@student.42madrid.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/11 17:09:38 by orudek            #+#    #+#             */
-/*   Updated: 2023/09/28 15:53:45 by orudek           ###   ########.fr       */
+/*   Updated: 2023/10/01 16:46:01 by iortega-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,7 +14,7 @@
 
 void	unset_variable(t_list **list, char *name)
 {
-	int index;
+	int	index;
 
 	index = is_in_varlist(*list, name);
 	if (index != -1)
