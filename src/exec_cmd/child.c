@@ -6,18 +6,13 @@
 /*   By: orudek <orudek@student.42madrid.com>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/20 21:29:18 by oscar             #+#    #+#             */
-/*   Updated: 2023/09/29 19:47:06 by orudek           ###   ########.fr       */
+/*   Updated: 2023/09/30 20:00:20 by orudek           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "exec_cmd.h"
 #include <stdio.h>
-#include <sys/types.h>
-#include <sys/file.h>
-#include <sys/stat.h>
 #include <sys/errno.h>
-#include <readline/readline.h>
-#include <readline/history.h>
 
 /*  child:
         Executes a command that can have redirections.
@@ -34,24 +29,7 @@
 			the local ones).
 	Return:
 		NOTHING! it must exit the program at the end of this function
-	Todo:
-		In a separate function
-		[x] REDIR: Create all files from the redirections in cmd
-		[x] REDIR: <<Here Doc
-		[x] REDIR: >>append mode
-		[x] REDIR: If no redirection in the cmd, redirect to infile/outfile
-		[x]	CHECK_BUILTINS
-		[ ] ACCESS: "./" "../" "/"
-		[ ] ACCESS: [OPTIONAL] if no path, add ./ to cmd if it doesn't have it
-		[ ] ACCESS: if cmd[i]="\0", don't crash and print "'': cmd not found"
-		[ ] perror with cmd name after excve
-		[ ] use nice names :)
-		[ ] algo de signals nose
-		[ ] norminette
 */
-
-#include "exec_cmd.h"
-
 static char	**get_path(char **envp)
 {
 	char	**path;
@@ -70,9 +48,9 @@ static char	**get_path(char **envp)
 
 static char	*absolute_route(char *cmd, int *abs)
 {
-	if (cmd[0] == '/' || cmd[0] == '.')
+	if (*cmd == '/' || !ft_strncmp(cmd, "./", 2) || !ft_strncmp(cmd, "../", 3))
 	{
-		if (access(cmd, X_OK) == 0)
+		if (access(cmd, F_OK) == 0)
 			return (ft_strdup(cmd));
 		else
 			return (NULL);
@@ -103,17 +81,17 @@ static char	*get_cmd_path(char **paths, char *cmd)
 	command = absolute_route(cmd, &abs);
 	if (!abs)
 		return (command);
-	while (*paths)
+	while (paths && *paths)
 	{
 		tmp = ft_strjoin(*paths, "/");
 		command = ft_strjoin(tmp, cmd);
 		free(tmp);
-		if (access(command, X_OK) == 0)
+		if (access(command, F_OK) == 0)
 			return (command);
 		free(command);
 		paths++;
 	}
-	if (access(cmd, X_OK) == 0)
+	if (access(cmd, F_OK) == 0)
 		return (ft_strdup(cmd));
 	return (NULL);
 }
