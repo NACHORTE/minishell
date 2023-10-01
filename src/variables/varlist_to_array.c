@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   varlist_to_array.c                                 :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: iortega- <iortega-@student.42madrid.com    +#+  +:+       +#+        */
+/*   By: orudek <orudek@student.42madrid.com>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/20 22:46:57 by oscar             #+#    #+#             */
-/*   Updated: 2023/10/01 16:48:36 by iortega-         ###   ########.fr       */
+/*   Updated: 2023/10/01 21:18:34 by orudek           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -107,40 +107,3 @@ char	**varlist_to_array(t_list *varlist, int type)
 		return (NULL);
 	return (save_vars(out, varlist, len, type));
 }
-
-/*
-#define BLACK "\x1b[30m"     	// Black text
-#define RED "\x1b[31m"       	// Red text
-#define GREEN "\x1b[32m"     	// Green text
-#define YELLOW "\x1b[33m"    	// Yellow text
-#define BLUE "\x1b[34m"      	// Blue text
-#define MAGENTA "\x1b[35m"   	// Magenta text
-#define CYAN "\x1b[36m"      	// Cyan text
-#define WHITE "\x1b[37m"     	// White text
-#define ORANGE "\x1b[38;5;208m"	// Orange text
-#define RESET "\x1b[0m"      // Reset all attributes to default
-#pragma GCC diagnostic ignored "-Wunused-parameter"
-int main(int c, char **v, char **e)
-{
-	//t_list *env = array_to_varlist(e);
-	t_var *hello = malloc(sizeof(t_var));
-	hello->name = ft_strdup("nombre");
-	hello->content = ft_strdup("contenido");
-	t_var *hello2 = malloc(sizeof(t_var));
-	hello2->name = ft_strdup("nombre2");
-	hello2->content = ft_strdup("");
-	t_var *hello3 = malloc(sizeof(t_var));
-	hello3->name = ft_strdup("nombre3");
-	hello3->content = NULL;
-	t_list *env = ft_lstnew(hello);
-	ft_lstadd_back(&env,ft_lstnew(NULL));
-	ft_lstadd_back(&env,ft_lstnew(hello2));
-	ft_lstadd_back(&env,ft_lstnew(hello3));
-	print_varlist(env);
-	char **array = varlist_to_array(env, 1);
-	for (int i = 0; array && array[i]; i++)
-		printf(BLUE"array["CYAN"%d"BLUE"]:\t"RESET"%s\n", i, array[i]);
-	exit (0);
-}
-gcc -Iinclude -Ilibft/include -fsanitize=leak -Wall -Wextra -Werror src/array_to_varlist.c src/free_var.c src/set_variable.c src/varlist_to_array.c src/print_varlist.c libft/libft.a
-*/

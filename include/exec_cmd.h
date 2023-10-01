@@ -3,18 +3,18 @@
 /*                                                        :::      ::::::::   */
 /*   exec_cmd.h                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: iortega- <iortega-@student.42madrid.com    +#+  +:+       +#+        */
+/*   By: orudek <orudek@student.42madrid.com>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/27 22:31:08 by orudek            #+#    #+#             */
-/*   Updated: 2023/10/01 16:42:45 by iortega-         ###   ########.fr       */
+/*   Updated: 2023/10/01 21:17:37 by orudek           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef EXEC_CMD_H
 # define EXEC_CMD_H
 
-#include "t_var.h"
-#include "libft.h"
+# include "t_var.h"
+# include "libft.h"
 
 typedef struct s_multicmd
 {
@@ -28,7 +28,7 @@ typedef struct s_multicmd
 	int	*fds;
 	int	n_heredocs;
 	int	j;
-}t_multicmd;
+}	t_multicmd;
 
 int		cmd_cd(char **cmd, t_list **varlist);
 int		cmd_echo(char **cmd);
@@ -41,7 +41,7 @@ int		cmd_unset(char **cmd, t_list **varlist);
 int		exec_cmd(t_list *cmds, t_list **varlist);
 int		is_builtin(char *cmd);
 int		exec_builtin(char **cmd, t_list **varlist);
-void    child(int infile, int outfile, char ** cmd, t_list **varlist);
+void	child(int infile, int outfile, char **cmd, t_list **varlist);
 void	redirect_streams(int infile, int outfile, char **cmd);
 char	**parse_cmd(char **input);
 int		exec_multi_cmd(t_list *cmds, t_list **varlist);
