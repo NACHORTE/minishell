@@ -6,7 +6,7 @@
 /*   By: orudek <orudek@student.42madrid.com>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/23 12:22:38 by orudek            #+#    #+#             */
-/*   Updated: 2023/10/02 14:00:54 by orudek           ###   ########.fr       */
+/*   Updated: 2023/10/02 14:20:53 by orudek           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,7 +27,7 @@ int	exec_builtin(char **cmd, t_list **varlist)
 	else if (!ft_strcmp(cmd[0], "unset"))
 		return (cmd_unset(cmd, varlist));
 	else if (!ft_strcmp(cmd[0], "exit"))
-		cmd_exit(ft_atoi(cmd[1]));
+		return (cmd_exit(cmd, varlist));
 	else if (!ft_strcmp(cmd[0], "export"))
 		return (cmd_export(cmd, varlist));
 	return (1);
