@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   cmd_cd.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: iortega- <iortega-@student.42madrid.com    +#+  +:+       +#+        */
+/*   By: orudek <orudek@student.42madrid.com>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/27 21:26:02 by orudek            #+#    #+#             */
-/*   Updated: 2023/10/02 14:04:02 by iortega-         ###   ########.fr       */
+/*   Updated: 2023/10/02 15:12:38 by orudek           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,8 +47,7 @@ static int	cd_home(t_list **varlist)
 		free_var(var);
 		return (0);
 	}
-	printf("cd: HOME not set\n");
-	return (1);
+	return (return_msg("cd: HOME not set", 2, 1));
 }
 
 static int	cd_back(t_list **varlist)
@@ -67,19 +66,14 @@ static int	cd_back(t_list **varlist)
 		free_var(var);
 		return (0);
 	}
-	printf("cd: OLDPWD not set\n");
-	return (1);
+	return (return_msg("cd: OLDPWD not set", 2, 1));
 }
 
 //[ ] COMENTAR
-//[ ] Hacer un tester para esto
 int	cmd_cd(char **cmd, t_list **varlist)
 {
 	if (cmd[1] != 0 && cmd[2] != 0)
-	{
-		write(2, "cd: too many arguments\n", 23);
-		return (1);
-	}
+		return (return_msg("cd: too many arguments", 2, 1));
 	if (!cmd[1] || !ft_strcmp(cmd[1], "~"))
 		return (cd_home(varlist));
 	else if (cmd[1] && !ft_strcmp(cmd[1], "-"))
