@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   exec_cmd.h                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: iortega- <iortega-@student.42madrid.com    +#+  +:+       +#+        */
+/*   By: orudek <orudek@student.42madrid.com>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/27 22:31:08 by orudek            #+#    #+#             */
-/*   Updated: 2023/10/01 21:43:42 by iortega-         ###   ########.fr       */
+/*   Updated: 2023/10/02 14:22:26 by orudek           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,7 +34,7 @@ typedef struct s_multicmd
 int		cmd_cd(char **cmd, t_list **varlist);
 int		cmd_echo(char **cmd);
 int		cmd_env(t_list *varlist);
-int		cmd_exit(void);
+int		cmd_exit(char **cmd, t_list **varlist);
 int		cmd_export(char **cmd, t_list **varlist);
 int		cmd_pwd(void);
 int		cmd_unset(char **cmd, t_list **varlist);
