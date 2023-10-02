@@ -6,7 +6,7 @@
 /*   By: orudek <orudek@student.42madrid.com>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/27 21:22:08 by orudek            #+#    #+#             */
-/*   Updated: 2023/10/02 15:11:14 by orudek           ###   ########.fr       */
+/*   Updated: 2023/10/02 15:14:59 by orudek           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,7 +15,6 @@
 #include "libft.h"
 #include "t_var.h"
 #include "error.h"
-
 char	is_number(char *str)
 {
 	if (*str == '+' || *str == '-')

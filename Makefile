@@ -3,10 +3,10 @@
 #                                                         :::      ::::::::    #
 #    Makefile                                           :+:      :+:    :+:    #
 #                                                     +:+ +:+         +:+      #
-#    By: iortega- <iortega-@student.42madrid.com    +#+  +:+       +#+         #
+#    By: orudek <orudek@student.42madrid.com>       +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/09/03 15:02:39 by iortega-          #+#    #+#              #
-#    Updated: 2023/10/01 21:48:06 by iortega-         ###   ########.fr        #
+#    Updated: 2023/10/02 15:16:24 by orudek           ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -25,7 +25,9 @@ LIBFT_NAME := libft.a
 
 LIB := readline
 
-SRC_FILES := variables/is_varname_ok.c\
+SRC_FILES := error/return_msg.c\
+	error/return_perror.c\
+	variables/is_varname_ok.c\
 	variables/varlist_to_array.c\
 	variables/unset_variable.c\
 	variables/set_variable.c\

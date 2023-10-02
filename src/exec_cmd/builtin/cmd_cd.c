@@ -6,11 +6,13 @@
 /*   By: orudek <orudek@student.42madrid.com>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/27 21:26:02 by orudek            #+#    #+#             */
-/*   Updated: 2023/10/02 15:12:38 by orudek           ###   ########.fr       */
+/*   Updated: 2023/10/02 15:15:38 by orudek           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "exec_cmd.h"
+#include "error.h"
+#include "libft.h"
+#include "t_var.h"
 
 int	cd(char *str, t_list **varlist)
 {
