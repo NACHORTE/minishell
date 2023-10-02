@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   cmd_exit.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: iortega- <iortega-@student.42madrid.com    +#+  +:+       +#+        */
+/*   By: orudek <orudek@student.42madrid.com>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/27 21:22:08 by orudek            #+#    #+#             */
-/*   Updated: 2023/10/02 14:45:18 by iortega-         ###   ########.fr       */
+/*   Updated: 2023/10/02 15:14:59 by orudek           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,7 +14,7 @@
 #include <stdlib.h>
 #include "libft.h"
 #include "t_var.h"
-
+#include "error.h"
 char	is_number(char *str)
 {
 	if (*str == '+' || *str == '-')
@@ -55,10 +55,7 @@ int	cmd_exit(char **cmd, t_list **varlist)
 	if (!cmd[1])
 	{
 		if (!get_exit_status(*varlist, &exit_status))
-		{
-			printf("Couldn't find $?\n");
-			return (1);
-		}
+			return (return_msg("Couldn't find $?", 2, 1));
 		exit(exit_status);
 	}
 	if (!is_number(cmd[1]))
@@ -66,14 +63,9 @@ int	cmd_exit(char **cmd, t_list **varlist)
 		write(2, "minishell: exit: ", 17);
 		write(2, cmd[1], ft_strlen(cmd[1]));
 		write(2, ": numeric argument required\n", 28);
-		//printf("minishell: exit: %s: numeric argument required\n", cmd[1]);
 		exit(2);
 	}
 	if (cmd[2])
-	{
-		write(2, "minishell: exit: too many arguments\n", 36);
-		//printf("minishell: exit: too many arguments\n");
-		return (1);
-	}
+		return (return_msg("minishell: exit: too many arguments", 2, 1));
 	exit(ft_atoi(cmd[1]));
 }
