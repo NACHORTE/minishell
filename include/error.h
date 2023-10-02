@@ -1,20 +1,19 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   cmd_exit.c                                         :+:      :+:    :+:   */
+/*   error.h                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: orudek <orudek@student.42madrid.com>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2023/09/27 21:22:08 by orudek            #+#    #+#             */
-/*   Updated: 2023/09/29 19:46:39 by orudek           ###   ########.fr       */
+/*   Created: 2023/10/02 14:52:15 by orudek            #+#    #+#             */
+/*   Updated: 2023/10/02 15:09:35 by orudek           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include <stdio.h>
-#include <stdlib.h>
+#ifndef ERROR_H
+# define ERROR_H
 
-void	cmd_exit(void)
-{
-	printf("exit\n");
-	exit(0);
-}
+unsigned long	return_perror(char *msg, unsigned long ret_val);
+unsigned long	return_msg(char *msg, int fd, unsigned long ret_val);
+
+#endif

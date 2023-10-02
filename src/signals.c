@@ -1,22 +1,35 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   unset_variable.c                                   :+:      :+:    :+:   */
+/*   signals.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: iortega- <iortega-@student.42madrid.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2023/09/11 17:09:38 by orudek            #+#    #+#             */
-/*   Updated: 2023/10/01 16:46:01 by iortega-         ###   ########.fr       */
+/*   Created: 2023/10/01 21:46:01 by iortega-          #+#    #+#             */
+/*   Updated: 2023/10/01 21:54:17 by iortega-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "t_var.h"
+#include "minishell.h"
 
-void	unset_variable(t_list **list, char *name)
+void	new_line(int sig)
 {
-	int	index;
+	(void)sig;
+	write(1, "\n", 1);
+	rl_on_new_line();
+	rl_replace_line("", 0);
+	rl_redisplay();
+}
 
-	index = is_in_varlist(*list, name);
-	if (index != -1)
-		ft_lstpop(list, index, free_var);
+void	sig_here(int sig)
+{
+	(void)sig;
+	write(1, "\n", 1);
+	exit (1);
+}
+
+void	sig_child(int sig)
+{
+	(void)sig;
+	write(1, "\n", 1);
 }

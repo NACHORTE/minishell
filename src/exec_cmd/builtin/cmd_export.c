@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   cmd_export.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: orudek <orudek@student.42madrid.com>       +#+  +:+       +#+        */
+/*   By: iortega- <iortega-@student.42madrid.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/27 21:04:33 by orudek            #+#    #+#             */
-/*   Updated: 2023/09/29 19:48:05 by orudek           ###   ########.fr       */
+/*   Updated: 2023/10/02 14:49:00 by iortega-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,7 +27,10 @@ static int	get_name(char *str, char **name)
 	ft_strlcpy(*name, str, len + 1);
 	if (!is_varname_ok(*name))
 	{
-		free(name);
+		write(2, "export: `", 9);
+		write(2, *name, ft_strlen(*name));
+		write(2, "': not a valid identifier\n", 26);
+		free(*name);
 		return (0);
 	}
 	return (1);

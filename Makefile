@@ -6,14 +6,14 @@
 #    By: orudek <orudek@student.42madrid.com>       +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/09/03 15:02:39 by iortega-          #+#    #+#              #
-#    Updated: 2023/09/29 16:42:28 by orudek           ###   ########.fr        #
+#    Updated: 2023/10/02 15:16:24 by orudek           ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
 NAME := minishell
 
 CC := gcc
-STANDARD_FLAGS := -I/Users/$(USER)/.brew/opt/readline/include -lreadline -L /Users/$(USER)/.brew/opt/readline/lib -fsanitize=leak -Wall -Wextra -Werror
+STANDARD_FLAGS := -I/Users/$(USER)/.brew/opt/readline/include -L /Users/$(USER)/.brew/opt/readline/lib -fsanitize=leak -Wall -Wextra -Werror
 RM := rm -f
 
 SRC_DIR := src
@@ -25,37 +25,46 @@ LIBFT_NAME := libft.a
 
 LIB := readline
 
-SRC_FILES := main.c\
+SRC_FILES := error/return_msg.c\
+	error/return_perror.c\
+	variables/is_varname_ok.c\
+	variables/varlist_to_array.c\
+	variables/unset_variable.c\
+	variables/set_variable.c\
+	variables/get_variable.c\
+	variables/dup_var.c\
+	variables/array_to_varlist.c\
+	variables/print_varlist.c\
+	variables/is_in_varlist.c\
+	variables/new_var.c\
+	variables/free_var.c\
+	variables/set_variable2.c\
+	exec_cmd/builtin/cmd_unset.c\
+	exec_cmd/builtin/cmd_exit.c\
+	exec_cmd/builtin/cmd_cd.c\
+	exec_cmd/builtin/exec_builtin.c\
+	exec_cmd/builtin/cmd_pwd.c\
+	exec_cmd/builtin/cmd_echo.c\
+	exec_cmd/builtin/cmd_env.c\
+	exec_cmd/builtin/cmd_export.c\
+	exec_cmd/builtin/is_builtin.c\
+	check_redi.c\
+	is_command.c\
+	local_declare.c\
+	signals.c\
 	exec_cmd/child.c\
-	exec_cmd/cmd_cd.c\
-	exec_cmd/cmd_echo.c\
-	exec_cmd/cmd_env.c\
-	exec_cmd/cmd_exit.c\
-	exec_cmd/cmd_export.c\
-	exec_cmd/cmd_pwd.c\
-	exec_cmd/cmd_unset.c\
-	exec_cmd/exec_builtin.c\
+	exec_cmd/pipe_heredocs.c\
 	exec_cmd/exec_cmd.c\
-	exec_cmd/is_builtin.c\
+	exec_cmd/heredoc.c\
+	exec_cmd/exec_multicmd.c\
 	exec_cmd/parse_cmd.c\
 	exec_cmd/redirect_streams.c\
-	parse/expand_variables.c\
-	parse/parse.c\
 	parse/split_args.c\
 	parse/split_args2.c\
+	parse/parse.c\
 	parse/split_pipe.c\
-	variables/array_to_varlist.c\
-	variables/dup_var.c\
-	variables/free_var.c\
-	variables/get_variable.c\
-	variables/is_in_varlist.c\
-	variables/is_varname_ok.c\
-	variables/new_var.c\
-	variables/print_varlist.c\
-	variables/set_variable.c\
-	variables/set_variable2.c\
-	variables/unset_variable.c\
-	variables/varlist_to_array.c
+	parse/expand_variables.c\
+	main.c
 
 SRC := $(addprefix $(SRC_DIR)/,$(SRC_FILES))
 OBJ := $(SRC:$(SRC_DIR)/%.c=$(OBJ_DIR)/%.o)
@@ -66,7 +75,7 @@ INCLUDE_PATH := -I$(INCLUDE_DIR) -I$(LIBFT_DIR)/include
 all: $(NAME)
 
 $(NAME): $(OBJ) $(LIBFT_DIR)/$(LIBFT_NAME)
-	$(CC) $(STANDARD_FLAGS)  $(INCLUDE_PATH) $(OBJ) $(LIBFT_DIR)/$(LIBFT_NAME) -lreadline -o $@
+	$(CC) $(STANDARD_FLAGS)  $(INCLUDE_PATH) $(OBJ) $(LIBFT_DIR)/$(LIBFT_NAME) $(LIB_FLAG) -o $@
 
 $(OBJ_DIR)/%.o: $(SRC_DIR)/%.c
 	@mkdir -p $(OBJ_FOLDER)

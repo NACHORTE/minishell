@@ -1,36 +1,24 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   cmd_echo.c                                         :+:      :+:    :+:   */
+/*   return_msg.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: orudek <orudek@student.42madrid.com>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2023/09/27 21:24:11 by orudek            #+#    #+#             */
-/*   Updated: 2023/09/29 19:48:22 by orudek           ###   ########.fr       */
+/*   Created: 2023/10/02 14:51:25 by orudek            #+#    #+#             */
+/*   Updated: 2023/10/02 15:09:39 by orudek           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "exec_cmd.h"
+#include "unistd.h"
+#include "libft.h"
 
-int	cmd_echo(char **cmd)
+unsigned long	return_msg(char *msg, int fd, unsigned long ret_val)
 {
-	int	i;
-	int	flag;
-
-	i = 0;
-	flag = 0;
-	if (!ft_strcmp(cmd[1], "-n"))
+	if (msg)
 	{
-		flag = 1;
-		i++;
+		write(fd, msg, ft_strlen(msg));
+		write(fd, "\n", 1);
 	}
-	while (cmd[++i])
-	{
-		printf("%s", cmd[i]);
-		if (cmd[i + 1])
-			printf(" ");
-	}
-	if (flag == 0)
-		printf("\n");
-	return (0);
+	return (ret_val);
 }

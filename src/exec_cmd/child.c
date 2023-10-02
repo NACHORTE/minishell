@@ -3,21 +3,21 @@
 /*                                                        :::      ::::::::   */
 /*   child.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: orudek <orudek@student.42madrid.com>       +#+  +:+       +#+        */
+/*   By: iortega- <iortega-@student.42madrid.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/20 21:29:18 by oscar             #+#    #+#             */
-/*   Updated: 2023/09/29 19:47:06 by orudek           ###   ########.fr       */
+/*   Updated: 2023/10/02 16:07:40 by iortega-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "exec_cmd.h"
+#include <stdlib.h>
+#include <unistd.h>
 #include <stdio.h>
-#include <sys/types.h>
-#include <sys/file.h>
-#include <sys/stat.h>
+#include <fcntl.h>
+#include <errno.h>
+#include <sys/wait.h>
 #include <sys/errno.h>
-#include <readline/readline.h>
-#include <readline/history.h>
 
 /*  child:
         Executes a command that can have redirections.
@@ -34,24 +34,7 @@
 			the local ones).
 	Return:
 		NOTHING! it must exit the program at the end of this function
-	Todo:
-		In a separate function
-		[x] REDIR: Create all files from the redirections in cmd
-		[x] REDIR: <<Here Doc
-		[x] REDIR: >>append mode
-		[x] REDIR: If no redirection in the cmd, redirect to infile/outfile
-		[x]	CHECK_BUILTINS
-		[ ] ACCESS: "./" "../" "/"
-		[ ] ACCESS: [OPTIONAL] if no path, add ./ to cmd if it doesn't have it
-		[ ] ACCESS: if cmd[i]="\0", don't crash and print "'': cmd not found"
-		[ ] perror with cmd name after excve
-		[ ] use nice names :)
-		[ ] algo de signals nose
-		[ ] norminette
 */
-
-#include "exec_cmd.h"
-
 static char	**get_path(char **envp)
 {
 	char	**path;
@@ -70,9 +53,9 @@ static char	**get_path(char **envp)
 
 static char	*absolute_route(char *cmd, int *abs)
 {
-	if (cmd[0] == '/' || cmd[0] == '.')
+	if (*cmd == '/' || !ft_strncmp(cmd, "./", 2) || !ft_strncmp(cmd, "../", 3))
 	{
-		if (access(cmd, X_OK) == 0)
+		if (access(cmd, F_OK) == 0)
 			return (ft_strdup(cmd));
 		else
 			return (NULL);
@@ -87,7 +70,10 @@ static void	no_command(char **cmd_parsed)
 
 	write(2, &"Command not found: ", 19);
 	len = ft_strlen(cmd_parsed[0]);
-	write(2, cmd_parsed[0], len);
+	if (**cmd_parsed)
+		write(2, cmd_parsed[0], len);
+	else
+		write(2, "\'\'", 2);
 	write(2, &"\n", 1);
 }
 
@@ -98,24 +84,61 @@ static char	*get_cmd_path(char **paths, char *cmd)
 	int		abs;
 
 	abs = 0;
-	if (!cmd)
+	if (!cmd || !*cmd)
 		return (NULL);
 	command = absolute_route(cmd, &abs);
 	if (!abs)
 		return (command);
-	while (*paths)
+	while (paths && *paths)
 	{
 		tmp = ft_strjoin(*paths, "/");
 		command = ft_strjoin(tmp, cmd);
 		free(tmp);
-		if (access(command, X_OK) == 0)
+		if (access(command, F_OK) == 0)
 			return (command);
 		free(command);
 		paths++;
 	}
-	if (access(cmd, X_OK) == 0)
+	if (access(cmd, F_OK) == 0)
 		return (ft_strdup(cmd));
 	return (NULL);
+}
+
+int	check_permission(char **cmd)
+{
+	int	i;
+	int	j;
+	int fd;
+
+	i = 0;
+	fd = 0;
+	while (cmd[i])
+	{
+		j = 0;
+		if (cmd[i][j] == '<')
+		{
+			j++;
+			if (cmd[i][j] != '<')
+				fd = open(&cmd[i][j], O_RDONLY);
+		}
+		if (cmd[i][j] == '>')
+		{
+			j++;
+			if (cmd[i][j] == '>')
+				fd = open(&cmd[i][++j], O_WRONLY | O_APPEND | O_CREAT, 0644);
+			else
+				fd = open(&cmd[i][j], O_WRONLY | O_CREAT, 0644);
+		}
+		if (fd < 0)
+		{
+			perror(&cmd[i][j]);
+			return (1);
+		}
+		if (fd > 0)
+			close(fd);
+		i++;
+	}
+	return (0);
 }
 
 void	child(int infile, int outfile, char **cmd, t_list **varlist)
@@ -125,6 +148,9 @@ void	child(int infile, int outfile, char **cmd, t_list **varlist)
 	char	**env;
 	char	**path;
 
+	signal(SIGINT, SIG_DFL);
+	if (check_permission(cmd))
+		exit (1);
 	env = varlist_to_array(*varlist, ENV_VAR);
 	path = get_path(env);
 	redirect_streams(infile, outfile, cmd);

@@ -1,22 +1,41 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   unset_variable.c                                   :+:      :+:    :+:   */
+/*   cmd_echo.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: iortega- <iortega-@student.42madrid.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2023/09/11 17:09:38 by orudek            #+#    #+#             */
-/*   Updated: 2023/10/01 16:46:01 by iortega-         ###   ########.fr       */
+/*   Created: 2023/09/27 21:24:11 by orudek            #+#    #+#             */
+/*   Updated: 2023/10/02 18:53:33 by iortega-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "t_var.h"
+#include "exec_cmd.h"
 
-void	unset_variable(t_list **list, char *name)
+int	cmd_echo(char **cmd)
 {
-	int	index;
+	int	i;
+	int	flag;
 
-	index = is_in_varlist(*list, name);
-	if (index != -1)
-		ft_lstpop(list, index, free_var);
+	i = 0;
+	flag = 0;
+	if (!cmd[1])
+	{
+		printf("\n");
+		return (0);
+	}
+	if (!ft_strcmp(cmd[1], "-n"))
+	{
+		flag = 1;
+		i++;
+	}
+	while (cmd[++i])
+	{
+		printf("%s", cmd[i]);
+		if (cmd[i + 1])
+			printf(" ");
+	}
+	if (flag == 0)
+		printf("\n");
+	return (0);
 }
