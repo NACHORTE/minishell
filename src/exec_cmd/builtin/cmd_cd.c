@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   cmd_cd.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: orudek <orudek@student.42madrid.com>       +#+  +:+       +#+        */
+/*   By: iortega- <iortega-@student.42madrid.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/27 21:26:02 by orudek            #+#    #+#             */
-/*   Updated: 2023/09/29 19:50:18 by orudek           ###   ########.fr       */
+/*   Updated: 2023/10/02 14:04:02 by iortega-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,17 +18,17 @@ int	cd(char *str, t_list **varlist)
 
 	old_pwd = getcwd(NULL, 0);
 	if (!old_pwd)
-		return (0);
+		return (1);
 	if (chdir(str) == -1)
 	{
 		perror(str);
 		free(old_pwd);
-		return (0);
+		return (1);
 	}
 	if (!set_variable(varlist, "OLDPWD", old_pwd, DEFAULT_VAR))
-		return (0);
+		return (1);
 	free(old_pwd);
-	return (1);
+	return (0);
 }
 
 static int	cd_home(t_list **varlist)
@@ -39,7 +39,7 @@ static int	cd_home(t_list **varlist)
 	{
 		if (get_variable(*varlist, "HOME", &var) == -1)
 			return (1);
-		if (!cd(var->content, varlist))
+		if (cd(var->content, varlist))
 		{
 			free_var(var);
 			return (1);
@@ -59,7 +59,7 @@ static int	cd_back(t_list **varlist)
 	{
 		if (get_variable(*varlist, "OLDPWD", &var) == -1)
 			return (1);
-		if (!cd(var->content, varlist))
+		if (cd(var->content, varlist))
 		{
 			free_var(var);
 			return (1);
@@ -77,7 +77,7 @@ int	cmd_cd(char **cmd, t_list **varlist)
 {
 	if (cmd[1] != 0 && cmd[2] != 0)
 	{
-		printf("cd: too many arguments\n");
+		write(2, "cd: too many arguments\n", 23);
 		return (1);
 	}
 	if (!cmd[1] || !ft_strcmp(cmd[1], "~"))

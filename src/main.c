@@ -6,7 +6,7 @@
 /*   By: iortega- <iortega-@student.42madrid.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/01 16:37:59 by iortega-          #+#    #+#             */
-/*   Updated: 2023/10/02 11:03:57 by iortega-         ###   ########.fr       */
+/*   Updated: 2023/10/02 12:26:22 by iortega-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -104,11 +104,15 @@ int	main(int argc, char **argv, char **envp)
 		return (1);
 	(void)argv;
 	global.varlist = array_to_varlist(envp);
+	if (!global.varlist)
+	{
+		printf("Error getting env\n");
+		return (0);
+	}
 	global.last_status = 0;
 	refresh_lvl(&global);
 	refresh_status(&global);
 	signal(SIGINT, &new_line);
 	read_input(global);
-	rl_clear_history();
 	return (0);
 }
