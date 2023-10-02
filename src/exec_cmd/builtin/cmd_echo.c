@@ -6,7 +6,7 @@
 /*   By: iortega- <iortega-@student.42madrid.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/27 21:24:11 by orudek            #+#    #+#             */
-/*   Updated: 2023/10/02 13:49:52 by iortega-         ###   ########.fr       */
+/*   Updated: 2023/10/02 18:53:33 by iortega-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,6 +19,11 @@ int	cmd_echo(char **cmd)
 
 	i = 0;
 	flag = 0;
+	if (!cmd[1])
+	{
+		printf("\n");
+		return (0);
+	}
 	if (!ft_strcmp(cmd[1], "-n"))
 	{
 		flag = 1;
