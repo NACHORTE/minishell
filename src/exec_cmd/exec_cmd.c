@@ -6,12 +6,16 @@
 /*   By: iortega- <iortega-@student.42madrid.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/20 13:56:41 by oscar             #+#    #+#             */
-/*   Updated: 2023/10/02 13:04:47 by iortega-         ###   ########.fr       */
+/*   Updated: 2023/10/02 15:25:04 by iortega-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "exec_cmd.h"
+#include <stdlib.h>
+#include <unistd.h>
 #include <stdio.h>
+#include <fcntl.h>
+#include <errno.h>
 #include <sys/wait.h>
 
 static void	check_doublestdin_here(char *character, int *fd)
@@ -133,6 +137,7 @@ int	exec_one_cmd(char **cmd, t_list **varlist)
 		[ ] close files (child)
 		[ ] norminette
 */
+
 int	exec_cmd(t_list *cmds, t_list **varlist)
 {
 	int		status;

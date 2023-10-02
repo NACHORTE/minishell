@@ -6,7 +6,7 @@
 /*   By: iortega- <iortega-@student.42madrid.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/30 18:40:15 by iortega-          #+#    #+#             */
-/*   Updated: 2023/09/30 18:51:48 by iortega-         ###   ########.fr       */
+/*   Updated: 2023/10/02 15:59:29 by iortega-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -99,7 +99,7 @@ static int	middle_cmds(t_multicmd *data, t_list **cmds, t_list **varlist)
 	return (0);
 }
 
-static void	last_cmd(t_multicmd *data, t_list *cmds, t_list **varlist)
+static int	last_cmd(t_multicmd *data, t_list *cmds, t_list **varlist)
 {
 	data->pid = fork();
 	if (data->pid == 0)
@@ -120,11 +120,13 @@ static void	last_cmd(t_multicmd *data, t_list *cmds, t_list **varlist)
 		data->j++;
 	}
 	close (data->last_pipe[0]);
+	return (data->pid);
 }
 
 int	exec_multi_cmd(t_list *cmds, t_list **varlist)
 {
 	t_multicmd	data;
+	pid_t		last_pid;
 
 	data.cmds_len = ft_lstsize(cmds);
 	if (pipe_heredocs(&data, cmds))
@@ -140,8 +142,9 @@ int	exec_multi_cmd(t_list *cmds, t_list **varlist)
 	if (middle_cmds(&data, &cmds, varlist))
 		return (1);
 	close(data.last_pipe[1]);
-	last_cmd(&data, cmds, varlist);
-	while (wait(&(data.status)) != -1)
+	last_pid = last_cmd(&data, cmds, varlist);
+	waitpid(last_pid, &(data.status), 0);
+	while (wait(NULL) != -1)
 		;
 	if (data.n_heredocs > 0)
 	{
