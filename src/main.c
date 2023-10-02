@@ -6,7 +6,7 @@
 /*   By: iortega- <iortega-@student.42madrid.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/01 16:37:59 by iortega-          #+#    #+#             */
-/*   Updated: 2023/10/01 22:27:08 by iortega-         ###   ########.fr       */
+/*   Updated: 2023/10/02 11:03:57 by iortega-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,18 +49,10 @@ void	read_input(t_command global)
 	}
 }
 
-void	refresh_lvl(t_command *global)
+static void	set_shell(t_var *shell_lvl, int status)
 {
 	int	lvl;
-	int	status;
-	t_var	*shell_lvl;
 
-	status = get_variable(global->varlist, "SHLVL", &shell_lvl);
-	if (status == -1)
-	{
-		printf("Error reading env\n");
-		exit (1);
-	}
 	if (status == 0)
 	{
 		shell_lvl = new_var("SHLVL", "1", ENV_VAR);
@@ -81,7 +73,22 @@ void	refresh_lvl(t_command *global)
 			exit (1);
 		}
 	}
-	if (!set_variable(&(global->varlist), shell_lvl->name, shell_lvl->content, ENV_VAR))
+}
+
+void	refresh_lvl(t_command *global)
+{
+	int		status;
+	t_var	*shell_lvl;
+
+	status = get_variable(global->varlist, "SHLVL", &shell_lvl);
+	if (status == -1)
+	{
+		printf("Error reading env\n");
+		exit (1);
+	}
+	set_shell(shell_lvl, status);
+	if (!set_variable(&(global->varlist),
+			shell_lvl->name, shell_lvl->content, ENV_VAR))
 	{
 		printf("Unable to set new SHLVL\n");
 		exit (1);
