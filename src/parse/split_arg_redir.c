@@ -6,7 +6,7 @@
 /*   By: orudek <orudek@student.42madrid.com>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/03 20:56:54 by orudek            #+#    #+#             */
-/*   Updated: 2023/10/03 23:23:14 by orudek           ###   ########.fr       */
+/*   Updated: 2023/10/03 23:37:22 by orudek           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -107,6 +107,7 @@ t_list *split_arg_redir(char **cmd)
 	return (out);
 }
 
+/*
 void print_arg_redir(t_list *lst)
 {
 	for (lst; lst; lst = lst->next)
@@ -142,4 +143,4 @@ int main()
 	print_arg_redir(result);
 	ft_lstfree(result, free_arg_redir);
 	exit (0);
-}
+}*/
