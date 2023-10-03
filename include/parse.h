@@ -6,7 +6,7 @@
 /*   By: orudek <orudek@student.42madrid.com>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/29 13:58:18 by orudek            #+#    #+#             */
-/*   Updated: 2023/10/03 12:47:10 by orudek           ###   ########.fr       */
+/*   Updated: 2023/10/03 22:22:01 by orudek           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,12 +14,16 @@
 # define PARSE_H
 
 # include "libft.h"
+# include "error.h"
 
 typedef struct s_arg_redir
 {
 	t_list *args;
 	t_list *redir;
 } t_arg_redir;
+
+t_arg_redir *new_arg_redir(void);
+void	free_arg_redir(void *arg_redir);
 
 typedef struct s_cmd
 {
