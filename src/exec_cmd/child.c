@@ -6,7 +6,7 @@
 /*   By: iortega- <iortega-@student.42madrid.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/20 21:29:18 by oscar             #+#    #+#             */
-/*   Updated: 2023/10/02 16:07:40 by iortega-         ###   ########.fr       */
+/*   Updated: 2023/10/03 22:16:51 by iortega-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -121,7 +121,7 @@ int	check_permission(char **cmd)
 			if (cmd[i][j] != '<')
 				fd = open(&cmd[i][j], O_RDONLY);
 		}
-		if (cmd[i][j] == '>')
+		else if (cmd[i][j] == '>') //check
 		{
 			j++;
 			if (cmd[i][j] == '>')
