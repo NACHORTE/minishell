@@ -6,11 +6,11 @@
 /*   By: orudek <orudek@student.42madrid.com>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/11 22:37:17 by orudek            #+#    #+#             */
-/*   Updated: 2023/09/29 19:26:33 by orudek           ###   ########.fr       */
+/*   Updated: 2023/10/03 13:33:27 by orudek           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "libft.h"
+#include "parse.h"
 #include "t_var.h"
 
 static char	find_var(char **var, char *str, int len, t_list *list)
@@ -117,17 +117,19 @@ static int	dup_arg(char *out, char **s, t_list *varlist)
 	return (len);
 }
 
-char	*expand_variables(char *str, t_list *varlist)
+char 
+//modifies the t_arg_redir struct, and returns 1 if ok and 0 if failed
+char	expand_variables(t_arg_redir *cmd, t_list *varlist)
 {
 	char	*out;
 	int		len;
 	int		i;
 	int		state;
 
-	len = expanded_len(str, varlist);
-	out = malloc(len + 1);
-	if (!out)
-		return (NULL);
+	if (expand_vars(&cmd->args) == 0)
+		return (0);
+	if (expand_redirs(&cmd->redir) == 0)
+		return (0);
 	i = 0;
 	state = 0;
 	while (i < len)
