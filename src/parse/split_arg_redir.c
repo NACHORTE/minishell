@@ -6,7 +6,7 @@
 /*   By: orudek <orudek@student.42madrid.com>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/03 20:56:54 by orudek            #+#    #+#             */
-/*   Updated: 2023/10/03 23:37:22 by orudek           ###   ########.fr       */
+/*   Updated: 2023/10/03 23:43:38 by orudek           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,7 +14,7 @@
 
 int	arg_len(char *s)
 {
-	int i;
+	int	i;
 	int	state;
 
 	i = -1;
@@ -32,22 +32,21 @@ int	arg_len(char *s)
 
 int	redir_len(char *cmd)
 {
-	int i;
+	int	i;
 
-	i = 1;	//If this func is called the first char must be < or >
-	if (cmd[i] == '<' || cmd[i] == '>') //If second char is < or > add 1
+	i = 1;
+	if (cmd[i] == '<' || cmd[i] == '>')
 		i++;
-	while (cmd[i] == ' ') //count all the spaces
+	while (cmd[i] == ' ')
 		i++;
-	i += arg_len(&cmd[i]); //add the lenght of the word after redir
-	return (i); 
+	i += arg_len(&cmd[i]);
+	return (i);
 }
-
 
 char	*get_arg(char **cmd)
 {
-	int	len;
-	char *out;
+	int		len;
+	char	*out;
 
 	while (**cmd == ' ')
 		(*cmd)++;
@@ -60,14 +59,14 @@ char	*get_arg(char **cmd)
 		return ((void *)return_msg("Couldn't allocate memory", 2, 0));
 	ft_strlcpy(out, *cmd, len + 1);
 	(*cmd) += len;
-	return (out);		
+	return (out);
 }
 
 t_arg_redir	*get_cmd(char *cmd)
 {
 	t_arg_redir	*out;
-	char	*arg;
-	int	i;
+	char		*arg;
+	int			i;
 
 	out = new_arg_redir();
 	if (!out)
@@ -76,10 +75,10 @@ t_arg_redir	*get_cmd(char *cmd)
 	while (*cmd)
 	{
 		arg = get_arg(&cmd);
-		if (!arg || ((arg[0] == '<' || arg[0] == '>')		//if args is NULL
-			&& !ft_lstadd_back_content(&out->redir, arg))	//or push failed to redir
-			|| (arg[0] != '<' && arg[0] != '>'				//or push failed to args
-			&& !ft_lstadd_back_content(&out->args, arg)))
+		if (!arg || ((arg[0] == '<' || arg[0] == '>')
+				&& !ft_lstadd_back_content(&out->redir, arg))
+			|| (arg[0] != '<' && arg[0] != '>'
+				&& !ft_lstadd_back_content(&out->args, arg)))
 		{
 			free_arg_redir(out);
 			return ((void *)return_msg("Couldn't allocate memory", 2, 0));
@@ -88,10 +87,10 @@ t_arg_redir	*get_cmd(char *cmd)
 	return (out);
 }
 
-t_list *split_arg_redir(char **cmd)
+t_list	*split_arg_redir(char **cmd)
 {
-	t_list *out;
-	t_arg_redir *new_cmd;
+	t_list		*out;
+	t_arg_redir	*new_cmd;
 
 	out = NULL;
 	while (*cmd)
@@ -100,7 +99,7 @@ t_list *split_arg_redir(char **cmd)
 		if (!new_cmd || !ft_lstadd_back_content(&out, new_cmd))
 		{
 			ft_lstfree(out, free_arg_redir);
-			return ((void *)return_msg("Couldn't allocate memory", 2, 0)); //[ ] check this msg
+			return ((void *)return_msg("Couldn't allocate memory", 2, 0));
 		}
 		cmd++;
 	}
