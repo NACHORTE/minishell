@@ -6,12 +6,13 @@
 /*   By: iortega- <iortega-@student.42madrid.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/03 19:51:13 by iortega-          #+#    #+#             */
-/*   Updated: 2023/10/03 22:52:09 by iortega-         ###   ########.fr       */
+/*   Updated: 2023/10/04 12:46:23 by iortega-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "parse.h"
 #include <fcntl.h>
+#include "minishell.h"
 
 static void	check_doublestdin(char *character, int *fd)
 {
@@ -86,11 +87,11 @@ static int	check_restdout(t_list *redir)
 		check_doublestdout(str, &fd);
 		redir = redir->next;
 	}
-	if (fd > 0)
+	/*if (fd > 0)
 	{
-		//dup2(fd, 1);
+		dup2(fd, 1);
 		close(fd);
-	}
+	}*/
 	return (fd);
 }
 
@@ -107,8 +108,10 @@ void	redirect_streams(t_cmd *out, t_list *redir)
 	}
 	else if (fd_in > 0)
 	{
+		if (out->infile > 0)
+			close(out->infile);
 		out->infile = fd_in;
-		close(fd_in);
+		//close(fd_in);
 	}
 	if (fd_out <= -1)
 		out->outfile = -1;
@@ -154,7 +157,32 @@ int	check_restdin_here(t_list *redir)
 	return (fd);
 }
 
-t_cmd	*save_inout(t_arg_redir *cmd)
+char	**save_args(t_list *args)
+{
+	char **out;
+	int	i;
+
+	i = ft_lstsize(args);
+	out = malloc(sizeof(char *) * (i + 1));
+	if (!out)
+		return (NULL);
+	out[i] = NULL;
+	i = 0;
+	while (args)
+	{
+		out[i] = ft_strdup((char *)args->content);
+		if (!out[i])
+		{
+			ft_array_free(out);
+			return (NULL);
+		}
+		i++;
+		args->next;
+	}
+	return (out);
+}
+
+static t_cmd	*get_cmd(t_arg_redir *cmd)
 {
 	t_cmd	*out;
 
@@ -165,7 +193,25 @@ t_cmd	*save_inout(t_arg_redir *cmd)
 	if (out->infile < 0)
 		return (NULL);
 	redirect_streams(out, (t_list *)cmd->redir);
-	
+	out->args = save_args((t_list *)cmd->args);
+	if (!out->args)
+		return (NULL);
+	return (out);
+}
+
+void	free_cmd(void *cmd)
+{
+	t_cmd *aux;
+
+	if (!cmd)
+		return ;
+	aux = (t_cmd *)cmd;
+	ft_array_free(aux->args);
+	if (aux->infile > 1)
+		close(aux->infile);
+	if (aux->outfile > 1)
+		close(aux->outfile);
+	free(aux);
 }
 
 t_list	*cmd_redir(t_list *pipes)
