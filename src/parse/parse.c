@@ -6,13 +6,13 @@
 /*   By: iortega- <iortega-@student.42madrid.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/17 17:24:03 by orudek            #+#    #+#             */
-/*   Updated: 2023/10/03 13:28:24 by iortega-         ###   ########.fr       */
+/*   Updated: 2023/10/04 20:06:04 by iortega-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-char	**expand_vars_array(char **str, t_list *varlist)
+/*char	**expand_vars_array(char **str, t_list *varlist)
 {
 	int		i;
 	char	**output;
@@ -36,7 +36,7 @@ char	**expand_vars_array(char **str, t_list *varlist)
 	}
 	output[i] = 0;
 	return (output);
-}
+}*/
 
 t_list	*save_commands(char **array)
 {
@@ -57,74 +57,27 @@ t_list	*save_commands(char **array)
 	return (output);
 }
 
-t_arg_redir	*arg_redir(char **cmds)
-{
-	t_arg_redir	*out;
-	int	i;
-	int	j;
-	int	quotes;
-	int	simples;
-	char	*str;
-
-	out = malloc(sizeof(t_arg_redir));
-	if (!out)
-		return (NULL);
-	i = 0;
-	quotes = 0;
-	simples = 0;
-	str = NULL;
-	while (cmds[i])
-	{
-		j = 0;
-		while (cmds[i][j])
-		{
-			if (cmds[i][j] == '\'' && !quotes)
-				simples = !simples;
-			else if (cmds[i][j] == '"' && !simples)
-				quotes = !quotes;
-			if (!quotes && !simples)
-			{
-				if (cmds[i][j] == '<' || cmds[i][j] == '>')
-				{
-					while (cmds[i][j] == ' ')
-						j++;
-					while (cmds[i][j] && cmds[i][j] != ' ')
-					{
-						if (cmds[i][j] == '\'')
-						{
-							while (cmds[i][j] != '\'')
-							{
-								
-							}
-						}
-						else if (cmds[i][j] == '"')
-						{
-							
-						}
-						
-					}
-				}
-			}
-		}
-	}
-}
-
 t_list	*parse(char	*input, t_list *varlist)
 {
 	char	**split_pipes;
-	char	**expanded;
+	//char	**expanded;
 	t_list	*out;
 
 	if (!input)
 		return (NULL);
+	(void)(varlist);
 	split_pipes = split_pipe(input);
 	if (!split_pipes)
 		return (NULL);
-	expanded = expand_vars_array(split_pipes, varlist);
+	t_list *arg_redir_lst = split_arg_redir(split_pipes);
+	out = cmd_redir(arg_redir_lst);
+	ft_array_free(split_pipes);
+	ft_lstfree(arg_redir_lst, free_arg_redir);
+	/*t_list *expanded_cmd = expand_vars_array(arg_redir_lst, varlist);
 	ft_array_free(split_pipes);
 	if (!expanded)
 		return (NULL);
 	out = save_commands(expanded);
-	ft_array_free(expanded);
+	ft_array_free(expanded);*/
 	return (out);
 }

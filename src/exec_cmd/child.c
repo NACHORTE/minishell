@@ -6,7 +6,7 @@
 /*   By: iortega- <iortega-@student.42madrid.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/20 21:29:18 by oscar             #+#    #+#             */
-/*   Updated: 2023/10/03 22:16:51 by iortega-         ###   ########.fr       */
+/*   Updated: 2023/10/04 16:19:22 by iortega-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -103,7 +103,7 @@ static char	*get_cmd_path(char **paths, char *cmd)
 		return (ft_strdup(cmd));
 	return (NULL);
 }
-
+/*
 int	check_permission(char **cmd)
 {
 	int	i;
@@ -139,7 +139,7 @@ int	check_permission(char **cmd)
 		i++;
 	}
 	return (0);
-}
+}*/
 
 void	child(int infile, int outfile, char **cmd, t_list **varlist)
 {
@@ -149,11 +149,21 @@ void	child(int infile, int outfile, char **cmd, t_list **varlist)
 	char	**path;
 
 	signal(SIGINT, SIG_DFL);
-	if (check_permission(cmd))
-		exit (1);
+	/*if (check_permission(cmd))
+		exit (1);*/
 	env = varlist_to_array(*varlist, ENV_VAR);
 	path = get_path(env);
-	redirect_streams(infile, outfile, cmd);
+	//redirect_streams(infile, outfile, cmd);
+	if (infile > 1)
+	{
+		dup2(infile, 0);
+		close(infile);
+	}
+	if (outfile > 1)
+	{
+		dup2(outfile, 1);
+		close(outfile);
+	}
 	cmd_parsed = parse_cmd(cmd);
 	if (is_builtin(cmd_parsed[0]))
 		exit(exec_builtin(cmd_parsed, varlist));

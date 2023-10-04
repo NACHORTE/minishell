@@ -6,7 +6,7 @@
 /*   By: iortega- <iortega-@student.42madrid.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/03 19:51:13 by iortega-          #+#    #+#             */
-/*   Updated: 2023/10/04 12:46:23 by iortega-         ###   ########.fr       */
+/*   Updated: 2023/10/04 16:12:41 by iortega-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -95,7 +95,7 @@ static int	check_restdout(t_list *redir)
 	return (fd);
 }
 
-void	redirect_streams(t_cmd *out, t_list *redir)
+static void	redirect_streamss(t_cmd *out, t_list *redir)
 {
 	int	fd_in;
 	int	fd_out;
@@ -137,7 +137,7 @@ static void	check_doublestdin_here(char *character, int *fd)
 	}
 }
 
-int	check_restdin_here(t_list *redir)
+static int	check_restdin_heree(t_list *redir)
 {
 	int	i;
 	int	fd;
@@ -157,7 +157,7 @@ int	check_restdin_here(t_list *redir)
 	return (fd);
 }
 
-char	**save_args(t_list *args)
+static char	**save_args(t_list *args)
 {
 	char **out;
 	int	i;
@@ -166,7 +166,7 @@ char	**save_args(t_list *args)
 	out = malloc(sizeof(char *) * (i + 1));
 	if (!out)
 		return (NULL);
-	out[i] = NULL;
+	out[i] = 0;
 	i = 0;
 	while (args)
 	{
@@ -177,22 +177,31 @@ char	**save_args(t_list *args)
 			return (NULL);
 		}
 		i++;
-		args->next;
+		args = args->next;
 	}
+	/*i = 0;
+	while (out[i])
+	{
+		printf("%s\n", out[i]);
+		i++;
+	}*/
 	return (out);
 }
 
-static t_cmd	*get_cmd(t_arg_redir *cmd)
+static t_cmd	*get_cmd(t_arg_redir *cmd) //chekar out maloc
 {
 	t_cmd	*out;
 
 	out = malloc(sizeof(t_cmd));
 	if (!out)
 		return (NULL);
-	out->infile = check_restdin_here((t_list *)cmd->redir);
+	out->infile = check_restdin_heree((t_list *)cmd->redir);
 	if (out->infile < 0)
+	{
+		free(out);
 		return (NULL);
-	redirect_streams(out, (t_list *)cmd->redir);
+	}
+	redirect_streamss(out, (t_list *)cmd->redir);
 	out->args = save_args((t_list *)cmd->args);
 	if (!out->args)
 		return (NULL);
@@ -218,7 +227,6 @@ t_list	*cmd_redir(t_list *pipes)
 {
 	t_cmd	*cmd;
 	t_list	*out;
-	int	fdin;
 
 	out = NULL;
 	while (pipes)
@@ -226,9 +234,10 @@ t_list	*cmd_redir(t_list *pipes)
 		cmd = get_cmd((t_arg_redir*)pipes->content);
 		if (!cmd || !ft_lstadd_back_content(&out, cmd))
 		{
-			ft_lstfree(cmd, free_cmd); //crear free
-			return (1); //mensaje error
+			ft_lstfree(out, free_cmd); //crear free
+			return (NULL); //mensaje error
 		}
 		pipes = pipes->next;
 	}
+	return (out);
 }
