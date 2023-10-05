@@ -6,7 +6,7 @@
 #    By: orudek <orudek@student.42madrid.com>       +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/09/03 15:02:39 by iortega-          #+#    #+#              #
-#    Updated: 2023/10/02 15:16:24 by orudek           ###   ########.fr        #
+#    Updated: 2023/10/05 22:15:42 by orudek           ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -87,7 +87,7 @@ $(LIBFT_DIR)/$(LIBFT_NAME):
 clean:
 	@$(RM) -r $(OBJ_DIR)
 	@make -C $(LIBFT_DIR) fclean
-	@echo "Deleted obj files:\n\t$(OBJ)"
+	@echo "Deleted obj files"
 	@echo "Deleted $(LIBFT_NAME)"
 
 fclean: clean
