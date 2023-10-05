@@ -6,7 +6,7 @@
 /*   By: orudek <orudek@student.42madrid.com>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/11 22:37:17 by orudek            #+#    #+#             */
-/*   Updated: 2023/10/05 14:36:29 by orudek           ###   ########.fr       */
+/*   Updated: 2023/10/05 15:30:50 by orudek           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -164,10 +164,8 @@ static t_list	*str_to_arg(char *str)
 {
 	t_list	*out;
 	char	*arg;
-	int		i;
 
 	out = NULL;
-	i = 0;
 	while (1)
 	{
 		while (*str == ' ')
@@ -345,5 +343,4 @@ int main(int c, char **v)
 	free(vars);
 	return (0);
 }
-gcc -I include -I libft/include src/variables/* src/parse/*arg_redir.c src/parse/expand_variables.c src/error/* libft/libft.a
 */
