@@ -6,13 +6,13 @@
 /*   By: orudek <orudek@student.42madrid.com>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/17 17:24:03 by orudek            #+#    #+#             */
-/*   Updated: 2023/10/05 14:37:42 by orudek           ###   ########.fr       */
+/*   Updated: 2023/10/05 19:15:13 by orudek           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-char	**expand_vars_array(char **str, t_list *varlist)
+/*char	**expand_vars_array(char **str, t_list *varlist)
 {
 	int		i;
 	char	**output;
@@ -36,7 +36,7 @@ char	**expand_vars_array(char **str, t_list *varlist)
 	}
 	output[i] = 0;
 	return (output);
-}
+}*/
 
 t_list	*save_commands(char **array)
 {
@@ -60,20 +60,24 @@ t_list	*save_commands(char **array)
 t_list	*parse(char	*input, t_list *varlist)
 {
 	char	**split_pipes;
-	char	**expanded;
+	//char	**expanded;
 	t_list	*out;
 
 	if (!input)
 		return (NULL);
+	(void)(varlist);
 	split_pipes = split_pipe(input);
 	if (!split_pipes)
 		return (NULL);
 	t_list *arg_redir_lst = split_arg_redir(split_pipes);
-	expand_variables(arg_redir_lst, varlist);
+	out = cmd_redir(arg_redir_lst);
+	ft_array_free(split_pipes);
+	ft_lstfree(arg_redir_lst, free_arg_redir);
+	/*t_list *expanded_cmd = expand_vars_array(arg_redir_lst, varlist);
 	ft_array_free(split_pipes);
 	if (!expanded)
 		return (NULL);
 	out = save_commands(expanded);
-	ft_array_free(expanded);
+	ft_array_free(expanded);*/
 	return (out);
 }

@@ -6,7 +6,7 @@
 /*   By: orudek <orudek@student.42madrid.com>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/03 20:56:54 by orudek            #+#    #+#             */
-/*   Updated: 2023/10/05 14:32:32 by orudek           ###   ########.fr       */
+/*   Updated: 2023/10/05 19:14:39 by orudek           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,8 +48,6 @@ char	*get_arg(char **cmd)
 	int		len;
 	char	*out;
 
-	while (**cmd == ' ')
-		(*cmd)++;
 	if (**cmd == '>' || **cmd == '<')
 		len = redir_len(*cmd);
 	else
@@ -66,14 +64,16 @@ t_arg_redir	*get_cmd(char *cmd)
 {
 	t_arg_redir	*out;
 	char		*arg;
-	int			i;
 
 	out = new_arg_redir();
 	if (!out)
 		return ((void *)return_msg("Couldn't allocate memory", 2, 0));
-	i = 0;
 	while (*cmd)
 	{
+		while (*cmd == ' ')
+			cmd++;
+		if (!*cmd)
+			break;
 		arg = get_arg(&cmd);
 		if (!arg || ((arg[0] == '<' || arg[0] == '>')
 				&& !ft_lstadd_back_content(&out->redir, arg))
@@ -125,8 +125,6 @@ t_list	*split_arg_redir(char **cmd)
 	printf("List: (%p)\n", lst);
 }
 
-#include "t_var.h"
-int	expand_variables(t_list *cmd, t_list *varlist);
 int main()
 {
 	char *cmd[] =
@@ -162,6 +160,10 @@ int main()
 		return (0);
 	printf("expand_variables\n");
 	print_arg_redir(result);
+	t_list *nacho = cmd_redir(result);
+	print_cmd(nacho);
 	ft_lstfree(result, free_arg_redir);
+	ft_lstfree(nacho, free_cmd);
 	exit (0);
-}*/
+}
+*/

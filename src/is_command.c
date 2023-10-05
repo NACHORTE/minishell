@@ -6,7 +6,7 @@
 /*   By: iortega- <iortega-@student.42madrid.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/01 16:30:39 by iortega-          #+#    #+#             */
-/*   Updated: 2023/10/02 12:47:43 by iortega-         ###   ########.fr       */
+/*   Updated: 2023/10/04 15:31:21 by iortega-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -56,6 +56,7 @@ static int	local_declare(t_command *global)
 
 int	is_command(t_command *global)
 {
+	return (1);
 	if (!global->cmds || !((char **)global->cmds->content)[0])
 		return (0);
 	else if (local_declare(global))
