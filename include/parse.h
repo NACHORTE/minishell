@@ -6,7 +6,7 @@
 /*   By: orudek <orudek@student.42madrid.com>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/29 13:58:18 by orudek            #+#    #+#             */
-/*   Updated: 2023/10/05 19:14:50 by orudek           ###   ########.fr       */
+/*   Updated: 2023/10/05 20:52:38 by orudek           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,6 +34,7 @@ typedef struct s_cmd
 
 char	**split_pipe(char *s);
 int		expand_variables(t_list *cmd, t_list *varlist);
+int	format_variables(t_list *cmd);
 char	**split_args(char const *s, char c);
 t_list	*parse(char	*input, t_list *varlist);
 t_list	*cmd_redir(t_list *pipes);

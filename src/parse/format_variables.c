@@ -6,50 +6,22 @@
 /*   By: orudek <orudek@student.42madrid.com>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/11 22:37:17 by orudek            #+#    #+#             */
-/*   Updated: 2023/10/05 18:55:52 by orudek           ###   ########.fr       */
+/*   Updated: 2023/10/05 21:35:06 by orudek           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "parse.h"
 #include "t_var.h"
 
-static char	*format_redir(char *s)
-{
-	int	state;
-	char *out;
-	int	i;
-
-	*out = malloc(arg_len(s) + 1);
-	if (!*out)
-		return (NULL);
-	state = 0;
-	i = 0;
-	s--;
-	while (*++s)
-	{
-		if (state == 0 && (*s == '\'' || *s == '"'))
-		{
-			state = (*s == '\'') * 2 + (*s == '"');
-			continue ;
-		}
-		else if ((state == 1 && *s == '"') || (state == 2 && *s == '\''))
-		{
-			state = 0;
-			continue ;
-		}
-		out[i++] = *s;
-	}
-	out[i] = '\0';
-	return (out);
-}
-
 static int	arg_len(char *s)
 {
 	int	len;
+	int state;
 
+	state = 0;
 	len = 0;
-	str--;
-	while (*++str)
+	s--;
+	while (*++s)
 	{
 		if (state == 0 && (*s == '\'' || *s == '"'))
 		{
@@ -66,13 +38,75 @@ static int	arg_len(char *s)
 	return (len);
 }
 
+static int	redir_len(char *s)
+{
+	int	len;
+
+	len = 1;
+	if (s[0] == s[1])
+		len++;
+	if (s[1] == '<' || s[1] == '>')
+		s++;
+	s++;
+	while (*s == ' ')
+		s++;
+	len += arg_len(s);
+	return (len);
+}
+
+static void	cpy_redir(char *out, char *s)
+{
+	int	state;
+
+	*out++ = *s++;
+	if (s[-1] == s[0])
+		*out++ = *s++;
+	while (*s == ' ' || *s == '<' || *s == '>')
+		s++;
+	state = 0;
+	s--;
+	while (*++s)
+	{
+		if (state == 0 && (*s == '\'' || *s == '"'))
+		{
+			state = (*s == '\'') * 2 + (*s == '"');
+			continue ;
+		}
+		else if ((state == 1 && *s == '"') || (state == 2 && *s == '\''))
+		{
+			state = 0;
+			continue ;
+		}
+		*out++ = *s;
+	}
+	*out = '\0';
+}
+
+static char	*format_redir(char *s)
+{
+	char *out;
+
+	out = malloc(redir_len(s) + 1);
+	if (!out)
+		return (NULL);
+	cpy_redir(out, s);
+	if (((out[1] == '<' || out[1] == '>') && !out[2]) || !out[1])
+	{
+		free(out);
+		return ((void *)return_msg("syntax error near unexpected token",
+			2, 0));
+	}
+	return (out);
+}
+
+
 static char	*format_args(char *s)
 {
 	char *out;
-	int	i;
+	int	i[2];
 
-	*out = malloc(arg_len(s) + 1);
-	if (!*out)
+	out = malloc(arg_len(s) + 1);
+	if (!out)
 		return (NULL);
 	i[0] = 0;
 	i[1] = 0;
@@ -99,22 +133,22 @@ void	pop_arg(t_list **lst, t_list **aux)
 {
 	t_list	*previous_lst;
 	
-	if (aux == *lst)
+	if (*aux == *lst)
 	{
 		*lst = (*lst)->next;
 		ft_lstdelone(*aux, free);
-		aux = *lst;
+		*aux = *lst;
 		return ;
 	}
 	previous_lst = *lst;
 	while (previous_lst->next != *aux)
 		previous_lst = previous_lst->next;
-	previous_lst->next = aux->next;
-	ft_lstdelone(aux, free);
+	previous_lst->next = (*aux)->next;
+	ft_lstdelone(*aux, free);
 	*aux = previous_lst->next;
 }
 
-static int	format_list(t_list **lst, t_list *(*format_str)(char *))
+static int	format_list(t_list **lst, char *(*format_str)(char *))
 {
 	char	*formatted_str;
 	t_list	*aux;

@@ -6,7 +6,7 @@
 /*   By: orudek <orudek@student.42madrid.com>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/03 20:56:54 by orudek            #+#    #+#             */
-/*   Updated: 2023/10/05 19:14:39 by orudek           ###   ########.fr       */
+/*   Updated: 2023/10/05 21:37:36 by orudek           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -124,7 +124,7 @@ t_list	*split_arg_redir(char **cmd)
 	}
 	printf("List: (%p)\n", lst);
 }
-
+#include "t_var.h"
 int main()
 {
 	char *cmd[] =
@@ -132,7 +132,7 @@ int main()
 		"hola que tal $name1>>\"nacho es feo\"",
 		"Como estás hoy $name2\"<\" <<$variable<>   outfile",
 		"$=cat Makefile $name3",
-		"<<último >>comandito 2$empty  $$ \'$$\'",
+		"<<último >>comandito 2$empty \"\" $$ \'$$\'",
 		NULL
 	};
 	t_var var[] =
@@ -157,13 +157,16 @@ int main()
 	printf("[%s]\n",cmd[i]);
 	t_list *result = split_arg_redir(cmd);
 	if(!expand_variables(result, varlist))
-		return (0);
-	printf("expand_variables\n");
+		exit (0);
+	//printf("expand_variables\n");
+	//print_arg_redir(result);
+	if(!format_variables(result))
+		exit (0);
+	printf("format_variables\n");
 	print_arg_redir(result);
-	t_list *nacho = cmd_redir(result);
-	print_cmd(nacho);
+	//t_list *nacho = cmd_redir(result);
+	//print_cmd(nacho);
 	ft_lstfree(result, free_arg_redir);
-	ft_lstfree(nacho, free_cmd);
+	//ft_lstfree(nacho, free_cmd);
 	exit (0);
-}
-*/
+}*/
