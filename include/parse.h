@@ -6,7 +6,7 @@
 /*   By: iortega- <iortega-@student.42madrid.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/29 13:58:18 by orudek            #+#    #+#             */
-/*   Updated: 2023/10/04 15:35:05 by iortega-         ###   ########.fr       */
+/*   Updated: 2023/10/05 15:17:51 by iortega-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,7 +23,7 @@ typedef struct s_arg_redir
 } t_arg_redir;
 
 t_arg_redir *new_arg_redir(void);
-void	free_arg_redir(void *arg_redir);
+void		free_arg_redir(void *arg_redir);
 
 typedef struct s_cmd
 {
@@ -33,7 +33,7 @@ typedef struct s_cmd
 } t_cmd;
 
 char	**split_pipe(char *s);
-char	*expand_variables(char *str, t_list *varlist);
+int		expand_variables(t_list *cmd, t_list *varlist);
 char	**split_args(char const *s, char c);
 t_list	*parse(char	*input, t_list *varlist);
 t_list	*cmd_redir(t_list *pipes);

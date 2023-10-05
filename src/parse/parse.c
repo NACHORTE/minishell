@@ -6,7 +6,7 @@
 /*   By: iortega- <iortega-@student.42madrid.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/17 17:24:03 by orudek            #+#    #+#             */
-/*   Updated: 2023/10/04 20:06:04 by iortega-         ###   ########.fr       */
+/*   Updated: 2023/10/05 18:53:08 by iortega-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -57,6 +57,18 @@ t_list	*save_commands(char **array)
 	return (output);
 }
 
+void print_arg(t_list *arg_redir_lst)
+{
+	t_list *aux;
+
+	aux = (t_list *)((t_arg_redir *)arg_redir_lst->content)->args;
+	while (aux)
+	{
+		printf("%s\n", (char *)aux->content);
+		aux = aux->next;
+	}
+}
+
 t_list	*parse(char	*input, t_list *varlist)
 {
 	char	**split_pipes;
@@ -70,6 +82,13 @@ t_list	*parse(char	*input, t_list *varlist)
 	if (!split_pipes)
 		return (NULL);
 	t_list *arg_redir_lst = split_arg_redir(split_pipes);
+	//print_arg(arg_redir_lst);
+	if (!expand_variables(arg_redir_lst, varlist))
+	{
+		ft_array_free(split_pipes);
+		ft_lstfree(arg_redir_lst, free_arg_redir);
+		return (NULL);
+	}	
 	out = cmd_redir(arg_redir_lst);
 	ft_array_free(split_pipes);
 	ft_lstfree(arg_redir_lst, free_arg_redir);

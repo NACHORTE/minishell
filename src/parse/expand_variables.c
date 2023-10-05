@@ -3,22 +3,29 @@
 /*                                                        :::      ::::::::   */
 /*   expand_variables.c                                 :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: orudek <orudek@student.42madrid.com>       +#+  +:+       +#+        */
+/*   By: iortega- <iortega-@student.42madrid.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/11 22:37:17 by orudek            #+#    #+#             */
-/*   Updated: 2023/10/03 13:33:27 by orudek           ###   ########.fr       */
+/*   Updated: 2023/10/05 15:22:04 by iortega-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "parse.h"
 #include "t_var.h"
 
+static int	is_end_of_var(char c)
+{
+	if (c == ' ' || c == '\"' || c == '\'' || c == '=' || c == '<' || c == '>'
+		|| c == '\0')
+		return (1);
+	return (0);
+}
+
 static char	find_var(char **var, char *str, int len, t_list *list)
 {
 	int	i;
 
-	if (*str == '$')
-		str++;
+	str++;
 	while (list)
 	{
 		i = -1;
@@ -34,30 +41,17 @@ static char	find_var(char **var, char *str, int len, t_list *list)
 		}
 		list = list->next;
 	}
-	*var = NULL;
 	return (0);
 }
 
-static int	arg_len(char *s, int *len, t_list *varlist)
+static int	var_len(char *s, int *len, t_list *varlist)
 {
 	int		i;
 	char	*var;
 
 	i = 0;
-	while (s[++i])
-	{
-		if (s[i] == ' ' || s[i] == '"' || s[i] == '\'' || s[i] == '$')
-		{
-			if (i == 1 && s[i] == '$')
-				i++;
-			break ;
-		}
-	}
-	if (i == 1)
-	{
-		(*len) += 1;
-		return (i);
-	}
+	while (s[i] && !is_end_of_var(s[i]))
+		i++;
 	if (!find_var(&var, s, i - 1, varlist))
 		return (i);
 	*len += ft_strlen(var);
@@ -77,8 +71,8 @@ static int	expanded_len(char *str, t_list *varlist)
 			state = (*str == '\'') * 2 + (*str == '"');
 		else if ((state == 1 && *str == '"') || (state == 2 && *str == '\''))
 			state = 0;
-		if (state != 2 && *str == '$')
-			str += arg_len(str, &len, varlist);
+		if (state != 2 && *str == '$' && !is_end_of_var(*(str + 1)))
+			str += var_len(str, &len, varlist);
 		else
 		{
 			len++;
@@ -88,7 +82,7 @@ static int	expanded_len(char *str, t_list *varlist)
 	return (len);
 }
 
-static int	dup_arg(char *out, char **s, t_list *varlist)
+static int	cat_arg(char *out, char **s, t_list *varlist)
 {
 	int		len;
 	int		j;
@@ -96,20 +90,8 @@ static int	dup_arg(char *out, char **s, t_list *varlist)
 	char	*var;
 
 	len = 0;
-	i = arg_len(*s, &len, varlist);
-	if (len == 0)
-	{
-		(*s) += i;
-		return (0);
-	}
-	if (i == 1)
-	{
-		(*s) += i;
-		*out = '$';
-		return (1);
-	}
-	if (!find_var(&var, *s, i - 1, varlist))
-		return (i);
+	i = var_len(*s, &len, varlist);
+	find_var(&var, *s, i - 1, varlist);
 	j = -1;
 	while (++j < len)
 		*out++ = *var++;
@@ -117,19 +99,17 @@ static int	dup_arg(char *out, char **s, t_list *varlist)
 	return (len);
 }
 
-char 
-//modifies the t_arg_redir struct, and returns 1 if ok and 0 if failed
-char	expand_variables(t_arg_redir *cmd, t_list *varlist)
+static char	*get_expanded_str(char *str, t_list *varlist)
 {
 	char	*out;
 	int		len;
 	int		i;
 	int		state;
 
-	if (expand_vars(&cmd->args) == 0)
-		return (0);
-	if (expand_redirs(&cmd->redir) == 0)
-		return (0);
+	len = expanded_len(str, varlist);
+	out = malloc(len + 1);
+	if (!out)
+		return (NULL);
 	i = 0;
 	state = 0;
 	while (i < len)
@@ -138,8 +118,8 @@ char	expand_variables(t_arg_redir *cmd, t_list *varlist)
 			state = (*str == '\'') * 2 + (*str == '"');
 		else if ((state == 1 && *str == '"') || (state == 2 && *str == '\''))
 			state = 0;
-		if (state != 2 && *str == '$')
-			i += dup_arg(&out[i], &str, varlist);
+		if (state != 2 && *str == '$' && !is_end_of_var(*(str + 1)))
+			i += cat_arg(&out[i], &str, varlist);
 		else
 			out[i++] = *str++;
 	}
@@ -147,7 +127,166 @@ char	expand_variables(t_arg_redir *cmd, t_list *varlist)
 	return (out);
 }
 
-/*COMENTAR A PARTIR DE AQUI*//*
+//////////////////////////////////////////////////////////////////////////////////////
+static int	arg_len(char *s)
+{
+	int	i;
+	int	state;
+
+	i = -1;
+	state = 0;
+	while (s[++i]
+		&& (state || (s[i] != ' ' && s[i] != '<' && s[i] != '>')))
+	{
+		if (state == 0 && (s[i] == '\'' || s[i] == '"'))
+			state = (s[i] == '\'') * 2 + (s[i] == '"');
+		else if ((state == 1 && s[i] == '"') || (state == 2 && s[i] == '\''))
+			state = 0;
+	}
+	return (i);
+}
+
+static char	*get_arg(char **cmd)
+{
+	int		len;
+	char	*out;
+
+	len = arg_len(*cmd);
+	out = malloc(sizeof(char) * (len + 1));
+	if (!out)
+		return (NULL);
+	ft_strlcpy(out, *cmd, len + 1);
+	(*cmd) += len;
+	return (out);
+}
+
+static t_list	*str_to_arg(char *str)
+{
+	t_list	*out;
+	char	*arg;
+
+	out = NULL;
+	while (1)
+	{
+		while (*str == ' ')
+			str++;
+		arg = get_arg(&str);
+		if (!arg || !ft_lstadd_back_content(&out, arg))
+		{
+			ft_lstfree(out, free);
+			if (arg)
+				free(arg);
+			return ((void *)return_msg("Couldn't allocate memory", 2, 0));
+		}
+		if (!*str)
+			break ;
+	}
+	return (out);
+}
+//////////////////////////////////////////////////////////////////////////////////////
+
+static int	redir_format_ok(char *s)
+{
+	int	state;
+
+	state = 0;
+	if (*s != '<' && *s != '>')
+		return (0);
+	s++;
+	if (*s == '<' || *s == '>')
+		s++;
+	while (*s == ' ')
+		s++;
+	while (*s)
+	{
+		if (state == 0 && (*s == '\'' || *s == '"'))
+			state = (*s == '\'') * 2 + (*s == '"');
+		else if ((state == 1 && *s == '"') || (state == 2 && *s == '\''))
+			state = 0;
+		if (state == 0 && *s == ' ')
+			return (return_msg("Ambiguous redirect", 2, 0));
+		s++;
+	}
+	return (1);
+}
+
+static t_list	*str_to_redir(char *str)
+{
+	t_list	*out;
+	char	*new_str;
+
+	if (!redir_format_ok(str))
+		return (NULL);
+	new_str = ft_strdup(str);
+	if (!new_str)
+		return (NULL);
+	out = NULL;
+	if (!ft_lstadd_back_content(&out, new_str))
+		free(new_str);
+	return (out);
+}
+//////////////////////////////////////////////////////////////////////////////////////
+static t_list	*expand_str(char *name, t_list *varlist,
+	t_list *(*str_to_lst)(char *))
+{
+	char	*expanded_str;
+	t_list	*out;
+
+	expanded_str = get_expanded_str(name, varlist);
+	if (!expanded_str)
+		return (NULL);
+	out = str_to_lst(expanded_str);
+	free(expanded_str);
+	if (!out)
+		return (NULL);
+	return (out);
+}
+
+static int	expand_list(t_list **lst, t_list *varlist,
+	t_list *(*str_to_lst)(char *))
+{
+	t_list	*last;
+	t_list	*new_lst;
+	t_list	*aux;
+	t_list	*new_lst_last;
+
+	last = NULL;
+	aux = *lst;
+	while (aux)
+	{
+		new_lst = expand_str((char *)aux->content, varlist, str_to_lst);
+		if (!new_lst)
+			return (0);
+		new_lst_last = ft_lstlast(new_lst);
+		new_lst_last->next = aux->next;
+		if (last)
+			last->next = new_lst;
+		else
+			*lst = new_lst;
+		ft_lstdelone(aux, free);
+		last = new_lst_last;
+		aux = new_lst_last->next;
+	}
+	return (1);
+}
+
+int	expand_variables(t_list *cmd, t_list *varlist)
+{
+	t_arg_redir	*aux;
+
+	while (cmd)
+	{
+		aux = (t_arg_redir *)cmd->content;
+		if (!expand_list(&aux->args, varlist, str_to_arg)
+			|| !expand_list(&aux->redir, varlist, str_to_redir))
+			return (0);
+		cmd = cmd->next;
+	}
+	return (1);
+}
+
+/*COMENTAR A PARTIR DE AQUI*/
+/*
 #include "t_var.h"
 
 void print_list(t_list *list)
@@ -190,7 +329,7 @@ int main(int c, char **v)
 	vars[3]->content = ft_strdup("content3");
 	vars[4]->name = ft_strdup("name4");
 	vars[4]->content = ft_strdup("content4");
-	
+
 	set_variable(&local, vars[0]->name, vars[0]->content);
 	set_variable(&local, vars[1]->name, vars[1]->content);
 	set_variable(&local, vars[2]->name, vars[2]->content);
@@ -198,10 +337,11 @@ int main(int c, char **v)
 	set_variable(&env, vars[4]->name, vars[4]->content);
 	print_list(local);
 	print_list(env);
-	char *expanded = expand_variables(v[1], local, env);
+	char *expanded = expand_variables(v[1], local);
 	printf("expanded: \"%s\"\n",expanded);
 	ft_lstfree(local, free_var);
 	ft_lstfree(env, free_var);
 	free(vars);
 	return (0);
-}*/
+}
+*/

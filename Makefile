@@ -6,7 +6,7 @@
 #    By: iortega- <iortega-@student.42madrid.com    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/09/03 15:02:39 by iortega-          #+#    #+#              #
-#    Updated: 2023/10/04 15:37:21 by iortega-         ###   ########.fr        #
+#    Updated: 2023/10/05 15:20:23 by iortega-         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -68,7 +68,7 @@ SRC_FILES := error/return_msg.c\
 	parse/parse.c\
 	parse/split_pipe.c\
 	main.c\
-	#parse/expand_variables.c
+	parse/expand_variables.c
 
 SRC := $(addprefix $(SRC_DIR)/,$(SRC_FILES))
 OBJ := $(SRC:$(SRC_DIR)/%.c=$(OBJ_DIR)/%.o)
