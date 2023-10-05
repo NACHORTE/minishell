@@ -6,7 +6,7 @@
 /*   By: orudek <orudek@student.42madrid.com>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/11 22:37:17 by orudek            #+#    #+#             */
-/*   Updated: 2023/10/05 20:38:30 by orudek           ###   ########.fr       */
+/*   Updated: 2023/10/05 21:44:08 by orudek           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -285,7 +285,8 @@ int	expand_variables(t_list *cmd, t_list *varlist)
 	return (1);
 }
 
-/*COMENTAR A PARTIR DE AQUI*//*
+/*COMENTAR A PARTIR DE AQUI*/
+/*
 #include "t_var.h"
 
 void print_list(t_list *list)

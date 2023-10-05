@@ -6,7 +6,7 @@
 /*   By: orudek <orudek@student.42madrid.com>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/17 17:24:03 by orudek            #+#    #+#             */
-/*   Updated: 2023/10/05 21:40:19 by orudek           ###   ########.fr       */
+/*   Updated: 2023/10/05 21:45:38 by orudek           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,6 +29,18 @@ t_list	*save_commands(char **array)
 		array++;
 	}
 	return (output);
+}
+
+void print_arg(t_list *arg_redir_lst)
+{
+	t_list *aux;
+
+	aux = (t_list *)((t_arg_redir *)arg_redir_lst->content)->args;
+	while (aux)
+	{
+		printf("%s\n", (char *)aux->content);
+		aux = aux->next;
+	}
 }
 
 t_list	*parse(char	*input, t_list *varlist)

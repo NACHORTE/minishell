@@ -6,7 +6,7 @@
 /*   By: iortega- <iortega-@student.42madrid.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/01 15:59:47 by iortega-          #+#    #+#             */
-/*   Updated: 2023/10/01 16:26:01 by iortega-         ###   ########.fr       */
+/*   Updated: 2023/10/05 15:42:49 by iortega-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,14 +37,16 @@ static int	is_assignation(char *cmd)
 	return (flag);
 }
 
-int	is_allasignation(char **cmds)
+int	is_allasignation(t_cmd *cmds)
 {
 	int	i;
+	char	**args;
 
 	i = 0;
-	while (cmds[i])
+	args = (char **)cmds->args;
+	while (args[i])
 	{
-		if (!is_assignation(cmds[i]))
+		if (!is_assignation(args[i]))
 			return (0);
 		i++;
 	}
@@ -88,7 +90,7 @@ static int	set_assignation(t_command *global, int pos)
 
 	i = 0;
 	size = 0;
-	while (((char **)global->cmds->content)[pos][i] != '=')
+	while (((char **)((t_cmd *)global->cmds->content)->args)[pos][i] != '=')
 	{
 		size++;
 		i++;
@@ -97,8 +99,8 @@ static int	set_assignation(t_command *global, int pos)
 	name = malloc(sizeof(char) * (size + 1));
 	if (!name)
 		return (0);
-	ft_strlcpy(name, ((char **)global->cmds->content)[pos], size + 1);
-	content = get_content((char **)global->cmds->content, i, pos, name);
+	ft_strlcpy(name, ((char **)((t_cmd *)global->cmds->content)->args)[pos], size + 1);
+	content = get_content(((char **)((t_cmd *)global->cmds->content)->args), i, pos, name);
 	if (!content)
 		return (0);
 	set_variable(&(global->varlist), name, content, DEFAULT_VAR);
@@ -112,7 +114,7 @@ int	save_variables(t_command *global)
 	int	pos;
 
 	pos = 0;
-	while (((char **)global->cmds->content)[pos])
+	while (((char **)((t_cmd *)global->cmds->content)->args)[pos])
 	{
 		if (!set_assignation(global, pos))
 			printf("No memory for new variable.\n");
