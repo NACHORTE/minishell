@@ -6,7 +6,7 @@
 /*   By: orudek <orudek@student.42madrid.com>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/11 22:37:17 by orudek            #+#    #+#             */
-/*   Updated: 2023/10/05 15:30:50 by orudek           ###   ########.fr       */
+/*   Updated: 2023/10/05 16:08:54 by orudek           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -185,7 +185,7 @@ static t_list	*str_to_arg(char *str)
 }
 //////////////////////////////////////////////////////////////////////////////////////
 
-static int	redir_format_ok(char *s)
+/*static int	redir_format_ok(char *s)
 {
 	int	state;
 
@@ -208,15 +208,15 @@ static int	redir_format_ok(char *s)
 		s++;
 	}
 	return (1);
-}
+}*/
 
 static t_list	*str_to_redir(char *str)
 {
 	t_list	*out;
 	char	*new_str;
 
-	if (!redir_format_ok(str))
-		return (NULL);
+	//if (!redir_format_ok(str))
+	//	return (NULL);
 	new_str = ft_strdup(str);
 	if (!new_str)
 		return (NULL);
