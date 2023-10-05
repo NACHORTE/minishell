@@ -6,7 +6,7 @@
 /*   By: orudek <orudek@student.42madrid.com>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/03 20:56:54 by orudek            #+#    #+#             */
-/*   Updated: 2023/10/03 23:43:38 by orudek           ###   ########.fr       */
+/*   Updated: 2023/10/05 14:32:32 by orudek           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -99,6 +99,8 @@ t_list	*split_arg_redir(char **cmd)
 		if (!new_cmd || !ft_lstadd_back_content(&out, new_cmd))
 		{
 			ft_lstfree(out, free_arg_redir);
+			if (new_cmd)
+				free_arg_redir(new_cmd);
 			return ((void *)return_msg("Couldn't allocate memory", 2, 0));
 		}
 		cmd++;
@@ -106,8 +108,7 @@ t_list	*split_arg_redir(char **cmd)
 	return (out);
 }
 
-/*
-void print_arg_redir(t_list *lst)
+/*void print_arg_redir(t_list *lst)
 {
 	for (lst; lst; lst = lst->next)
 	{
@@ -124,21 +125,42 @@ void print_arg_redir(t_list *lst)
 	printf("List: (%p)\n", lst);
 }
 
+#include "t_var.h"
+int	expand_variables(t_list *cmd, t_list *varlist);
 int main()
 {
 	char *cmd[] =
 	{
-		"hola que tal >>\"nacho es feo\"",
-		"Como estás hoy \"<\" <<$variable<>   outfile",
-		"cat Makefile",
-		"<<último >>comandito",
+		"hola que tal $name1>>\"nacho es feo\"",
+		"Como estás hoy $name2\"<\" <<$variable<>   outfile",
+		"$=cat Makefile $name3",
+		"<<último >>comandito 2$empty  $$ \'$$\'",
 		NULL
+	};
+	t_var var[] =
+	{
+		{"name1","una string con muchas cosas",1},	
+		{"name2","content2",1},	
+		{"name3","content3",1},
+		{"variable","nachoesunfeo",1},
+		{"name4","",1},
+		NULL
+	};
+	t_list varlist[]=
+	{
+		{&var[0], &varlist[1]},	
+		{&var[1], &varlist[2]},	
+		{&var[2], &varlist[3]},	
+		{&var[3], NULL}	
 	};
 	int i=0;
 	for (i;cmd[i];i++)
 		printf("[%s]\n",cmd[i]);
 	printf("[%s]\n",cmd[i]);
 	t_list *result = split_arg_redir(cmd);
+	if(!expand_variables(result, varlist))
+		return (0);
+	printf("expand_variables\n");
 	print_arg_redir(result);
 	ft_lstfree(result, free_arg_redir);
 	exit (0);

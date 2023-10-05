@@ -6,7 +6,7 @@
 /*   By: orudek <orudek@student.42madrid.com>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/17 17:24:03 by orudek            #+#    #+#             */
-/*   Updated: 2023/10/03 12:50:25 by orudek           ###   ########.fr       */
+/*   Updated: 2023/10/05 14:37:42 by orudek           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -69,7 +69,7 @@ t_list	*parse(char	*input, t_list *varlist)
 	if (!split_pipes)
 		return (NULL);
 	t_list *arg_redir_lst = split_arg_redir(split_pipes);
-	t_list *expanded_cmd = expand_vars_array(arg_redir_lst, varlist);
+	expand_variables(arg_redir_lst, varlist);
 	ft_array_free(split_pipes);
 	if (!expanded)
 		return (NULL);
