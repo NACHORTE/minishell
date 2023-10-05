@@ -6,7 +6,7 @@
 /*   By: iortega- <iortega-@student.42madrid.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/01 16:30:39 by iortega-          #+#    #+#             */
-/*   Updated: 2023/10/02 12:47:43 by iortega-         ###   ########.fr       */
+/*   Updated: 2023/10/05 16:14:10 by iortega-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,7 +46,7 @@ int	check_closed_quotes(char *input)
 static int	local_declare(t_command *global)
 {
 	if (ft_lstsize(global->cmds) == 1
-		&& is_allasignation((char **)global->cmds->content))
+		&& is_allasignation((t_cmd *)global->cmds->content))
 	{
 		save_variables(global);
 		return (1);
@@ -56,12 +56,12 @@ static int	local_declare(t_command *global)
 
 int	is_command(t_command *global)
 {
-	if (!global->cmds || !((char **)global->cmds->content)[0])
+	if (!global->cmds || !((char **)((t_cmd *)global->cmds->content)->args)[0])
 		return (0);
 	else if (local_declare(global))
 		return (0);
-	else if (!redirect_ok(global->cmds))
-		return (0);
+	/*else if (!redirect_ok(global->cmds))
+		return (0);*/
 	else
 		return (1);
 }

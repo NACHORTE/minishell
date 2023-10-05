@@ -1,38 +1,25 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   is_varname_ok.c                                    :+:      :+:    :+:   */
+/*   free_arg_redir.c                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: orudek <orudek@student.42madrid.com>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2023/09/24 18:28:01 by orudek            #+#    #+#             */
-/*   Updated: 2023/10/05 14:37:30 by orudek           ###   ########.fr       */
+/*   Created: 2023/10/03 22:20:59 by orudek            #+#    #+#             */
+/*   Updated: 2023/10/04 12:46:10 by orudek           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "t_var.h"
+#include "parse.h"
 
-static int	is_allowed_char(char c)
+void	free_arg_redir(void *arg_redir)
 {
-	if (c == '_'
-		|| ft_isdigit(c)
-		|| ft_isalpha(c))
-		return (1);
-	return (0);
-}
+	t_arg_redir *aux;
 
-int	is_varname_ok(const char *name)
-{
-	if (!name)
-		return (0);
-	if (!ft_isalpha(*name) && *name != '_')
-		return (0);
-	name++;
-	while (*name)
-	{
-		if (!is_allowed_char(*name))
-			return (0);
-		name++;
-	}
-	return (1);
+	if (!arg_redir)
+		return ;
+	aux = (t_arg_redir *)arg_redir;
+	ft_lstfree(aux->args, free);
+	ft_lstfree(aux->redir, free);
+	free(arg_redir);
 }

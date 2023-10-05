@@ -6,12 +6,17 @@
 /*   By: iortega- <iortega-@student.42madrid.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/20 13:56:41 by oscar             #+#    #+#             */
-/*   Updated: 2023/10/02 13:04:47 by iortega-         ###   ########.fr       */
+/*   Updated: 2023/10/04 18:50:34 by iortega-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "exec_cmd.h"
+#include "minishell.h"
+#include <stdlib.h>
+#include <unistd.h>
 #include <stdio.h>
+#include <fcntl.h>
+#include <errno.h>
 #include <sys/wait.h>
 
 static void	check_doublestdin_here(char *character, int *fd)
@@ -51,23 +56,32 @@ int	check_restdin_here(char **input)
 }
 
 //[ ] check open files and leaks
-int	exec_one_builtin(char **cmd, t_list **varlist, int *status)
+int	exec_one_builtin(t_cmd *cmd, t_list **varlist, int *status)
 {
 	int		std_in;
 	int		std_out;
 	char	**cmd_parsed;
 
-	cmd_parsed = parse_cmd(cmd);
+	//cmd_parsed = parse_cmd(cmd);
+	cmd_parsed = (char **)cmd->args;
 	if (!is_builtin(cmd_parsed[0]))
 	{
-		ft_array_free(cmd_parsed);
+		//ft_array_free(cmd_parsed);
 		return (0);
 	}
 	std_in = dup(0);
 	std_out = dup(1);
-	redirect_streams(0, 1, cmd);
+	//redirect_streams(0, 1, cmd);
+	if (cmd->infile > 1)
+		dup2(cmd->infile, 0);
+	if (cmd->outfile > 1)
+		dup2(cmd->outfile, 1);
 	*status = exec_builtin(cmd_parsed, varlist);
-	ft_array_free(cmd_parsed);
+	//ft_array_free(cmd_parsed);
+	if (cmd->infile > 1)
+		close(cmd->infile);
+	if (cmd->outfile > 1)
+		close(cmd->outfile);
 	dup2(std_in, 0);
 	dup2(std_out, 1);
 	close(std_in);
@@ -80,14 +94,14 @@ int	exec_one_builtin(char **cmd, t_list **varlist, int *status)
     calls the child process setting infile=stdin, outfile=stdout
     If the command contains redirections, they will be handled inside the child
 */
-int	exec_one_cmd(char **cmd, t_list **varlist)
+int	exec_one_cmd(t_cmd *cmd, t_list **varlist)
 {
 	int	status;
-	int	fd;
+	//int	fd;
 	int	pid;
 
-	fd = check_restdin_here(cmd);
-	if (fd < 0)
+	//fd = check_restdin_here(cmd);
+	if (cmd->infile < 0)
 		return (1);
 	if (exec_one_builtin(cmd, varlist, &status))
 		return (status);
@@ -98,9 +112,11 @@ int	exec_one_cmd(char **cmd, t_list **varlist)
 		return (1);
 	}
 	if (pid == 0)
-		child(fd, 1, cmd, varlist);
-	if (fd > 0)
-		close(fd);
+		child(cmd->infile, cmd->outfile, cmd->args, varlist);
+	if (cmd->infile > 0)
+		close(cmd->infile);
+	if (cmd->outfile > 1)
+		close(cmd->outfile);
 	wait(&status);
 	return (WEXITSTATUS(status));
 }
@@ -133,6 +149,7 @@ int	exec_one_cmd(char **cmd, t_list **varlist)
 		[ ] close files (child)
 		[ ] norminette
 */
+
 int	exec_cmd(t_list *cmds, t_list **varlist)
 {
 	int		status;
@@ -144,7 +161,7 @@ int	exec_cmd(t_list *cmds, t_list **varlist)
 		return (1);
 	}
 	if (ft_lstsize(cmds) == 1)
-		status = exec_one_cmd((char **)cmds->content, varlist);
+		status = exec_one_cmd((t_cmd *)cmds->content, varlist);
 	else
 		status = exec_multi_cmd(cmds, varlist);
 	signal(SIGINT, &new_line);

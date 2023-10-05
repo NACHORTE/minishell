@@ -6,7 +6,7 @@
 /*   By: orudek <orudek@student.42madrid.com>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/13 14:28:51 by orudek            #+#    #+#             */
-/*   Updated: 2023/09/17 17:26:10 by orudek           ###   ########.fr       */
+/*   Updated: 2023/10/05 19:53:46 by orudek           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,7 +42,7 @@ static char	*get_string(char **s)
 	if (**s == '|')
 		(*s)++;
 	len = get_string_len(*s);
-	string = malloc(len);
+	string = malloc(len + 1);
 	if (string == NULL)
 		return (NULL);
 	i = -1;

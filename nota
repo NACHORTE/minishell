@@ -1,0 +1,188 @@
+PARSE
+1. separar por pipe
+	char *std → char **cmds
+2. Separar args de redirecciones 
+					╔═══════════════════════════════╗
+					║	t_list 						║
+					║	├─	t_list					║
+	char **cmds →	║	│	└─	char *args			║
+					║	└─	t_list					║
+					║		└─	char *redirecciones	║
+					╚═══════════════════════════════╝
+	╔═══════════════════════════════════════════════════════════════════════╗
+	║	variable=infile														║
+	║	variable2=">outfile"												║
+	║	variable3="cat Makefile | grep all | wc -l"							║
+	║	cat <$variable "<"algo << > hola ">outfile" $variable2 $variable3	║
+	║	variables:															║
+	║		cat																║
+	║		"<"algo															║
+	║		hola															║
+	║		">outfile"														║
+	║		$variable2														║
+	║		$variable3														║
+	║	redirecciones														║
+	║		<$variable														║
+	║		<<																║
+	║		> hola															║
+	╚═══════════════════════════════════════════════════════════════════════╝
+3. Expandir variables 
+	($=tiene que guardarse bien)
+	($$ tiene que funcionar)
+	(si una variable tiene muchas palabras se añaden mas argumentos)
+	(si una redireccion tiene una var con muchas palabras es error "minishell: $var: ambiguous redirect")
+	╔═══════════════════════════════╗	╔═══════════════════════════════╗
+	║	t_list 						║	║	t_list 						║
+	║	├─	t_list					║	║	├─	t_list					║
+	║	│	└─	char *args			║ → ║	│	└─	char *args			║
+	║	└─	t_list					║	║	└─	t_list					║
+	║		└─	char *redirecciones	║	║		└─	char *redirecciones	║
+	╚═══════════════════════════════╝	╚═══════════════════════════════╝
+	╔═══════════════════╗
+	║	variables:		║
+	║		cat			║
+	║		"<"algo		║
+	║		hola		║
+	║		">outfile"	║
+	║		>outfile	║
+	║		cat			║
+	║		Makefile	║
+	║		|			║
+	║		grep		║
+	║		all			║
+	║		|			║
+	║		wc			║
+	║		-l			║
+	║	redirecciones	║
+	║		<infile		║
+	║		<<			║
+	║		> hola		║
+	╚═══════════════════╝
+4. quitar comillas y juntar redirecciones.
+	╔═══════════════════════════════╗	╔═══════════════════════════════╗
+	║	t_list 						║	║	t_list 						║
+	║	├─	t_list					║	║	├─	t_list					║
+	║	│	└─	char *args			║ → ║	│	└─	char *args			║
+	║	└─	t_list					║	║	└─	t_list					║
+	║		└─	char *redirecciones	║	║		└─	char *redirecciones	║
+	╚═══════════════════════════════╝	╚═══════════════════════════════╝
+	╔═══════════════════╗
+	║	variables:		║
+	║		cat			║
+	║		<algo		║
+	║		hola		║
+	║		>outfile	║
+	║		>outfile	║
+	║		cat			║
+	║		Makefile	║
+	║		|			║
+	║		grep		║
+	║		all			║
+	║		|			║
+	║		wc			║
+	║		-l			║
+	║	redirecciones	║
+	║		<infile		║
+	║		<<			║
+	║		> hola		║
+	╚═══════════════════╝
+REDIRECT_STREAMS
+5. Crear struct del COMANDO
+	╔═══════════════════╗
+	║	t_list 			║
+	║	├─	char **args	║
+	║	├─	int intfile	║
+	║	└─	int outfile	║
+	╚═══════════════════╝
+6. guardar variables en cmd
+	╔═══════════════════╗
+	║	t_list 			║ → char **args
+	║	└─	char *args	║
+	╚═══════════════════╝
+7. hacer redirecciones para cada COMANDO
+	╔═══════════════════════════════╗	╔═══════════════════╗
+	║	t_list 						║	║	t_list 			║
+	║	├─	t_list					║	║	├─	char **args	║
+	║	│	└─	char *args			║ → ║	├─	int intfile	║
+	║	└─	t_list					║	║	└─	int outfile	║
+	║		└─	char *redirecciones	║	╚═══════════════════╝
+	╚═══════════════════════════════╝	
+	while (redirecciones)
+	{
+		if ("<")
+			close(infile)
+			infile = open(O_RDONLY)
+		elif ("<<")
+			close(infile)
+			infile = heredoc;
+		elif (">")
+			close(outfile)
+			outfile = open(O_WRONLY | O_CREAT | O_TRUNC)
+		elif (">>")
+			close(outfile)
+			outfile = open(O_WRONLY | O_CREAT | O_APPEND)
+	}
+	if (infile == -1)
+		infile = 0;
+	if (outfile == -1)
+		outfile = 1;
+EXEC_CMD
+8. executar comando
+	8.1- Comprobar si es uno o varios
+		8.1.1- Si es uno
+			8.1.1.1- Si es asignación (todos los arg son name=content)
+				- name solo puede ser "[a-zA-Z_][a-zA-Z0-9_]*"
+				- Guardar todos los nombres en varlist
+				- Si alguna asignación está mal status=1 y continue
+			8.1.1.2- Si es builtin
+				- quitar las asignaciones del principio
+				- Se guardan los antiguos stdin stdout
+				- Se redirigen los streams
+				- Executar builtin
+				- Volver a poner antiguos streams
+			8.1.1.1- Si es normal
+				- Se executa un fork
+				- @CHILD
+		8.1.2- Si son muchos
+			- primero crear una pipe
+			- Si el primer cmd tiene outfile cerrar pipe_write #CREO QUE SI CIERRO PIPE_WRITE, PIPE_READ SIEMPRE LEE 0
+			- else cmd[0].outfile = pipe_write
+			- Hacer un fork
+			- @CHILD
+			- Cerrar pipe_write en parent
+			- Bucle hasta el penultimo cmd
+				* Crear pipe
+				* Si cmd[i] tiene outfile cerrar pipe_write
+				* else cmd[i].outfile = pipe_write
+				* Si cmd[i] tiene infile, cerrar pipe_read de la pipe anterior
+				* else cmd[i].infile = last_pipe_read
+				* Hacer un fork
+				* @CHILD
+				* Cerrar pipes en parent menos last_pipe_read
+			- Si el último cmd tiene infile cerrar last_pipe_read
+			- Else cmd[last].infile = last_pipe_read
+			- Hacer un fork
+			- @CHILD
+			- Cerrar pipes
+			- Wait y guardar status de la última
+9. Actualizar exit status "$?"
+10. Actualizar last command executed "_"
+@CHILD- Executa el comando como en pipex
+	@.1 Checkear si es una asignación (solo name1=content1 name2=content2 ...)
+		* Terminar child si lo es.
+	@.2 quitar las asignaciones del principio
+		(name1=cont1 name2=cont2 ... cmd arg1 arg2 ...)
+	@.3 Executar @BUILTIN si es builtin
+		* Terminar child si lo es.
+	@.4 Hacer las redirecciones que están dentro de la struct
+		dup2(infile, 0);
+		dup2(outfile,1)
+	@.5 Conseguir path (sin mallocs puede estar bien)
+	@.6 Buscar el comando con access(F_OK)
+		* Primero testear si tiene ./ ../ .
+			** Si no se encuentra el file exit cmd not found
+		* Luego probar todos los paths
+			** Si no se encuentra se pone ./ y se prueba otra vez
+		* Si no lo encuentra exit cmd not found
+	@.7 executar el comando execve
+		* if no hace excve, exit perror

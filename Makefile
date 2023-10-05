@@ -6,7 +6,7 @@
 #    By: orudek <orudek@student.42madrid.com>       +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/09/03 15:02:39 by iortega-          #+#    #+#              #
-#    Updated: 2023/10/05 22:15:42 by orudek           ###   ########.fr        #
+#    Updated: 2023/10/05 22:16:35 by orudek           ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -59,11 +59,16 @@ SRC_FILES := error/return_msg.c\
 	exec_cmd/exec_multicmd.c\
 	exec_cmd/parse_cmd.c\
 	exec_cmd/redirect_streams.c\
+	parse/free_arg_redir.c\
+	parse/new_arg_redir.c\
+	parse/redir.c\
+	parse/split_arg_redir.c\
 	parse/split_args.c\
 	parse/split_args2.c\
 	parse/parse.c\
 	parse/split_pipe.c\
 	parse/expand_variables.c\
+	parse/format_variables.c\
 	main.c
 
 SRC := $(addprefix $(SRC_DIR)/,$(SRC_FILES))

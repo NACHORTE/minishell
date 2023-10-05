@@ -3,15 +3,20 @@
 /*                                                        :::      ::::::::   */
 /*   child.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: orudek <orudek@student.42madrid.com>       +#+  +:+       +#+        */
+/*   By: iortega- <iortega-@student.42madrid.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/20 21:29:18 by oscar             #+#    #+#             */
-/*   Updated: 2023/10/01 21:57:44 by orudek           ###   ########.fr       */
+/*   Updated: 2023/10/04 16:19:22 by iortega-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "exec_cmd.h"
+#include <stdlib.h>
+#include <unistd.h>
 #include <stdio.h>
+#include <fcntl.h>
+#include <errno.h>
+#include <sys/wait.h>
 #include <sys/errno.h>
 
 /*  child:
@@ -98,6 +103,43 @@ static char	*get_cmd_path(char **paths, char *cmd)
 		return (ft_strdup(cmd));
 	return (NULL);
 }
+/*
+int	check_permission(char **cmd)
+{
+	int	i;
+	int	j;
+	int fd;
+
+	i = 0;
+	fd = 0;
+	while (cmd[i])
+	{
+		j = 0;
+		if (cmd[i][j] == '<')
+		{
+			j++;
+			if (cmd[i][j] != '<')
+				fd = open(&cmd[i][j], O_RDONLY);
+		}
+		else if (cmd[i][j] == '>') //check
+		{
+			j++;
+			if (cmd[i][j] == '>')
+				fd = open(&cmd[i][++j], O_WRONLY | O_APPEND | O_CREAT, 0644);
+			else
+				fd = open(&cmd[i][j], O_WRONLY | O_CREAT, 0644);
+		}
+		if (fd < 0)
+		{
+			perror(&cmd[i][j]);
+			return (1);
+		}
+		if (fd > 0)
+			close(fd);
+		i++;
+	}
+	return (0);
+}*/
 
 void	child(int infile, int outfile, char **cmd, t_list **varlist)
 {
@@ -107,9 +149,21 @@ void	child(int infile, int outfile, char **cmd, t_list **varlist)
 	char	**path;
 
 	signal(SIGINT, SIG_DFL);
+	/*if (check_permission(cmd))
+		exit (1);*/
 	env = varlist_to_array(*varlist, ENV_VAR);
 	path = get_path(env);
-	redirect_streams(infile, outfile, cmd);
+	//redirect_streams(infile, outfile, cmd);
+	if (infile > 1)
+	{
+		dup2(infile, 0);
+		close(infile);
+	}
+	if (outfile > 1)
+	{
+		dup2(outfile, 1);
+		close(outfile);
+	}
 	cmd_parsed = parse_cmd(cmd);
 	if (is_builtin(cmd_parsed[0]))
 		exit(exec_builtin(cmd_parsed, varlist));
