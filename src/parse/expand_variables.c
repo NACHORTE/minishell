@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   expand_variables.c                                 :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: iortega- <iortega-@student.42madrid.com    +#+  +:+       +#+        */
+/*   By: orudek <orudek@student.42madrid.com>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/11 22:37:17 by orudek            #+#    #+#             */
-/*   Updated: 2023/10/05 21:45:51 by iortega-         ###   ########.fr       */
+/*   Updated: 2023/10/06 12:47:23 by orudek           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -284,64 +284,3 @@ int	expand_variables(t_list *cmd, t_list *varlist)
 	}
 	return (1);
 }
-
-/*COMENTAR A PARTIR DE AQUI*/
-/*
-#include "t_var.h"
-
-void print_list(t_list *list)
-{
-	int i = 0;//COMENTAR ESTA FUNCION SI NO SE USA MAIN
-
-	if (!list)
-		printf("list[0]: NULL\n");
-	while(list)
-	{
-		printf("list[%d]: (%p) (%p)\n",i,list, list->next);
-		printf("\tvars.name:\t[%s]\n\tvars.content:\t[%s]\n",
-		((t_var *)list->content)->name, ((t_var *)list->content)->content);
-		list = list->next;
-		i++;
-	}
-	printf("______\n");
-}
-
-int main(int c, char **v)
-{
-	t_var **vars = malloc(sizeof(t_var *) * 5);
-	t_list	*local = NULL;
-	t_list	*env = NULL;
-
-	if (c == 1)
-		return 1;
-	vars[0] = malloc (sizeof(t_var));
-	vars[1] = malloc (sizeof(t_var));
-	vars[2] = malloc (sizeof(t_var));
-	vars[3] = malloc (sizeof(t_var));
-	vars[4] = malloc (sizeof(t_var));
-	vars[0]->name = ft_strdup("name0");
-	vars[0]->content = ft_strdup("4567891011");
-	vars[1]->name = ft_strdup("$");
-	vars[1]->content = ft_strdup("content1");
-	vars[2]->name = ft_strdup("name2");
-	vars[2]->content = ft_strdup("content2");
-	vars[3]->name = ft_strdup("name3");
-	vars[3]->content = ft_strdup("content3");
-	vars[4]->name = ft_strdup("name4");
-	vars[4]->content = ft_strdup("content4");
-
-	set_variable(&local, vars[0]->name, vars[0]->content);
-	set_variable(&local, vars[1]->name, vars[1]->content);
-	set_variable(&local, vars[2]->name, vars[2]->content);
-	set_variable(&env, vars[3]->name, vars[3]->content);
-	set_variable(&env, vars[4]->name, vars[4]->content);
-	print_list(local);
-	print_list(env);
-	char *expanded = expand_variables(v[1], local);
-	printf("expanded: \"%s\"\n",expanded);
-	ft_lstfree(local, free_var);
-	ft_lstfree(env, free_var);
-	free(vars);
-	return (0);
-}
-*/

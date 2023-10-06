@@ -3,10 +3,10 @@
 #                                                         :::      ::::::::    #
 #    Makefile                                           :+:      :+:    :+:    #
 #                                                     +:+ +:+         +:+      #
-#    By: iortega- <iortega-@student.42madrid.com    +#+  +:+       +#+         #
+#    By: orudek <orudek@student.42madrid.com>       +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/09/03 15:02:39 by iortega-          #+#    #+#              #
-#    Updated: 2023/10/05 21:46:03 by iortega-         ###   ########.fr        #
+#    Updated: 2023/10/06 12:40:24 by orudek           ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -34,7 +34,6 @@ SRC_FILES := error/return_msg.c\
 	variables/get_variable.c\
 	variables/dup_var.c\
 	variables/array_to_varlist.c\
-	variables/print_varlist.c\
 	variables/is_in_varlist.c\
 	variables/new_var.c\
 	variables/free_var.c\
