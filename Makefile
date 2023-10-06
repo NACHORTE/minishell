@@ -6,7 +6,7 @@
 #    By: orudek <orudek@student.42madrid.com>       +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/09/03 15:02:39 by iortega-          #+#    #+#              #
-#    Updated: 2023/10/06 13:05:46 by orudek           ###   ########.fr        #
+#    Updated: 2023/10/06 13:26:45 by orudek           ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -32,6 +32,7 @@ SRC_FILES := error/return_msg.c\
 	variables/unset_variable.c\
 	variables/set_variable.c\
 	variables/get_variable.c\
+	variables/is_end_of_var.c\
 	variables/dup_var.c\
 	variables/array_to_varlist.c\
 	variables/is_in_varlist.c\
@@ -58,13 +59,16 @@ SRC_FILES := error/return_msg.c\
 	exec_cmd/exec_multicmd.c\
 	exec_cmd/parse_cmd.c\
 	exec_cmd/redirect_streams.c\
+	parse/expand_variables/expand_variables.c\
+	parse/expand_variables/get_expanded_str.c\
+	parse/expand_variables/str_to_arg.c\
+	parse/expand_variables/str_to_redir.c\
 	parse/free_arg_redir.c\
 	parse/new_arg_redir.c\
 	parse/redir.c\
 	parse/split_arg_redir.c\
 	parse/parse.c\
 	parse/split_pipe.c\
-	parse/expand_variables.c\
 	parse/format_variables.c\
 	main.c
 
