@@ -6,7 +6,7 @@
 #    By: orudek <orudek@student.42madrid.com>       +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/09/03 15:02:39 by iortega-          #+#    #+#              #
-#    Updated: 2023/10/06 13:03:37 by orudek           ###   ########.fr        #
+#    Updated: 2023/10/06 13:05:46 by orudek           ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -47,7 +47,6 @@ SRC_FILES := error/return_msg.c\
 	exec_cmd/builtin/cmd_env.c\
 	exec_cmd/builtin/cmd_export.c\
 	exec_cmd/builtin/is_builtin.c\
-	check_redi.c\
 	is_command.c\
 	local_declare.c\
 	signals.c\
@@ -55,6 +54,7 @@ SRC_FILES := error/return_msg.c\
 	exec_cmd/pipe_heredocs.c\
 	exec_cmd/exec_cmd.c\
 	exec_cmd/heredoc.c\
+	exec_cmd/exec_firstpipe.c\
 	exec_cmd/exec_multicmd.c\
 	exec_cmd/parse_cmd.c\
 	exec_cmd/redirect_streams.c\
