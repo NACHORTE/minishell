@@ -6,7 +6,7 @@
 /*   By: iortega- <iortega-@student.42madrid.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/01 16:37:59 by iortega-          #+#    #+#             */
-/*   Updated: 2023/10/05 19:34:48 by iortega-         ###   ########.fr       */
+/*   Updated: 2023/10/06 12:23:22 by iortega-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,7 +37,7 @@ void	read_input(t_command global)
 		if (check_closed_quotes(input))
 		{
 			global.cmds = parse(input, global.varlist);
-			if (global.cmds && is_command(&global)) //roto
+			if (global.cmds && is_command(&global))
 			{
 				global.last_status = exec_cmd(global.cmds, &global.varlist);
 				refresh_status(&global);

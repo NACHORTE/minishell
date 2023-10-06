@@ -6,7 +6,7 @@
 /*   By: iortega- <iortega-@student.42madrid.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/01 16:30:39 by iortega-          #+#    #+#             */
-/*   Updated: 2023/10/05 16:14:10 by iortega-         ###   ########.fr       */
+/*   Updated: 2023/10/06 12:23:07 by iortega-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -60,8 +60,6 @@ int	is_command(t_command *global)
 		return (0);
 	else if (local_declare(global))
 		return (0);
-	/*else if (!redirect_ok(global->cmds))
-		return (0);*/
 	else
 		return (1);
 }

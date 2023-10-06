@@ -6,7 +6,7 @@
 /*   By: iortega- <iortega-@student.42madrid.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/20 13:56:41 by oscar             #+#    #+#             */
-/*   Updated: 2023/10/04 18:50:34 by iortega-         ###   ########.fr       */
+/*   Updated: 2023/10/06 12:24:59 by iortega-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -62,22 +62,18 @@ int	exec_one_builtin(t_cmd *cmd, t_list **varlist, int *status)
 	int		std_out;
 	char	**cmd_parsed;
 
-	//cmd_parsed = parse_cmd(cmd);
 	cmd_parsed = (char **)cmd->args;
 	if (!is_builtin(cmd_parsed[0]))
 	{
-		//ft_array_free(cmd_parsed);
 		return (0);
 	}
 	std_in = dup(0);
 	std_out = dup(1);
-	//redirect_streams(0, 1, cmd);
 	if (cmd->infile > 1)
 		dup2(cmd->infile, 0);
 	if (cmd->outfile > 1)
 		dup2(cmd->outfile, 1);
 	*status = exec_builtin(cmd_parsed, varlist);
-	//ft_array_free(cmd_parsed);
 	if (cmd->infile > 1)
 		close(cmd->infile);
 	if (cmd->outfile > 1)
@@ -97,11 +93,9 @@ int	exec_one_builtin(t_cmd *cmd, t_list **varlist, int *status)
 int	exec_one_cmd(t_cmd *cmd, t_list **varlist)
 {
 	int	status;
-	//int	fd;
 	int	pid;
 
-	//fd = check_restdin_here(cmd);
-	if (cmd->infile < 0)
+	if (cmd->infile < 0 || cmd->outfile < 0)
 		return (1);
 	if (exec_one_builtin(cmd, varlist, &status))
 		return (status);

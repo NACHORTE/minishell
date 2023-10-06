@@ -6,7 +6,7 @@
 /*   By: iortega- <iortega-@student.42madrid.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/30 18:40:15 by iortega-          #+#    #+#             */
-/*   Updated: 2023/10/04 19:54:09 by iortega-         ###   ########.fr       */
+/*   Updated: 2023/10/06 12:26:20 by iortega-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,23 +35,16 @@ static int	first_cmd(t_multicmd *data, t_cmd *cmds, t_list **varlist)
 	if (data->pid == 0)
 	{
 		close(data->last_pipe[0]);
-		/*if (data->j < data->n_heredocs && data->i == data->n_cmd[data->j])
-			child(data->fds[data->j], data->last_pipe[1],
-				(char **)cmds->content, varlist);
-		else
-			child(0, data->last_pipe[1], (char **)cmds->content, varlist);*/
 		if (cmds->infile < 0 || cmds->outfile < 0)
 			exit (1);
 		if (cmds->outfile > 1)
 			child (cmds->infile, cmds->outfile, (char **)cmds->args, varlist);
 		else
-			child (cmds->infile, data->last_pipe[1], (char **)cmds->args, varlist);
+			child (cmds->infile, data->last_pipe[1],
+				(char **)cmds->args, varlist);
 	}
-	else //if (data->j < data->n_heredocs && data->i == data->n_cmd[data->j])
+	else
 	{
-		/*if (data->fds[data->j] > 0)
-			close(data->fds[data->j]);
-		data->j++;*/
 		if (cmds->infile > 0)
 			close(cmds->infile);
 		if (cmds->outfile > 1)
@@ -65,12 +58,6 @@ static void	manage_child(t_multicmd *data, t_cmd *cmds, t_list **varlist)
 	if (data->pid == 0)
 	{
 		close(data->new_pipe[0]);
-		/*if (data->j < data->n_heredocs && data->i == data->n_cmd[data->j])
-			child(data->fds[data->j], data->new_pipe[1],
-				(char **)cmds->content, varlist);
-		else
-			child(data->last_pipe[0], data->new_pipe[1],
-				(char **)cmds->content, varlist);*/
 		if (cmds->infile < 0 || cmds->outfile < 0)
 			exit (1);
 		if (cmds->infile > 0)
@@ -90,12 +77,6 @@ static void	manage_child(t_multicmd *data, t_cmd *cmds, t_list **varlist)
 		close(data->last_pipe[0]);
 		data->last_pipe[0] = data->new_pipe[0];
 		data->last_pipe[1] = data->new_pipe[1];
-		/*if (data->j < data->n_heredocs && data->i == data->n_cmd[data->j])
-		{
-			if (data->fds[data->j] > 0)
-				close(data->fds[data->j]);
-			data->j++;
-		}*/
 		if (cmds->infile > 0)
 			close(cmds->infile);
 		if (cmds->outfile > 1)
@@ -131,14 +112,6 @@ static int	last_cmd(t_multicmd *data, t_cmd *cmds, t_list **varlist)
 	data->pid = fork();
 	if (data->pid == 0)
 	{
-		/*if (data->j < data->n_heredocs && data->i == data->n_cmd[data->j])
-		{
-			child(data->fds[data->j], 1, (char **)cmds->content, varlist);
-		}
-		else
-		{
-			child(data->last_pipe[0], 1, (char **)cmds->content, varlist);
-		}*/
 		if (cmds->infile < 0 || cmds->outfile < 0)
 			exit (1);
 		if (cmds->infile > 0)
@@ -146,11 +119,8 @@ static int	last_cmd(t_multicmd *data, t_cmd *cmds, t_list **varlist)
 		else
 			child(data->last_pipe[0], cmds->outfile, (char **)cmds->args, varlist);
 	}
-	else //if (data->j < data->n_heredocs && data->i == data->n_cmd[data->j])
+	else
 	{
-		/*if (data->fds[data->j] > 0)
-			close(data->fds[data->j]);
-		data->j++;*/
 		if (cmds->infile > 0)
 			close(cmds->infile);
 		if (cmds->outfile > 1)
@@ -166,8 +136,6 @@ int	exec_multi_cmd(t_list *cmds, t_list **varlist)
 	pid_t		last_pid;
 
 	data.cmds_len = ft_lstsize(cmds);
-	/*if (pipe_heredocs(&data, cmds))
-		return (1);*/
 	if (pipe(data.last_pipe) == -1)
 	{
 		printf("EXEC_MULTI_CMD: pipe 0: fail\n");
@@ -183,10 +151,5 @@ int	exec_multi_cmd(t_list *cmds, t_list **varlist)
 	waitpid(last_pid, &(data.status), 0);
 	while (wait(NULL) != -1)
 		;
-	/*if (data.n_heredocs > 0)
-	{
-		free (data.n_cmd);
-		free(data.fds);
-	}*/
 	return (WEXITSTATUS(data.status));
 }
