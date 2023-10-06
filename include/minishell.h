@@ -6,7 +6,7 @@
 /*   By: iortega- <iortega-@student.42madrid.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/03 15:58:32 by iortega-          #+#    #+#             */
-/*   Updated: 2023/10/05 15:40:55 by iortega-         ###   ########.fr       */
+/*   Updated: 2023/10/06 13:22:18 by iortega-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,11 +36,11 @@ typedef struct s_command
 	int		last_status;
 }	t_command;
 
-int	redirect_ok(t_list *cmds);
-int	save_variables(t_command *global);
-int	is_allasignation(t_cmd *cmds);
-int	is_command(t_command *global);
-int	check_closed_quotes(char *input);
+int		redirect_ok(t_list *cmds);
+int		save_variables(t_command *global);
+int		is_allasignation(t_cmd *cmds);
+int		is_command(t_command *global);
+int		check_closed_quotes(char *input);
 void	new_line(int sig);
 void	sig_child(int sig);
 void	sig_here(int sig);

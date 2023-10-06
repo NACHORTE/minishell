@@ -6,11 +6,22 @@
 /*   By: iortega- <iortega-@student.42madrid.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/01 16:30:39 by iortega-          #+#    #+#             */
-/*   Updated: 2023/10/06 12:52:45 by iortega-         ###   ########.fr       */
+/*   Updated: 2023/10/06 13:33:09 by iortega-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
+
+static int	inval_char(int quotes, int simple, char c)
+{
+	if ((quotes % 2 == 0 && simple % 2 == 0)
+		&& (c == '\\' || c == ';'))
+	{
+		printf("Invalid character: \"%c\"\n", c);
+		return (1);
+	}
+	return (0);
+}
 
 int	check_closed_quotes(char *input)
 {
@@ -27,12 +38,8 @@ int	check_closed_quotes(char *input)
 			simple++;
 		else if (input[i] == '"' && simple % 2 == 0)
 			quotes++;
-		if ((quotes % 2 == 0 && simple % 2 == 0)
-			&& (input[i] == '\\' || input[i] == ';'))
-		{
-			printf("Invalid character: \"%c\"\n", input[i]);
+		if (inval_char(quotes, simple, input[i]))
 			return (0);
-		}
 		i++;
 	}
 	if (quotes % 2 == 0 && simple % 2 == 0)
