@@ -6,7 +6,7 @@
 #    By: orudek <orudek@student.42madrid.com>       +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/09/03 15:02:39 by iortega-          #+#    #+#              #
-#    Updated: 2023/10/06 13:30:54 by orudek           ###   ########.fr        #
+#    Updated: 2023/10/06 13:53:39 by orudek           ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -63,15 +63,18 @@ SRC_FILES := error/return_msg.c\
 	parse/expand_variables/get_expanded_str.c\
 	parse/expand_variables/str_to_arg.c\
 	parse/expand_variables/str_to_redir.c\
-	parse/free_arg_redir.c\
-	parse/new_arg_redir.c\
+	parse/format_variables/format_arg_len.c\
+	parse/format_variables/format_args.c\
+	parse/format_variables/format_redir.c\
+	parse/format_variables/format_variables.c\
+	parse/split_arg_redir/free_arg_redir.c\
+	parse/split_arg_redir/new_arg_redir.c\
+	parse/split_arg_redir/split_arg_redir.c\
 	parse/redir_heredoc.c\
 	parse/redir_streams.c\
 	parse/redir.c\
-	parse/split_arg_redir.c\
 	parse/parse.c\
 	parse/split_pipe.c\
-	parse/format_variables.c\
 	main.c
 
 SRC := $(addprefix $(SRC_DIR)/,$(SRC_FILES))

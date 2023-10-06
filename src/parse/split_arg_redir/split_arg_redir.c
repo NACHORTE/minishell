@@ -3,16 +3,16 @@
 /*                                                        :::      ::::::::   */
 /*   split_arg_redir.c                                  :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: iortega- <iortega-@student.42madrid.com    +#+  +:+       +#+        */
+/*   By: orudek <orudek@student.42madrid.com>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/03 20:56:54 by orudek            #+#    #+#             */
-/*   Updated: 2023/10/06 13:35:19 by iortega-         ###   ########.fr       */
+/*   Updated: 2023/10/06 13:46:58 by orudek           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "parse.h"
 
-int	arg_len(char *s)
+static int	arg_len(char *s)
 {
 	int	i;
 	int	state;
@@ -30,7 +30,7 @@ int	arg_len(char *s)
 	return (i);
 }
 
-int	redir_len(char *cmd)
+static int	redir_len(char *cmd)
 {
 	int	i;
 
@@ -43,7 +43,7 @@ int	redir_len(char *cmd)
 	return (i);
 }
 
-char	*get_arg(char **cmd)
+static char	*get_arg(char **cmd)
 {
 	int		len;
 	char	*out;
@@ -60,7 +60,7 @@ char	*get_arg(char **cmd)
 	return (out);
 }
 
-t_arg_redir	*get_cmd(char *cmd)
+static t_arg_redir	*get_cmd(char *cmd)
 {
 	t_arg_redir	*out;
 	char		*arg;
