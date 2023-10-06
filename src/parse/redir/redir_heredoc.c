@@ -6,7 +6,7 @@
 /*   By: iortega- <iortega-@student.42madrid.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/06 13:09:10 by iortega-          #+#    #+#             */
-/*   Updated: 2023/10/06 13:15:23 by iortega-         ###   ########.fr       */
+/*   Updated: 2023/10/06 15:40:34 by iortega-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,7 +30,7 @@ static void	check_doublestdin_here(char *character, int *fd)
 	}
 }
 
-int	check_restdin_heree(t_list *redir)
+int	check_restdin_here(t_list *redir)
 {
 	int		i;
 	int		fd;

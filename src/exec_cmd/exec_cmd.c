@@ -6,7 +6,7 @@
 /*   By: iortega- <iortega-@student.42madrid.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/20 13:56:41 by oscar             #+#    #+#             */
-/*   Updated: 2023/10/06 12:24:59 by iortega-         ###   ########.fr       */
+/*   Updated: 2023/10/06 15:43:54 by iortega-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,42 +18,6 @@
 #include <fcntl.h>
 #include <errno.h>
 #include <sys/wait.h>
-
-static void	check_doublestdin_here(char *character, int *fd)
-{
-	if (*fd != 0)
-		close (*fd);
-	if (*character == '<')
-	{
-		*fd = here_doc(character + 1);
-	}
-	else
-	{
-		if (*fd != 0)
-			close (*fd);
-		*fd = 0;
-	}
-}
-
-int	check_restdin_here(char **input)
-{
-	int	i;
-	int	j;
-	int	fd;
-
-	i = 0;
-	fd = 0;
-	while (fd >= 0 && input[i])
-	{
-		j = 0;
-		if (input[i][j] == '<')
-		{
-			check_doublestdin_here(&input[i][j + 1], &fd);
-		}
-		i++;
-	}
-	return (fd);
-}
 
 //[ ] check open files and leaks
 int	exec_one_builtin(t_cmd *cmd, t_list **varlist, int *status)

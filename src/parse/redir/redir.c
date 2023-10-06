@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   redir.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: orudek <orudek@student.42madrid.com>       +#+  +:+       +#+        */
+/*   By: iortega- <iortega-@student.42madrid.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/03 19:51:13 by iortega-          #+#    #+#             */
-/*   Updated: 2023/10/06 14:03:08 by orudek           ###   ########.fr       */
+/*   Updated: 2023/10/06 15:41:04 by iortega-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,13 +46,13 @@ static t_cmd	*get_cmd(t_arg_redir *cmd)
 	out = malloc(sizeof(t_cmd));
 	if (!out)
 		return (NULL);
-	out->infile = check_restdin_heree((t_list *)cmd->redir);
+	out->infile = check_restdin_here((t_list *)cmd->redir);
 	if (out->infile < 0)
 	{
 		free(out);
 		return (NULL);
 	}
-	redirect_streamss(out, (t_list *)cmd->redir);
+	redirect_streams(out, (t_list *)cmd->redir);
 	out->args = save_args((t_list *)cmd->args);
 	if (!out->args)
 		return (NULL);

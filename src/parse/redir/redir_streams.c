@@ -6,7 +6,7 @@
 /*   By: iortega- <iortega-@student.42madrid.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/06 13:11:49 by iortega-          #+#    #+#             */
-/*   Updated: 2023/10/06 13:21:06 by iortega-         ###   ########.fr       */
+/*   Updated: 2023/10/06 15:41:09 by iortega-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -90,7 +90,7 @@ static int	check_restdout(t_list *redir)
 	return (fd);
 }
 
-void	redirect_streamss(t_cmd *out, t_list *redir)
+void	redirect_streams(t_cmd *out, t_list *redir)
 {
 	int	fd_in;
 	int	fd_out;

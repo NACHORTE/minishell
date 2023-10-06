@@ -6,7 +6,7 @@
 #    By: iortega- <iortega-@student.42madrid.com    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/09/03 15:02:39 by iortega-          #+#    #+#              #
-#    Updated: 2023/10/06 14:46:52 by iortega-         ###   ########.fr        #
+#    Updated: 2023/10/06 15:45:53 by iortega-         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -50,13 +50,11 @@ SRC_FILES := variables/is_varname_ok.c\
 	exec_cmd/builtin/cmd_export.c\
 	exec_cmd/builtin/is_builtin.c\
 	exec_cmd/child.c\
-	exec_cmd/pipe_heredocs.c\
 	exec_cmd/exec_cmd.c\
 	exec_cmd/heredoc.c\
 	exec_cmd/exec_multicmd.c\
 	exec_cmd/parse_cmd.c\
 	exec_cmd/exec_firstpipe.c\
-	exec_cmd/redirect_streams.c\
 	exec_cmd/rm_assignation.c\
 	parse/expand_variables/str_to_redir.c\
 	parse/expand_variables/expand_variables.c\
