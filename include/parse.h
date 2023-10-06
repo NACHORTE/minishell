@@ -6,7 +6,7 @@
 /*   By: orudek <orudek@student.42madrid.com>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/29 13:58:18 by orudek            #+#    #+#             */
-/*   Updated: 2023/10/06 13:26:30 by orudek           ###   ########.fr       */
+/*   Updated: 2023/10/06 13:31:29 by orudek           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,5 +41,7 @@ t_list		*str_to_redir(char *str);
 int			format_variables(t_list *cmd);
 t_list		*cmd_redir(t_list *pipes);
 void		free_cmd(void *cmd);
+int			check_restdin_heree(t_list *redir);
+void		redirect_streamss(t_cmd *out, t_list *redir);
 
 #endif
