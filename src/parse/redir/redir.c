@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   redir.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: iortega- <iortega-@student.42madrid.com    +#+  +:+       +#+        */
+/*   By: orudek <orudek@student.42madrid.com>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/03 19:51:13 by iortega-          #+#    #+#             */
-/*   Updated: 2023/10/06 13:20:11 by iortega-         ###   ########.fr       */
+/*   Updated: 2023/10/06 14:03:08 by orudek           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -57,21 +57,6 @@ static t_cmd	*get_cmd(t_arg_redir *cmd)
 	if (!out->args)
 		return (NULL);
 	return (out);
-}
-
-void	free_cmd(void *cmd)
-{
-	t_cmd	*aux;
-
-	if (!cmd)
-		return ;
-	aux = (t_cmd *)cmd;
-	ft_array_free(aux->args);
-	if (aux->infile > 1)
-		close(aux->infile);
-	if (aux->outfile > 1)
-		close(aux->outfile);
-	free(aux);
 }
 
 t_list	*cmd_redir(t_list *pipes)
