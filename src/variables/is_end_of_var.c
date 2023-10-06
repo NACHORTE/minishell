@@ -1,24 +1,19 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   return_msg.c                                       :+:      :+:    :+:   */
+/*   is_end_of_var.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: iortega- <iortega-@student.42madrid.com    +#+  +:+       +#+        */
+/*   By: orudek <orudek@student.42madrid.com>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2023/10/02 14:51:25 by orudek            #+#    #+#             */
-/*   Updated: 2023/10/06 12:46:26 by iortega-         ###   ########.fr       */
+/*   Created: 2023/10/06 13:09:37 by orudek            #+#    #+#             */
+/*   Updated: 2023/10/06 13:09:54 by orudek           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "unistd.h"
-#include "libft.h"
-
-unsigned long	return_msg(char *msg, int fd, unsigned long ret_val)
+int	is_end_of_var(char c)
 {
-	if (msg)
-	{
-		write(fd, msg, ft_strlen(msg));
-		write(fd, "\n", 1);
-	}
-	return (ret_val);
+	if (c == ' ' || c == '\"' || c == '\'' || c == '=' || c == '<' || c == '>'
+		|| c == '\0')
+		return (1);
+	return (0);
 }

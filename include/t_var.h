@@ -6,7 +6,7 @@
 /*   By: orudek <orudek@student.42madrid.com>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/11 13:20:58 by orudek            #+#    #+#             */
-/*   Updated: 2023/10/05 14:37:23 by orudek           ###   ########.fr       */
+/*   Updated: 2023/10/06 13:09:20 by orudek           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,7 +40,6 @@ void	unset_variable(t_list **lst, char *name);
 
 int		is_in_varlist(t_list *lst, char *name);
 int		is_varname_ok(const char *name);
-
-void	print_varlist(t_list *varlist); //XXX delete this before submitting project
+int		is_end_of_var(char c);
 
 #endif

@@ -6,7 +6,7 @@
 #    By: orudek <orudek@student.42madrid.com>       +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/09/03 15:02:39 by iortega-          #+#    #+#              #
-#    Updated: 2023/10/05 22:16:35 by orudek           ###   ########.fr        #
+#    Updated: 2023/10/06 13:55:05 by orudek           ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -32,9 +32,9 @@ SRC_FILES := error/return_msg.c\
 	variables/unset_variable.c\
 	variables/set_variable.c\
 	variables/get_variable.c\
+	variables/is_end_of_var.c\
 	variables/dup_var.c\
 	variables/array_to_varlist.c\
-	variables/print_varlist.c\
 	variables/is_in_varlist.c\
 	variables/new_var.c\
 	variables/free_var.c\
@@ -48,7 +48,6 @@ SRC_FILES := error/return_msg.c\
 	exec_cmd/builtin/cmd_env.c\
 	exec_cmd/builtin/cmd_export.c\
 	exec_cmd/builtin/is_builtin.c\
-	check_redi.c\
 	is_command.c\
 	local_declare.c\
 	signals.c\
@@ -56,19 +55,26 @@ SRC_FILES := error/return_msg.c\
 	exec_cmd/pipe_heredocs.c\
 	exec_cmd/exec_cmd.c\
 	exec_cmd/heredoc.c\
+	exec_cmd/exec_firstpipe.c\
 	exec_cmd/exec_multicmd.c\
 	exec_cmd/parse_cmd.c\
 	exec_cmd/redirect_streams.c\
-	parse/free_arg_redir.c\
-	parse/new_arg_redir.c\
+	parse/expand_variables/expand_variables.c\
+	parse/expand_variables/get_expanded_str.c\
+	parse/expand_variables/str_to_arg.c\
+	parse/expand_variables/str_to_redir.c\
+	parse/format_variables/format_arg_len.c\
+	parse/format_variables/format_args.c\
+	parse/format_variables/format_redir.c\
+	parse/format_variables/format_variables.c\
+	parse/split_arg_redir/free_arg_redir.c\
+	parse/split_arg_redir/new_arg_redir.c\
+	parse/split_arg_redir/split_arg_redir.c\
+	parse/redir_heredoc.c\
+	parse/redir_streams.c\
 	parse/redir.c\
-	parse/split_arg_redir.c\
-	parse/split_args.c\
-	parse/split_args2.c\
 	parse/parse.c\
 	parse/split_pipe.c\
-	parse/expand_variables.c\
-	parse/format_variables.c\
 	main.c
 
 SRC := $(addprefix $(SRC_DIR)/,$(SRC_FILES))

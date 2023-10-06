@@ -6,7 +6,7 @@
 /*   By: iortega- <iortega-@student.42madrid.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/20 21:29:18 by oscar             #+#    #+#             */
-/*   Updated: 2023/10/04 16:19:22 by iortega-         ###   ########.fr       */
+/*   Updated: 2023/10/06 12:57:50 by iortega-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -68,6 +68,8 @@ static void	no_command(char **cmd_parsed)
 {
 	int	len;
 
+	if (!*cmd_parsed)
+		exit (0);
 	write(2, &"Command not found: ", 19);
 	len = ft_strlen(cmd_parsed[0]);
 	if (**cmd_parsed)
@@ -75,6 +77,7 @@ static void	no_command(char **cmd_parsed)
 	else
 		write(2, "\'\'", 2);
 	write(2, &"\n", 1);
+	exit(127);
 }
 
 static char	*get_cmd_path(char **paths, char *cmd)
@@ -143,17 +146,13 @@ int	check_permission(char **cmd)
 
 void	child(int infile, int outfile, char **cmd, t_list **varlist)
 {
-	char	**cmd_parsed;
 	char	*cmd_path;
 	char	**env;
 	char	**path;
 
 	signal(SIGINT, SIG_DFL);
-	/*if (check_permission(cmd))
-		exit (1);*/
 	env = varlist_to_array(*varlist, ENV_VAR);
 	path = get_path(env);
-	//redirect_streams(infile, outfile, cmd);
 	if (infile > 1)
 	{
 		dup2(infile, 0);
@@ -164,16 +163,12 @@ void	child(int infile, int outfile, char **cmd, t_list **varlist)
 		dup2(outfile, 1);
 		close(outfile);
 	}
-	cmd_parsed = parse_cmd(cmd);
-	if (is_builtin(cmd_parsed[0]))
-		exit(exec_builtin(cmd_parsed, varlist));
-	cmd_path = get_cmd_path(path, cmd_parsed[0]);
+	if (is_builtin(cmd[0]))
+		exit(exec_builtin(cmd, varlist));
+	cmd_path = get_cmd_path(path, cmd[0]);
 	if (!cmd_path)
-	{
-		no_command(cmd_parsed);
-		exit(127);
-	}
-	execve(cmd_path, cmd_parsed, env);
-	perror(cmd_parsed[0]);
+		no_command(cmd);
+	execve(cmd_path, cmd, env);
+	perror(cmd[0]);
 	exit(errno);
 }

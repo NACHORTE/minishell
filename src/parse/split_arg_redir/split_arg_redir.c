@@ -6,13 +6,13 @@
 /*   By: orudek <orudek@student.42madrid.com>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/03 20:56:54 by orudek            #+#    #+#             */
-/*   Updated: 2023/10/05 21:45:56 by orudek           ###   ########.fr       */
+/*   Updated: 2023/10/06 13:57:47 by orudek           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "parse.h"
 
-int	arg_len(char *s)
+static int	arg_len(char *s)
 {
 	int	i;
 	int	state;
@@ -30,7 +30,7 @@ int	arg_len(char *s)
 	return (i);
 }
 
-int	redir_len(char *cmd)
+static int	redir_len(char *cmd)
 {
 	int	i;
 
@@ -43,7 +43,7 @@ int	redir_len(char *cmd)
 	return (i);
 }
 
-char	*get_arg(char **cmd)
+static char	*get_arg(char **cmd)
 {
 	int		len;
 	char	*out;
@@ -60,7 +60,7 @@ char	*get_arg(char **cmd)
 	return (out);
 }
 
-t_arg_redir	*get_cmd(char *cmd)
+static t_arg_redir	*get_cmd(char *cmd)
 {
 	t_arg_redir	*out;
 	char		*arg;
@@ -73,7 +73,7 @@ t_arg_redir	*get_cmd(char *cmd)
 		while (*cmd == ' ')
 			cmd++;
 		if (!*cmd)
-			break;
+			break ;
 		arg = get_arg(&cmd);
 		if (!arg || ((arg[0] == '<' || arg[0] == '>')
 				&& !ft_lstadd_back_content(&out->redir, arg))
@@ -124,7 +124,24 @@ t_list	*split_arg_redir(char **cmd)
 	}
 	printf("List: (%p)\n", lst);
 }
+
+void print_cmd(t_list *lst)
+{
+	printf("printeo nacho\n");
+	for (lst; lst; lst = lst->next)
+	{
+		char **args = ((t_cmd *)lst->content)->args;
+		for (int i = 0; args[i]; i++)
+		{
+			printf("%s\n", args[i]);
+		}
+		printf("infile %d outfile %d\n\n", ((t_cmd *)lst->content)->infile,
+			 ((t_cmd *)lst->content)->outfile);
+	}
+}
+
 #include "t_var.h"
+int	expand_variables(t_list *cmd, t_list *varlist);
 int main()
 {
 	char *cmd[] =

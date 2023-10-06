@@ -1,25 +1,25 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   new_arg_redir.c                                    :+:      :+:    :+:   */
+/*   free_arg_redir.c                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: orudek <orudek@student.42madrid.com>       +#+  +:+       +#+        */
+/*   By: iortega- <iortega-@student.42madrid.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2023/10/03 22:20:08 by orudek            #+#    #+#             */
-/*   Updated: 2023/10/03 22:21:40 by orudek           ###   ########.fr       */
+/*   Created: 2023/10/03 22:20:59 by orudek            #+#    #+#             */
+/*   Updated: 2023/10/06 13:14:45 by iortega-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "parse.h"
 
-t_arg_redir *new_arg_redir(void)
+void	free_arg_redir(void *arg_redir)
 {
-	t_arg_redir *out;
+	t_arg_redir	*aux;
 
-	out = malloc(sizeof(t_arg_redir));
-	if (!out)
-		return (NULL);
-	out->args = NULL;
-	out->redir = NULL;
-	return (out);
+	if (!arg_redir)
+		return ;
+	aux = (t_arg_redir *)arg_redir;
+	ft_lstfree(aux->args, free);
+	ft_lstfree(aux->redir, free);
+	free(arg_redir);
 }
