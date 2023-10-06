@@ -3,45 +3,14 @@
 /*                                                        :::      ::::::::   */
 /*   parse.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: iortega- <iortega-@student.42madrid.com    +#+  +:+       +#+        */
+/*   By: orudek <orudek@student.42madrid.com>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/17 17:24:03 by orudek            #+#    #+#             */
-/*   Updated: 2023/10/05 21:45:44 by iortega-         ###   ########.fr       */
+/*   Updated: 2023/10/06 12:36:57 by orudek           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "minishell.h"
-
-t_list	*save_commands(char **array)
-{
-	t_list	*output;
-	char	**args;
-
-	output = NULL;
-	while (*array)
-	{
-		args = split_args(*array, ' ');
-		if (!args || !ft_lstadd_back_content(&output, args))
-		{
-			ft_lstfree(output, ft_array_free);
-			return (0);
-		}
-		array++;
-	}
-	return (output);
-}
-
-void print_arg(t_list *arg_redir_lst)
-{
-	t_list *aux;
-
-	aux = (t_list *)((t_arg_redir *)arg_redir_lst->content)->args;
-	while (aux)
-	{
-		printf("%s\n", (char *)aux->content);
-		aux = aux->next;
-	}
-}
+#include "parse.h"
 
 t_list	*parse(char	*input, t_list *varlist)
 {

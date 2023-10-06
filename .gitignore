@@ -3,7 +3,6 @@
 !include/
 !libft/
 !src/
-!test
 !Makefile
 !subject.pdf
 **/obj
