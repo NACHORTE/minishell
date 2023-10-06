@@ -6,7 +6,7 @@
 /*   By: iortega- <iortega-@student.42madrid.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/03 20:56:54 by orudek            #+#    #+#             */
-/*   Updated: 2023/10/05 21:45:27 by iortega-         ###   ########.fr       */
+/*   Updated: 2023/10/06 13:35:19 by iortega-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -73,7 +73,7 @@ t_arg_redir	*get_cmd(char *cmd)
 		while (*cmd == ' ')
 			cmd++;
 		if (!*cmd)
-			break;
+			break ;
 		arg = get_arg(&cmd);
 		if (!arg || ((arg[0] == '<' || arg[0] == '>')
 				&& !ft_lstadd_back_content(&out->redir, arg))
@@ -135,7 +135,8 @@ void print_cmd(t_list *lst)
 		{
 			printf("%s\n", args[i]);
 		}
-		printf("infile %d outfile %d\n\n", ((t_cmd *)lst->content)->infile, ((t_cmd *)lst->content)->outfile);
+		printf("infile %d outfile %d\n\n", ((t_cmd *)lst->content)->infile,
+			 ((t_cmd *)lst->content)->outfile);
 	}
 }
 

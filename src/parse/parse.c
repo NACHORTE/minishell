@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   parse.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: orudek <orudek@student.42madrid.com>       +#+  +:+       +#+        */
+/*   By: iortega- <iortega-@student.42madrid.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/17 17:24:03 by orudek            #+#    #+#             */
-/*   Updated: 2023/10/06 12:36:57 by orudek           ###   ########.fr       */
+/*   Updated: 2023/10/06 13:34:39 by iortega-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,7 +28,6 @@ t_list	*parse(char	*input, t_list *varlist)
 	if (!expand_variables(arg_redir_lst, varlist)
 		|| !format_variables(arg_redir_lst))
 	{
-		
 		ft_lstfree(arg_redir_lst, free_arg_redir);
 		return (NULL);
 	}
