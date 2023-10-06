@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   cmd_exit.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: orudek <orudek@student.42madrid.com>       +#+  +:+       +#+        */
+/*   By: iortega- <iortega-@student.42madrid.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/27 21:22:08 by orudek            #+#    #+#             */
-/*   Updated: 2023/10/02 15:14:59 by orudek           ###   ########.fr       */
+/*   Updated: 2023/10/06 12:31:05 by iortega-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,6 +15,7 @@
 #include "libft.h"
 #include "t_var.h"
 #include "error.h"
+
 char	is_number(char *str)
 {
 	if (*str == '+' || *str == '-')
@@ -49,7 +50,7 @@ int	get_exit_status(t_list *varlist, int *exit_status)
 
 int	cmd_exit(char **cmd, t_list **varlist)
 {
-	int exit_status;
+	int	exit_status;
 
 	printf("exit\n");
 	if (!cmd[1])

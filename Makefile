@@ -6,7 +6,7 @@
 #    By: iortega- <iortega-@student.42madrid.com    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/09/03 15:02:39 by iortega-          #+#    #+#              #
-#    Updated: 2023/10/05 21:46:03 by iortega-         ###   ########.fr        #
+#    Updated: 2023/10/06 12:39:17 by iortega-         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -56,6 +56,7 @@ SRC_FILES := error/return_msg.c\
 	exec_cmd/pipe_heredocs.c\
 	exec_cmd/exec_cmd.c\
 	exec_cmd/heredoc.c\
+	exec_cmd/exec_firstpipe.c\
 	exec_cmd/exec_multicmd.c\
 	exec_cmd/parse_cmd.c\
 	exec_cmd/redirect_streams.c\

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   exec_cmd.h                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: orudek <orudek@student.42madrid.com>       +#+  +:+       +#+        */
+/*   By: iortega- <iortega-@student.42madrid.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/27 22:31:08 by orudek            #+#    #+#             */
-/*   Updated: 2023/10/02 15:15:02 by orudek           ###   ########.fr       */
+/*   Updated: 2023/10/06 12:42:04 by iortega-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,6 +15,7 @@
 
 # include "t_var.h"
 # include "libft.h"
+# include "parse.h"
 # include "minishell.h"
 
 typedef struct s_multicmd
@@ -49,5 +50,6 @@ int		exec_multi_cmd(t_list *cmds, t_list **varlist);
 int		pipe_heredocs(t_multicmd *data, t_list *cmds);
 int		here_doc(char *str);
 int		check_restdin_here(char **input);
+int		first_cmd(t_multicmd *data, t_cmd *cmds, t_list **varlist);
 
 #endif

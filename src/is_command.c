@@ -6,7 +6,7 @@
 /*   By: iortega- <iortega-@student.42madrid.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/01 16:30:39 by iortega-          #+#    #+#             */
-/*   Updated: 2023/10/06 12:23:07 by iortega-         ###   ########.fr       */
+/*   Updated: 2023/10/06 12:52:45 by iortega-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,14 +27,15 @@ int	check_closed_quotes(char *input)
 			simple++;
 		else if (input[i] == '"' && simple % 2 == 0)
 			quotes++;
-		if ((quotes % 2 == 0 && simple % 2 == 0) && (input[i] == '\\' || input[i] == ';'))
+		if ((quotes % 2 == 0 && simple % 2 == 0)
+			&& (input[i] == '\\' || input[i] == ';'))
 		{
 			printf("Invalid character: \"%c\"\n", input[i]);
 			return (0);
 		}
 		i++;
 	}
-	if (quotes % 2 == 0)
+	if (quotes % 2 == 0 && simple % 2 == 0)
 		return (1);
 	else
 	{
