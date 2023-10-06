@@ -3,17 +3,15 @@
 /*                                                        :::      ::::::::   */
 /*   is_in_varlist.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: iortega- <iortega-@student.42madrid.com    +#+  +:+       +#+        */
+/*   By: orudek <orudek@student.42madrid.com>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/28 14:19:47 by orudek            #+#    #+#             */
-/*   Updated: 2023/10/01 16:46:35 by iortega-         ###   ########.fr       */
+/*   Updated: 2023/10/06 15:33:03 by orudek           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "t_var.h"
 
-//[ ]: comentarios
-// devuelve el indice y si no lo encuentra devuelve -1
 int	is_in_varlist(t_list *lst, char *name)
 {
 	t_var	var;

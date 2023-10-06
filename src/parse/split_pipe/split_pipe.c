@@ -6,7 +6,7 @@
 /*   By: orudek <orudek@student.42madrid.com>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/13 14:28:51 by orudek            #+#    #+#             */
-/*   Updated: 2023/10/05 19:53:46 by orudek           ###   ########.fr       */
+/*   Updated: 2023/10/06 15:31:40 by orudek           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -96,14 +96,3 @@ char	**split_pipe(char *s)
 	strings[i] = 0;
 	return (strings);
 }
-
-/*
-int main(int c, char **v)
-{
-	if (c)
-		c =2;
-	char **s = split_pipe(v[1]);
-	for (int i = 0; s[i]; i++)
-		printf("str[%d]=\'%s\'\n",i,s[i]);
-	return (1);
-}*/
