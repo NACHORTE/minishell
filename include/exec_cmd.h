@@ -6,7 +6,7 @@
 /*   By: iortega- <iortega-@student.42madrid.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/27 22:31:08 by orudek            #+#    #+#             */
-/*   Updated: 2023/10/06 14:51:36 by iortega-         ###   ########.fr       */
+/*   Updated: 2023/10/06 15:40:01 by iortega-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,7 +45,6 @@ int		is_builtin(char *cmd);
 int		exec_builtin(char **cmd, t_list **varlist);
 void	child(int infile, int outfile, char **cmd, t_list **varlist);
 void	redirect_streams(int infile, int outfile, char **cmd);
-char	**parse_cmd(char **input);
 int		exec_multi_cmd(t_list *cmds, t_list **varlist);
 int		pipe_heredocs(t_multicmd *data, t_list *cmds);
 int		here_doc(char *str);
