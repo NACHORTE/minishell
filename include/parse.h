@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   parse.h                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: orudek <orudek@student.42madrid.com>       +#+  +:+       +#+        */
+/*   By: iortega- <iortega-@student.42madrid.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/29 13:58:18 by orudek            #+#    #+#             */
-/*   Updated: 2023/10/06 12:38:28 by orudek           ###   ########.fr       */
+/*   Updated: 2023/10/06 13:12:20 by iortega-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,5 +38,7 @@ int			expand_variables(t_list *cmd, t_list *varlist);
 int			format_variables(t_list *cmd);
 t_list		*cmd_redir(t_list *pipes);
 void		free_cmd(void *cmd);
+int			check_restdin_heree(t_list *redir);
+void		redirect_streamss(t_cmd *out, t_list *redir);
 
 #endif

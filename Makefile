@@ -6,7 +6,7 @@
 #    By: iortega- <iortega-@student.42madrid.com    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/09/03 15:02:39 by iortega-          #+#    #+#              #
-#    Updated: 2023/10/06 13:00:51 by iortega-         ###   ########.fr        #
+#    Updated: 2023/10/06 13:20:32 by iortega-         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -47,7 +47,6 @@ SRC_FILES := error/return_msg.c\
 	exec_cmd/builtin/cmd_env.c\
 	exec_cmd/builtin/cmd_export.c\
 	exec_cmd/builtin/is_builtin.c\
-	check_redi.c\
 	is_command.c\
 	local_declare.c\
 	signals.c\
@@ -61,6 +60,8 @@ SRC_FILES := error/return_msg.c\
 	exec_cmd/redirect_streams.c\
 	parse/free_arg_redir.c\
 	parse/new_arg_redir.c\
+	parse/redir_heredoc.c\
+	parse/redir_streams.c\
 	parse/redir.c\
 	parse/split_arg_redir.c\
 	parse/split_args.c\
