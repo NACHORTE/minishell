@@ -6,7 +6,7 @@
 #    By: orudek <orudek@student.42madrid.com>       +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/09/03 15:02:39 by iortega-          #+#    #+#              #
-#    Updated: 2023/10/06 12:40:24 by orudek           ###   ########.fr        #
+#    Updated: 2023/10/06 13:03:37 by orudek           ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -62,8 +62,6 @@ SRC_FILES := error/return_msg.c\
 	parse/new_arg_redir.c\
 	parse/redir.c\
 	parse/split_arg_redir.c\
-	parse/split_args.c\
-	parse/split_args2.c\
 	parse/parse.c\
 	parse/split_pipe.c\
 	parse/expand_variables.c\
