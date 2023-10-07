@@ -6,7 +6,7 @@
 /*   By: orudek <orudek@student.42madrid.com>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/06 13:11:48 by orudek            #+#    #+#             */
-/*   Updated: 2023/10/06 13:27:49 by orudek           ###   ########.fr       */
+/*   Updated: 2023/10/07 13:15:40 by orudek           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,7 +42,14 @@ static int	var_len(char *s, int *len, t_list *varlist)
 
 	i = 0;
 	while (s[i] && !is_end_of_var(s[i]))
+	{
+		if (i == 1 && (s[i] == '?'))
+		{
+			i++;
+			break ;
+		}
 		i++;
+	}
 	if (!find_var(&var, s, i - 1, varlist))
 		return (i);
 	*len += ft_strlen(var);
